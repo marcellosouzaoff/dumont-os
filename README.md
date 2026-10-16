@@ -2,7 +2,7 @@
 
 **DUMONT OS · design system e planejamento do launcher Android**
 
-> **Status: DOCUMENTAÇÃO / PRÉ-CÓDIGO.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
+> **Status: M2 / FOUNDATION BRANCH.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
 
 > **Mockups aprovados:** imagens do tablet e smartphone preparadas no pacote v0.3, ainda pendentes de upload para este repositório. A publicação gráfica não está concluída.
 
@@ -72,7 +72,7 @@ DUMONT/
     └── dumont-desktop-conceito.png
 ```
 
-**Ainda não contém código-fonte Android.** O início da implementação exige aprovação explícita da documentação, da conta GitHub de destino e da publicação.
+**Fase M2 iniciada em branch de desenvolvimento.** Código experimental Android em `feat/m2-android-foundation`; consulte [Fundação Android](docs/M2_FOUNDATION.md) e [piloto real Tab S9 FE](docs/M2_PILOTO_TAB_S9_FE_2026-10-16.md) e [estado do piloto Galaxy A55](docs/M2_PILOTO_A55_2026-10-16.md) e [auditoria de assinaturas APK](docs/M2_ASSINATURAS_APK.md) e [assinatura local estável do Pilot](docs/M2_ASSINATURA_ESTAVEL.md). Nenhum APK ou instalação está validado antes dos testes de CI e de dispositivo.
 
 ## Referências técnicas
 
@@ -91,3 +91,38 @@ Este é um projeto independente, não afiliado a Samsung, Google ou Apple. Andro
 O código-fonte que vier a ser publicado e a documentação original deste repositório são disponibilizados sob a [Apache License, Version 2.0](LICENSE), salvo indicação expressa de outra licença. A Apache 2.0 permite uso, modificação e distribuição, inclusive comercial, mediante o cumprimento de suas condições.
 
 **Escopo e marcas:** a licença de código não concede direito de uso sobre o nome e a identidade visual **DUMONT**. Mockups, imagens, fotografias, logos, ícones e outros materiais gráficos não estão abrangidos pela Apache 2.0, a menos que sejam explicitamente identificados como licenciados. Elementos e marcas de terceiros permanecem sujeitos aos direitos dos respectivos titulares. O repositório ainda está em fase documental; não há aplicativo Android publicado.
+
+### Revisão de ergonomia v0.5
+
+[ADR-0002 — Workspace, menu superior, Dock e acesso ao Termux](docs/ADR-0002-ERGONOMIA-MACOS.md). Etapa experimental; não altera a HOME padrão.
+
+### DUMONT v0.6 — revisão da navegação
+
+[ADR-0003 — barras translúcidas, catálogo completo e Dock por uso](docs/ADR-0003-DOCK-E-BARRAS-TRANSLUCIDAS.md).
+
+### DUMONT v0.6.1 — barras alinhadas
+
+[ADR-0004 — larguras idênticas, cor sólida e Dock essencial sem Termux](docs/ADR-0004-BARRAS-IGUAIS-DOCK-ESSENCIAL.md).
+
+### DUMONT v0.7 — sistema, wallpaper e notificações
+
+[ADR-0005 — barra de status, galerias e painel direito de notificações](docs/ADR-0005-STATUS-WALLPAPER-NOTIFICACOES.md).
+
+### DUMONT v0.8 — Integração nativa Samsung / Android
+
+[ADR-0006 — painel Galaxy, controles públicos, limites Knox e plano de widgets](docs/ADR-0006-INTEGRACAO-GALAXY-ONE-UI.md).
+
+### DUMONT v0.9 — sidebar e harmonia cromática
+
+[ADR-0007 — nova barra superior e painel lateral direito](docs/ADR-0007-DESIGN-SIDEBAR-V09.md).
+
+### DUMONT v1.0-dev — correções de ergonomia
+
+[ADR-0008 — Mural, catálogo classificável e limites Samsung DeX](docs/ADR-0008-ERGONOMIA-DEX-CATALOGO-MURAL.md).
+
+### DUMONT v1.1 — Orchestrator e Samsung DeX
+
+[ADR-0009 — política de abertura de apps, limites DeX e testes](docs/ADR-0009-ORCHESTRATOR-DEX-V11.md).
+
+### Fluxo visual do Orchestrator
+[ADR-0010 — retomada e Recentes no DeX](docs/ADR-0010-DEEX-VISUAL-RECENTES.md).

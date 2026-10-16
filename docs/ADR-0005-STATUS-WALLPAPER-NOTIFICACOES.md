@@ -1,0 +1,57 @@
+# ADR-0005 — Sistema no centro, wallpaper selecionável e notificações à direita
+
+**Data:** 16/10/2026 · **Versão proposta:** DUMONT Pilot 0.7.0-dev · **Estado:** implementação sujeita a compilação e testes físicos.
+
+## Requisitos
+
+- No centro da barra superior: data, hora, porcentagem real da bateria e tipo de conexão ativo, lidos das APIs públicas Android. Em aparelho estreito, texto compacto; não inventar indicadores.
+- Wallpaper cobre toda a tela atrás das barras. Em DUMONT → Aparência → Escolher papel de parede, abrir seletor do Android para fotos/galeria/arquivos; persistir somente URI concedida pelo usuário. Sem varrer, copiar, enviar ou baixar fotos.
+- Usar papel de parede original devolve o desenho embutido e não apaga imagens pessoais.
+- Notificações têm botão de sino minimalista, sem a marca DUMONT, no lado direito da barra superior. Abrem um painel lateral interno alinhado à direita, com botão Fechar.
+- Notificações reais só são acessadas com consentimento explícito pelo painel oficial de Acesso às notificações Android. Sem autorização, mostrar apenas explicação/atalho para configurações.
+- Listener Android apresenta títulos e textos de notificações como dados transitórios em memória. Não salva em disco, banco, logs, rede, relatórios ou telemetria. Exclui notificações marcadas VISIBILITY_SECRET.
+- Hora, bateria e rede são consultadas apenas enquanto a Activity está RESUMED, em intervalos de 30 segundos. Mostra Wi-Fi, dados móveis, VPN, Ethernet ou conexão indisponível conforme APIs autorizadas.
+- As duas barras continuam com exatamente a mesma largura, preto sólido #252525 e transparência ajustável. Termux permanece no menu Terminal, não no Dock.
+- HOME padrão Samsung preservada. Wallpaper muda apenas dentro do DUMONT, não na One UI.
+
+## Validação
+
+| Gate | Critério | Estado inicial |
+|---|---|---|
+| UI-01 | Hora/data/bateria/conexão reais no centro | UNKNOWN |
+| UI-02 | Imagem da galeria selecionada e salva com SAF | UNKNOWN |
+| UI-03 | Retorno ao papel de parede original | UNKNOWN |
+| UI-04 | Sino abre/fecha painel direito | UNKNOWN |
+| PRIV-01 | Notificações exigem consentimento oficial Android | Pendente teste |
+| PRIV-02 | Dados de notificações não persistidos nem enviados | Revisão de código |
+| SAFE-01 | HOME Samsung e apps preservados | UNKNOWN |
+| PERF-01 | Nenhum polling quando Activity está pausada | Revisão de código |
+| BUILD | Kotlin/Gradle/CI/APK stable signing | Pendente |
+
+A linha branca observada na janela do tablet é do Samsung DeX, não da superfície do aplicativo DUMONT.
+
+## Evidência de build v0.7.0-dev (16/10/2026)
+
+- Branch feat/m2-android-foundation, commit f85b1c227b4ac4e4dc292c193544124e90fd9c8e.
+- GitHub Actions 38922519573: PASS em arquitetura estática, compilação Gradle/testes e artefato APK.
+- APK CI hash SHA-256 c49e901eca3f08b96b9af7c2ff52b353cb81f7e43749568429ab047300cf9fc1.
+- APK Pilot v0.7 localmente assinado SHA-256 497a2f3b33002c2810ba5797d8c275f283475e4b71df7cc87b4f59d2de95f71e. Certificado SHA-256 7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7. Verificação apksigner v3 PASS.
+- APK guardado em diretório privado Termux. Não foi instalado, não foi alterado o launcher padrão e nenhum acesso a notificações foi habilitado.
+- Tablet SM-X510 continua com Pilot versionCode 6 (v0.6.1) e com a Samsung com.sec.android.app.launcher como HOME.
+- Testes físicos pendentes: relógio/data/bateria/network, redimensionamento retrato/paisagem, seleção e persistência de imagem via galeria, botão sino/painel lateral, permissão de notifications listener, retorno ao desenho e impacto em bateria.
+- Teste de A55 permanece UNKNOWN, sem instalação.
+
+## Tablet Pilot v0.7 — implantação autorizada e testes físicos (16/10/2026)
+
+- Dispositivo Galaxy Tab S9 FE SM-X510; build CI 38922519573 PASS; artefato assinado com cert SHA-256 7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7.
+- APK SHA-256 497a2f3b33002c2810ba5797d8c275f283475e4b71df7cc87b4f59d2de95f71e, privado no Termux.
+- Atualização exclusivamente no package br.com.dumont.launcher.pilot, via adb install -r -t, retornou Success; Android reportou versionCode 7. DUMONT original br.com.dumont.launcher permaneceu instalado e One UI com.sec.android.app.launcher permaneceu HOME.
+- Backup privado e verificação byte-identical antes/depois: dumont_dock SHA-256 3d9c77953233187ff6b456ee1ffa3503761b401d99dbd41ac69336a86df1b9fe; dumont_appearance 3088ba50816d63e4ca1fba0610b68a16257e4d9c5824c8fa180202bb928e29d3; dumont_local_launches 49e48ff37f50e31157df046555c57cc10c1de5824d20cccb435ecfa2c6ae5cc7.
+- Início frio de Pilot: am start -W retornou Status ok e TotalTime 1227 ms (amostra única).
+- PASS no widget de status da barra superior: data/hora reais, bateria com estado de carregamento e Wi-Fi em dois rótulos no centro. PASS nos menus Aplicativos/Configurações/Terminal à esquerda, botão notificações neutro antes da marca DUMONT à direita; HOME Samsung inalterada.
+- PASS no botão minimalista de notificações: abre painel à direita e Fecha retorna ao workspace. Durante verificação, painel apresentou notificações reais. A consulta do parâmetro seguro enabled_notification_listeners encontrou o Pilot habilitado nesse instante. A equipe NÃO concedeu, revogou nem alterou autorização. A origem/momento dessa autorização não foi determinada. Nenhum título ou texto de notificação pessoal é transcrito neste relatório.
+- PASS na existência do botão Escolher papel de parede em Aparência DUMONT e abertura da ação de seleção. Android resolveu a intent de documento para com.google.android.documentsui/com.android.documentsui.picker.PickActivity. A transição de foco para o seletor não pôde ser comprovada pelo breve teste, e a operação foi cancelada sem selecionar imagens. Salvar/persistir wallpaper personalizado: UNKNOWN; deve ser testado manualmente pelo proprietário.
+- PASS abertura do painel Aparência e fechamento; preferências permaneceram intactas; não foi alterado percentual de transparência.
+- PASS no Dock sem Termux via árvore da interface, com ícones de apps essenciais, ambos os painéis fechados e tela de trabalho pronta.
+- PENDÊNCIAS: teste manual de persistência e restauração de wallpaper, comportamento da ação de notificação após toque, actualização de indicadores sob mudança de Wi-Fi/bateria, telefone A55, janela Samsung DeX/maximização e medição de bateria.
+- Segurança: nenhum root/ROM/Knox, nenhum launcher HOME alterado, nenhum aplicativo removido, nenhum acesso de notificações concedido programaticamente, nenhuma notificação pessoal guardada no log do projeto.
