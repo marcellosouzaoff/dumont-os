@@ -24,6 +24,7 @@
 | TAB-08 | `cmd role get-role-holders android.app.role.HOME` continuou retornando `com.sec.android.app.launcher` antes e após o teste | PASS |
 | TAB-09 | Botão HOME do Android preservou o launcher Samsung; APK DUMONT continuou instalado e reabriu | PASS |
 | TAB-10 | Nenhum erro fatal de DUMONT encontrado na amostra consultada do logcat | PASS (amostragem, não garantia de ausência futura) |
+| TAB-11 | Toque longo adicionou o app Google Flow ao Dock (9 favoritos); após reiniciar a atividade o estado persistiu; toque longo removeu o favorito e restaurou os 8 iniciais | PASS |
 
 ## Condições específicas
 
@@ -37,7 +38,7 @@
 - Nenhum teste físico executado no **Galaxy A55 (SM-A556E)**.
 - Definir DUMONT como HOME padrão e depois retornar à Samsung: **não testado**; preservar a escolha atual até etapa aprovada.
 - Gestos, rotação, orientação fixa, teclado físico, acessibilidade/TalkBack, mudança de escala de fonte, consumo de bateria e estabilidade prolongada: **UNKNOWN**.
-- Adição/remoção e persistência dos favoritos do Dock: **UNKNOWN** no dispositivo físico.
+- Teste básico de adição/remoção e persistência de favoritos: **PASS** (TAB-11); reordenação e acessibilidade do gesto longo permanecem **UNKNOWN**.
 - App icon exibido na moldura da janela ainda é genérico do Android; precisa de identidade própria DUMONT.
 - Fontes DM Sans/Cormorant Garamond ainda não estão incorporadas ao APK.
 - A captura sugere que a grade central exige rolagem em dimensões menores de janela. Ajustar ergonomia após ensaio em tela cheia e com tamanho de fonte aumentado.
@@ -45,8 +46,8 @@
 ## Próximos gates
 
 1. Ajustes visuais e acessibilidade no modo de janela livre.
-2. Teste controlado de favoritos com restauração do estado.
+2. Ampliar testes de favoritos: reordenação, limites e acessibilidade (adição/persistência/remoção básica já validada).
 3. Validar instalação e inicialização no A55 mediante autorização específica.
 4. Somente após aprovação separada, ensaiar DUMONT como HOME padrão e demonstrar reversão para One UI.
 
-**Conclusão:** instalação, abertura, busca, Dock e preservação da HOME Samsung foram observados em aparelho real. Não declarar conclusão do MVP, validação dos dois aparelhos, disponibilidade para distribuição pública ou aprovação da substituição da HOME.
+**Conclusão:** instalação, abertura, busca, Dock, persistência básica de favoritos e preservação da HOME Samsung foram observados em aparelho real. Não declarar conclusão do MVP, validação dos dois aparelhos, disponibilidade para distribuição pública ou aprovação da substituição da HOME.
