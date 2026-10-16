@@ -123,3 +123,6 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v1.1 — Orchestrator e Samsung DeX
 
 [ADR-0009 — política de abertura de apps, limites DeX e testes](docs/ADR-0009-ORCHESTRATOR-DEX-V11.md).
+
+### Fluxo visual do Orchestrator
+[ADR-0010 — retomada e Recentes no DeX](docs/ADR-0010-DEEX-VISUAL-RECENTES.md).

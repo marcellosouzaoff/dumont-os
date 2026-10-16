@@ -161,6 +161,7 @@ fun DumontHome(
                 ApplicationWindow(
                     apps = apps,
                     pinnedKeys = pinnedKeys,
+                    usageScores = usageScores,
                     minCellSize = if (wide) 105.dp else 82.dp,
                     modifier = Modifier.align(Alignment.Center)
                         .fillMaxWidth(if (wide) .91f else .96f)
@@ -170,7 +171,7 @@ fun DumontHome(
                     catalogError = catalogError,
                     onRefresh = onRefreshCatalog,
                     onClose = { showApps = false },
-                    onLaunch = onLaunch,
+                    onLaunch = { app -> showApps = false; onLaunch(app) },
                     onTogglePinned = onTogglePinned
                 )
             }
@@ -704,6 +705,7 @@ private fun Wallpaper(isDark: Boolean) {
 private fun ApplicationWindow(
     apps: List<AppEntry>,
     pinnedKeys: List<String>,
+    usageScores: Map<String, Long>,
     minCellSize: Dp,
     modifier: Modifier,
     isCatalogLoading: Boolean,
@@ -725,8 +727,12 @@ private fun ApplicationWindow(
                     app.packageName == "com.android.chrome"
                 "Sistema" -> app.packageName.startsWith("com.android.") ||
                     app.packageName.startsWith("com.sec.android.")
+                "Recentes" -> (usageScores[app.key] ?: 0L) > 0L
                 else -> true
             }
+        }.let { result ->
+            if (category == "Recentes") result.sortedByDescending { usageScores[it.key] ?: 0L }
+            else result
         }
     }
 
@@ -763,7 +769,7 @@ private fun ApplicationWindow(
                 Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                listOf("Todos", "Samsung", "Google", "Sistema").forEach { tab ->
+                listOf("Todos", "Recentes", "Samsung", "Google", "Sistema").forEach { tab ->
                     TextButton(onClick = { category = tab }) {
                         Text(
                             tab,
@@ -774,7 +780,9 @@ private fun ApplicationWindow(
                     }
                 }
             }
-            Text("Aplicativos disponíveis · ${visible.size}", style = MaterialTheme.typography.labelSmall)
+            Text(
+                if (category == "Recentes") "Aplicativos retomáveis · ${visible.size} (não representa janelas em execução)"
+                else "Aplicativos disponíveis · ${visible.size}", style = MaterialTheme.typography.labelSmall)
             Spacer(Modifier.height(8.dp))
             if (isCatalogLoading || catalogError || visible.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
