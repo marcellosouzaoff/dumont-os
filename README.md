@@ -4,7 +4,7 @@
 
 > **Status: DOCUMENTAÇÃO / PRÉ-CÓDIGO.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
 
-![DUMONT em tablet e smartphone — imagem conceitual](assets/mockups/dumont-tablet-e-a55-conceito.png)
+> **Mockups aprovados:** imagens do tablet e smartphone preparadas no pacote v0.3, ainda pendentes de upload para este repositório. A publicação gráfica não está concluída.
 
 ## Visão
 
@@ -21,9 +21,9 @@ Construir uma experiência de interface original e coerente para **Samsung Galax
 - **Tipografia:** DM Sans para UI e Cormorant Garamond para peças editoriais, sem comprometer legibilidade.
 - **Segurança:** Knox e a proteção original do Android permanecem intactos. **Linus Security** é apenas um nome proposto para uma interface informativa de segurança; não substitui Knox.
 
-![Conceito do desktop DUMONT](assets/mockups/dumont-desktop-conceito.png)
+**Mockup desktop:** imagem aprovada, pendente de upload público.
 
-![Paleta DUMONT](design/paleta.png)
+![Paleta DUMONT — versão vetorial](design/paleta.svg)
 
 ## Alvos iniciais
 
@@ -66,9 +66,8 @@ DUMONT/
 ├── design/
 │   ├── tokens.json
 │   ├── tokens.css
-│   ├── paleta.png
 │   └── paleta.svg
-└── assets/mockups/
+└── assets/mockups/  (pendente de upload)
     ├── dumont-tablet-e-a55-conceito.png
     └── dumont-desktop-conceito.png
 ```

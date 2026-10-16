@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="1200" height="760" fill="#F1EEE7"/>
+<text x="56" y="85" font-family="sans-serif" font-weight="700" font-size="46" fill="#252525">DUMONT · PALETA v0.3</text>
+<text x="56" y="130" font-family="sans-serif" font-size="22" fill="#4E5353">Neutros dominantes. Acentos pontuais.</text>
+<rect x="56" y="180" width="326" height="150" rx="15" fill="#F1EEE7" stroke="#4E5353" stroke-width="2"/>
+<text x="56" y="359" font-size="23" font-weight="700" font-family="sans-serif" fill="#252525">CLOUD DANCER · 2026</text>
+<text x="56" y="390" font-size="19" font-family="sans-serif" fill="#4E5353">#F1EEE7 · Base principal</text>
+<rect x="428" y="180" width="326" height="150" rx="15" fill="#FFFFFF" stroke="#4E5353" stroke-width="2"/>
+<text x="428" y="359" font-size="23" font-weight="700" font-family="sans-serif" fill="#252525">BRANCO</text>
+<text x="428" y="390" font-size="19" font-family="sans-serif" fill="#4E5353">#FFFFFF · Superfícies</text>
+<rect x="800" y="180" width="326" height="150" rx="15" fill="#4E5353" stroke="#4E5353" stroke-width="2"/>
+<text x="800" y="359" font-size="23" font-weight="700" font-family="sans-serif" fill="#252525">CINZA-CHUMBO</text>
+<text x="800" y="390" font-size="19" font-family="sans-serif" fill="#4E5353">#4E5353 · Bordas e painéis</text>
+<rect x="56" y="430" width="326" height="150" rx="15" fill="#252525" stroke="#4E5353" stroke-width="2"/>
+<text x="56" y="609" font-size="23" font-weight="700" font-family="sans-serif" fill="#252525">PRETO</text>
+<text x="56" y="640" font-size="19" font-family="sans-serif" fill="#4E5353">#252525 · Texto e Dock</text>
+<rect x="428" y="430" width="326" height="150" rx="15" fill="#A47864" stroke="#4E5353" stroke-width="2"/>
+<text x="428" y="609" font-size="23" font-weight="700" font-family="sans-serif" fill="#252525">MOCHA MOUSSE · 2025</text>
+<text x="428" y="640" font-size="19" font-family="sans-serif" fill="#4E5353">#A47864 · Detalhe editorial</text>
+<rect x="800" y="430" width="326" height="150" rx="15" fill="#CD212A" stroke="#4E5353" stroke-width="2"/>
+<text x="800" y="609" font-size="23" font-weight="700" font-family="sans-serif" fill="#252525">VERMELHO</text>
+<text x="800" y="640" font-size="19" font-family="sans-serif" fill="#4E5353">#CD212A · Acento e alertas</text>
+</svg>

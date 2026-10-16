@@ -1,0 +1,17 @@
+:root {
+  --dumont-cloud: #F1EEE7;
+  --dumont-white: #FFFFFF;
+  --dumont-charcoal: #4E5353;
+  --dumont-black: #252525;
+  --dumont-mocha: #A47864;
+  --dumont-red: #CD212A;
+  --dumont-status-ok: #287D53;
+  --dumont-status-warning: #B78319;
+  --dumont-status-unknown: #4E5353;
+  --dumont-font-ui: "DM Sans", sans-serif;
+  --dumont-font-editorial: "Cormorant Garamond", serif;
+  --dumont-border: 1px solid var(--dumont-charcoal);
+  --dumont-radius-control: 12px;
+  --dumont-radius-panel: 16px;
+  --dumont-radius-dock: 20px;
+}
