@@ -14,8 +14,8 @@ android {
         applicationId = "br.com.dumont.launcher"
         minSdk = 28
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.4.2-dev"
+        versionCode = 4
+        versionName = "0.5.0-dev"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.activity:activity-compose:1.12.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
     implementation("androidx.core:core-ktx:1.17.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 

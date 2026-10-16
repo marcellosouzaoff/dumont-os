@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,9 +60,13 @@ fun DumontHome(
     favoriteKeys: List<String>,
     onLaunch: (AppEntry) -> Unit,
     onToggleFavorite: (AppEntry) -> Unit,
-    onChooseHome: () -> Unit
+    onChooseHome: () -> Unit,
+    isCatalogLoading: Boolean,
+    catalogError: Boolean,
+    onRefreshCatalog: () -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
+    var showApps by rememberSaveable { mutableStateOf(false) }
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -70,50 +75,81 @@ fun DumontHome(
     ) {
         val wide = maxWidth >= 600.dp
         val gridCount = if (wide) 5 else if (maxWidth < 370.dp) 3 else 4
+        val termux = apps.firstOrNull { it.packageName == "com.termux" }
         val dockApps = remember(apps, favoriteKeys) {
             favoriteKeys.mapNotNull { key -> apps.firstOrNull { it.key == key } }
         }
-
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = if (wide) 20.dp else 8.dp)
+            modifier = Modifier.fillMaxSize().padding(horizontal = if (wide) 8.dp else 4.dp)
         ) {
-            TopBar(compact = !wide)
+            TopBar(
+                compact = !wide,
+                onApps = { showApps = !showApps },
+                onRefresh = onRefreshCatalog,
+                onTerminal = termux?.let { entry -> { onLaunch(entry) } }
+            )
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 Wallpaper(isDark)
-                ApplicationWindow(
-                    apps = apps,
-                    gridCount = gridCount,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxWidth(if (wide) .86f else .98f)
-                        .fillMaxHeight(if (wide) .86f else .94f)
-                        .heightIn(min = 180.dp, max = 620.dp),
-                    onLaunch = onLaunch,
-                    onToggleFavorite = onToggleFavorite,
-                    onChooseHome = onChooseHome
-                )
+                if (showApps) {
+                    ApplicationWindow(
+                        apps = apps,
+                        gridCount = gridCount,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxWidth(if (wide) .98f else 1f)
+                            .fillMaxHeight(.96f)
+                            .heightIn(min = 180.dp, max = 760.dp),
+                        isCatalogLoading = isCatalogLoading,
+                        catalogError = catalogError,
+                        onRefresh = onRefreshCatalog,
+                        onClose = { showApps = false },
+                        onLaunch = onLaunch,
+                        onToggleFavorite = onToggleFavorite,
+                        onChooseHome = onChooseHome
+                    )
+                }
             }
-            BottomDock(dockApps, onLaunch, modifier = Modifier.align(Alignment.CenterHorizontally))
-            Spacer(Modifier.height(8.dp))
+            BottomDock(
+                favorites = dockApps,
+                termux = termux,
+                onLaunch = onLaunch,
+                onApps = { showApps = !showApps },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(Modifier.height(4.dp))
         }
     }
 }
 
 @Composable
-private fun TopBar(compact: Boolean) {
+private fun TopBar(
+    compact: Boolean,
+    onApps: () -> Unit,
+    onRefresh: () -> Unit,
+    onTerminal: (() -> Unit)?
+) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(if (compact) 44.dp else 36.dp).padding(horizontal = 12.dp),
+        modifier = Modifier.fillMaxWidth()
+            .height(if (compact) 48.dp else 44.dp)
+            .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 12.dp)
     ) {
         Text(
             "DUMONT",
-            fontSize = if (compact) 17.sp else 16.sp,
+            fontSize = if (compact) 15.sp else 16.sp,
             fontWeight = FontWeight.SemiBold,
-            letterSpacing = 1.6.sp,
+            letterSpacing = 1.sp,
             color = MaterialTheme.colorScheme.onBackground
         )
-        // The real Android status bar shows system indicators. Never fabricate them here.
+        TextButton(onClick = onApps) { Text("Aplicativos", fontSize = if (compact) 11.sp else 13.sp) }
+        if (onTerminal != null) {
+            TextButton(onClick = onTerminal) { Text("Termux", fontSize = if (compact) 11.sp else 13.sp) }
+        }
+        if (!compact) {
+            TextButton(onClick = onRefresh) { Text("Atualizar", fontSize = 13.sp) }
+        }
+        // Android renders the actual status indicators outside this app.
     }
 }
 
@@ -153,6 +189,10 @@ private fun ApplicationWindow(
     apps: List<AppEntry>,
     gridCount: Int,
     modifier: Modifier,
+    isCatalogLoading: Boolean,
+    catalogError: Boolean,
+    onRefresh: () -> Unit,
+    onClose: () -> Unit,
     onLaunch: (AppEntry) -> Unit,
     onToggleFavorite: (AppEntry) -> Unit,
     onChooseHome: () -> Unit
@@ -185,8 +225,12 @@ private fun ApplicationWindow(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                TextButton(onClick = { showAll = !showAll }) {
-                    Text(if (showAll) "Google" else "Todos")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TextButton(onClick = { showAll = !showAll }) {
+                        Text(if (showAll) "Google" else "Todos")
+                    }
+                    TextButton(onClick = onRefresh) { Text("Atualizar", fontSize = 12.sp) }
+                    TextButton(onClick = onClose) { Text("Fechar", fontSize = 12.sp) }
                 }
             }
             OutlinedTextField(
@@ -210,11 +254,14 @@ private fun ApplicationWindow(
                 style = MaterialTheme.typography.labelSmall
             )
             Spacer(Modifier.height(8.dp))
-            if (visible.isEmpty()) {
+            if (isCatalogLoading || catalogError || visible.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        if (apps.isEmpty()) "Nenhum aplicativo disponível."
-                        else "Nenhum aplicativo encontrado. Toque em Todos para ampliar a lista.",
+                        when {
+                            isCatalogLoading -> "Carregando aplicativos…"
+                            catalogError -> "Falha ao consultar aplicativos. Toque em Atualizar no menu."
+                            else -> "Nenhum aplicativo encontrado. Toque em Todos para ampliar a lista."
+                        },
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
                     )
@@ -293,32 +340,42 @@ private fun NativeAppIcon(app: AppEntry, modifier: Modifier = Modifier) {
 @Composable
 private fun BottomDock(
     favorites: List<AppEntry>,
+    termux: AppEntry?,
     onLaunch: (AppEntry) -> Unit,
+    onApps: () -> Unit,
     modifier: Modifier
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(.98f).height(72.dp),
-        shape = RoundedCornerShape(20.dp),
+        modifier = modifier.fillMaxWidth(.99f).height(68.dp),
+        shape = RoundedCornerShape(16.dp),
         color = DumontColors.black,
-        shadowElevation = 8.dp
+        shadowElevation = 4.dp
     ) {
         Row(
             modifier = Modifier.horizontalScroll(androidx.compose.foundation.rememberScrollState())
-                .padding(horizontal = 14.dp, vertical = 7.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 8.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (favorites.isEmpty()) {
-                Text("Dock · fixe aplicativos Google", color = Color.White, fontSize = 13.sp)
-            } else {
-                favorites.forEach { app ->
-                    Box(
-                        modifier = Modifier.size(54.dp).clip(RoundedCornerShape(10.dp))
-                            .clickable(role = Role.Button, onClick = { onLaunch(app) }),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        NativeAppIcon(app, Modifier.size(40.dp))
-                    }
+            TextButton(onClick = onApps) { Text("Apps", color = Color.White, fontSize = 13.sp) }
+            if (termux != null) {
+                Column(
+                    modifier = Modifier.size(56.dp).clip(RoundedCornerShape(10.dp))
+                        .clickable(role = Role.Button, onClick = { onLaunch(termux) }),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    NativeAppIcon(termux, Modifier.size(35.dp))
+                    Text("Termux", color = Color.White, fontSize = 10.sp)
+                }
+            }
+            favorites.filterNot { it.packageName == "com.termux" }.forEach { app ->
+                Box(
+                    modifier = Modifier.size(52.dp).clip(RoundedCornerShape(10.dp))
+                        .clickable(role = Role.Button, onClick = { onLaunch(app) }),
+                    contentAlignment = Alignment.Center
+                ) {
+                    NativeAppIcon(app, Modifier.size(39.dp))
                 }
             }
         }
