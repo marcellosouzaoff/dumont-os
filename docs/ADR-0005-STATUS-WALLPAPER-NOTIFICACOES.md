@@ -29,3 +29,14 @@
 | BUILD | Kotlin/Gradle/CI/APK stable signing | Pendente |
 
 A linha branca observada na janela do tablet é do Samsung DeX, não da superfície do aplicativo DUMONT.
+
+## Evidência de build v0.7.0-dev (16/10/2026)
+
+- Branch feat/m2-android-foundation, commit f85b1c227b4ac4e4dc292c193544124e90fd9c8e.
+- GitHub Actions 38922519573: PASS em arquitetura estática, compilação Gradle/testes e artefato APK.
+- APK CI hash SHA-256 c49e901eca3f08b96b9af7c2ff52b353cb81f7e43749568429ab047300cf9fc1.
+- APK Pilot v0.7 localmente assinado SHA-256 497a2f3b33002c2810ba5797d8c275f283475e4b71df7cc87b4f59d2de95f71e. Certificado SHA-256 7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7. Verificação apksigner v3 PASS.
+- APK guardado em diretório privado Termux. Não foi instalado, não foi alterado o launcher padrão e nenhum acesso a notificações foi habilitado.
+- Tablet SM-X510 continua com Pilot versionCode 6 (v0.6.1) e com a Samsung com.sec.android.app.launcher como HOME.
+- Testes físicos pendentes: relógio/data/bateria/network, redimensionamento retrato/paisagem, seleção e persistência de imagem via galeria, botão sino/painel lateral, permissão de notifications listener, retorno ao desenho e impacto em bateria.
+- Teste de A55 permanece UNKNOWN, sem instalação.
