@@ -1,7 +1,5 @@
 name: Android validation
 on:
-  push:
-    branches: [main, "feat/**"]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -16,9 +14,11 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
-      - name: Install Android SDK
-        run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
+      - name: Install Android SDK components
+        run: |
+          set -euo pipefail
+          echo "ANDROID_HOME=${ANDROID_HOME:-unset}"
+          sdkmanager --install "platforms;android-36" "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
       - name: Validate static architecture
         run: python3 scripts/validate_foundation.py
