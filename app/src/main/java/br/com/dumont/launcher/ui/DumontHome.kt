@@ -68,10 +68,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Wifi
-import androidx.compose.material.icons.outlined.WifiOff
-import androidx.compose.material.icons.outlined.BatteryFull
 import androidx.compose.ui.viewinterop.AndroidView
 import br.com.dumont.launcher.data.AppRules
 import br.com.dumont.launcher.integration.GalaxyBridge
@@ -301,8 +297,21 @@ private fun TopBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(Modifier.size(40.dp, 24.dp), contentAlignment = Alignment.Center) {
-                    Icon(Icons.Outlined.BatteryFull, contentDescription = "Bateria",
-                        tint = Color.White, modifier = Modifier.fillMaxSize())
+                    Canvas(Modifier.fillMaxSize()) {
+                        val stroke = 1.4.dp.toPx()
+                        drawRoundRect(
+                            color = Color.White,
+                            topLeft = Offset(size.width * .07f, size.height * .15f),
+                            size = androidx.compose.ui.geometry.Size(size.width * .83f, size.height * .70f),
+                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(stroke * 2),
+                            style = Stroke(width = stroke)
+                        )
+                        drawRect(
+                            color = Color.White,
+                            topLeft = Offset(size.width * .92f, size.height * .38f),
+                            size = androidx.compose.ui.geometry.Size(size.width * .06f, size.height * .24f)
+                        )
+                    }
                     Text(deviceStatus.battery.substringBefore(" ").take(4),
                         fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 }
@@ -310,11 +319,7 @@ private fun TopBar(
                 Text(deviceStatus.dateTime, maxLines = 1, color = Color.White,
                     fontSize = if (compact) 9.sp else 12.sp)
                 Spacer(Modifier.width(if (compact) 2.dp else 8.dp))
-                Icon(
-                    if (deviceStatus.network == "Wi-Fi") Icons.Outlined.Wifi else Icons.Outlined.WifiOff,
-                    contentDescription = deviceStatus.network,
-                    tint = Color.White, modifier = Modifier.size(19.dp)
-                )
+                WifiStatusIcon(deviceStatus.network)
             }
             Row(
                 modifier = Modifier.weight(1f),
@@ -459,6 +464,31 @@ private fun NotificationBell() {
             style = Stroke(width = 1.8.dp.toPx(), cap = StrokeCap.Round)
         )
         drawCircle(Color.White, radius = 1.5.dp.toPx(), center = Offset(w * .5f, h * .82f))
+    }
+}
+
+@Composable
+private fun WifiStatusIcon(network: String) {
+    Canvas(
+        Modifier.size(20.dp).semantics { contentDescription = network }
+    ) {
+        val stroke = 1.8.dp.toPx()
+        for (r in listOf(.90f, .60f, .30f)) {
+            val d = size.minDimension * r
+            drawArc(
+                color = Color.White,
+                startAngle = 215f,
+                sweepAngle = 110f,
+                useCenter = false,
+                topLeft = Offset((size.width - d) / 2, (size.height - d) / 2),
+                size = androidx.compose.ui.geometry.Size(d, d),
+                style = Stroke(width = stroke, cap = StrokeCap.Round)
+            )
+        }
+        if (network != "Wi-Fi") {
+            drawLine(Color.White.copy(alpha=.7f), Offset(0f, size.height),
+                Offset(size.width, 0f), strokeWidth=stroke)
+        }
     }
 }
 
