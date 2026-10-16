@@ -18,7 +18,9 @@ jobs:
         run: |
           set -euo pipefail
           echo "ANDROID_HOME=${ANDROID_HOME:-unset}"
-          sdkmanager --install "platforms;android-36" "build-tools;35.0.0"
+          SDK_MANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager -print -quit)
+          test -n "$SDK_MANAGER"
+          "$SDK_MANAGER" --install "platforms;android-36" "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
       - name: Validate static architecture
         run: python3 scripts/validate_foundation.py
