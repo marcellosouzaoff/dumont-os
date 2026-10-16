@@ -1,0 +1,88 @@
+# DUMONT
+
+**DUMONT OS · design system e planejamento do launcher Android**
+
+> **Status: DOCUMENTAÇÃO / PRÉ-CÓDIGO.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
+
+![DUMONT em tablet e smartphone — imagem conceitual](assets/mockups/dumont-tablet-e-a55-conceito.png)
+
+## Visão
+
+Construir uma experiência de interface original e coerente para **Samsung Galaxy Tab S9 FE (SM-X510)** e **Samsung Galaxy A55 (SM-A556E)**, inspirada nos padrões de produtividade de um desktop, sem reproduzir marcas nem aplicativos proprietários da Apple ou alterar a segurança do Android.
+
+### Regras visuais aprovadas
+
+- **Marca no topo:** somente `DUMONT`, sem símbolo ou assinatura secundária.
+- **Duas barras horizontais:** barra superior fina para marca e indicadores; **Dock inferior** de aplicativos.
+- **Área central:** pasta/janela de aplicativos ou área de trabalho, responsiva ao tamanho da tela.
+- **Ícones de aplicativos:** priorizar ícones reais dos apps Google instalados; **não usar ícones Samsung ou Apple como linguagem visual do DUMONT**. Não redistribuir pacotes de ícones de terceiros.
+- **Paleta-base:** Cloud Dancer `#F1EEE7`, branco `#FFFFFF`, cinza-chumbo `#4E5353`, preto `#252525`.
+- **Acentos:** Mocha Mousse `#A47864` e vermelho `#CD212A` em uso contido; verde/amarelo/vermelho para estados operacionais, sempre com texto e ícone.
+- **Tipografia:** DM Sans para UI e Cormorant Garamond para peças editoriais, sem comprometer legibilidade.
+- **Segurança:** Knox e a proteção original do Android permanecem intactos. **Linus Security** é apenas um nome proposto para uma interface informativa de segurança; não substitui Knox.
+
+![Conceito do desktop DUMONT](assets/mockups/dumont-desktop-conceito.png)
+
+![Paleta DUMONT](design/paleta.png)
+
+## Alvos iniciais
+
+| Equipamento | Código | Base auditada em 15/10/2026 | Implementação pretendida |
+|---|---|---|---|
+| Galaxy A55 | `SM-A556E` / `a55x` | Android 16, One UI 8.5, bootloader bloqueado | Layout compacto em retrato |
+| Galaxy Tab S9 FE | `SM-X510` / `gts9fewifi` | Android 16, One UI 8.5, bootloader bloqueado | Desktop responsivo em paisagem |
+
+Os dados da tabela são **observações históricas** feitas por comandos de leitura nos aparelhos. Precisam ser reconfirmados antes de implementar ou instalar qualquer build.
+
+## Documentação
+
+| Documento | Conteúdo |
+|---|---|
+| [PRD](docs/PRD.md) | Problema, usuários, escopo, requisitos e critérios de aceite |
+| [TRD](docs/TRD.md) | Arquitetura Android proposta, restrições, dados, permissões e testes |
+| [Fluxos](docs/FLUXOS.md) | Jornadas, navegação e estados operacionais |
+| [Implantação](docs/PLANO_IMPLANTACAO.md) | Marcos, gates, QA, distribuição, rollback |
+| [Design System](docs/DESIGN_SYSTEM.md) | Tokens, componentes, tipografia, responsividade e acessibilidade |
+| [Governança](docs/GOVERNANCA.md) | PASS/FAIL/UNKNOWN, aprovação e proteção de dados |
+| [Direitos de assets](docs/ASSETS_E_DIREITOS.md) | Origem e cuidados com imagens/marcas/fonte |
+| [ADR-0001](docs/ADR-0001-ESTRATEGIA.md) | Decisão por launcher sem modificar ROM |
+| [Relatório da sessão](docs/RELATORIO_SESSAO.md) | Decisões e pendências |
+
+### Estrutura da etapa atual
+
+```text
+DUMONT/
+├── README.md
+├── docs/
+│   ├── PRD.md
+│   ├── TRD.md
+│   ├── FLUXOS.md
+│   ├── PLANO_IMPLANTACAO.md
+│   ├── DESIGN_SYSTEM.md
+│   ├── GOVERNANCA.md
+│   ├── ASSETS_E_DIREITOS.md
+│   ├── ADR-0001-ESTRATEGIA.md
+│   └── RELATORIO_SESSAO.md
+├── design/
+│   ├── tokens.json
+│   ├── tokens.css
+│   ├── paleta.png
+│   └── paleta.svg
+└── assets/mockups/
+    ├── dumont-tablet-e-a55-conceito.png
+    └── dumont-desktop-conceito.png
+```
+
+**Ainda não contém código-fonte Android.** O início da implementação exige aprovação explícita da documentação, da conta GitHub de destino e da publicação.
+
+## Referências técnicas
+
+- [Android: interfaces adaptáveis](https://developer.android.com/jetpack/androidx/releases/compose-material3-adaptive)
+- [Android: visibilidade de aplicativos](https://developer.android.com/training/package-visibility/declaring)
+- [Android: acesso a arquivos com SAF](https://developer.android.com/guide/topics/providers/document-provider)
+- [Android: multitarefa e back stack](https://developer.android.com/guide/components/activities/tasks-and-back-stack.html)
+- [Pantone 2026 — Cloud Dancer](https://www.pantone.com/na/en-us/color-of-the-year/2026)
+
+## Direitos, marcas e transparência
+
+Este é um projeto independente, não afiliado a Samsung, Google ou Apple. Android, Galaxy, Google, nomes e logotipos de aplicativos pertencem aos respectivos titulares. **Referências Pantone** indicam inspiração de cor; HEX são aproximações de projeto. Mockups são ilustrações conceituais, não capturas de aplicativos em execução nos dispositivos. Nenhuma licença de código aberto foi escolhida ainda: **repositório público não implica permissão automática de reutilização**. O licenciamento será decidido antes de aceitar contribuições de código.
