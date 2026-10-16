@@ -119,3 +119,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v1.0-dev — correções de ergonomia
 
 [ADR-0008 — Mural, catálogo classificável e limites Samsung DeX](docs/ADR-0008-ERGONOMIA-DEX-CATALOGO-MURAL.md).
+
+### DUMONT v1.1 — Orchestrator e Samsung DeX
+
+[ADR-0009 — política de abertura de apps, limites DeX e testes](docs/ADR-0009-ORCHESTRATOR-DEX-V11.md).

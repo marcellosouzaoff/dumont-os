@@ -29,6 +29,7 @@ import br.com.dumont.launcher.data.UsageStore
 import br.com.dumont.launcher.integration.GalaxyBridge
 import br.com.dumont.launcher.model.AppEntry
 import br.com.dumont.launcher.model.SystemStatus
+import br.com.dumont.launcher.orchestrator.AppLaunchPolicy
 import br.com.dumont.launcher.ui.DumontHome
 import br.com.dumont.launcher.ui.DumontTheme
 import kotlinx.coroutines.Dispatchers
@@ -167,7 +168,7 @@ class MainActivity : ComponentActivity() {
 
     private fun launch(app: AppEntry) {
         try {
-            startActivity(Intent.makeMainActivity(app.component).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            startActivity(AppLaunchPolicy.intentFor(app.component))
             usageStore.recordLaunch(app.key)
             updateUsageRanking()
         } catch (_: RuntimeException) {
