@@ -65,3 +65,27 @@ O DUMONT funciona como um **launcher Android alternativo**. Os aplicativos, serv
 - Nenhuma permissão privilegiada concedida, política Knox alterada, aplicativo removido, perfil de administração ativado ou componente One UI desabilitado.
 - Itens GAL-01 a GAL-05 e GAL-08 seguem UNKNOWN em interação real; precisam de instalação aprovada e teste de abrir/voltar. Widgets Samsung, atalhos avançados e funcionamento como HOME DUMONT permanecem fora do escopo executado.
 - No A55, a visibilidade de pacotes no Termux continua limitada pelo Android; integração ainda não instalada nem testada nele.
+
+## v0.8 — Instalação e primeiro teste físico no Galaxy Tab S9 FE
+
+**Data:** 16/10/2026; **CI:** 38925387660 PASS; **commit-fonte:** fa320a69bad0dd0796cf0b4089654ab54c7c5f38.
+
+| Gate | Evidência | Resultado |
+|---|---|---|
+| APK v0.8 assinatura | SHA-256 4d9b2d6bf5ba2e88fd24433fd264e80529f2381e8f4a988f0aabb4fec060a692; cert 7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7; APK Sig v3 validada | PASS |
+| Upgrade Pilot isolado | `adb install -r -t` → Success; `versionCode=8` | PASS |
+| Originais / HOME | Pacotes `br.com.dumont.launcher` e `.pilot` intactos; One UI `com.sec.android.app.launcher` segue HOME | PASS |
+| Dados de configuração | `dumont_dock` e `dumont_appearance` idênticos antes/depois do upgrade e dos testes. `dumont_local_launches` igual imediatamente após upgrade; duas contagens de abertura incrementadas durante teste, sem contadores removidos | PASS (mudança de contagens esperada) |
+| Nova entrada no menu superior | `Galaxy` ao lado de Aplicativos/Configurações/Terminal, com relógio/bateria/Wi-Fi e DUMONT mantidos | PASS |
+| Painel Galaxy | `Integração Galaxy` abre e fecha, rolável, sem travamento observado | PASS |
+| Apps Samsung encontrados no perfil do tablet | Meus Arquivos, Galeria, Câmera, Contatos, Notes, Store, Gravador de voz e Telefone foram observados na árvore de UI | PASS descoberta / UNKNOWN abertura da maioria |
+| Menu Conexões | Rolagem exibiu Conexões, Internet, Wi-Fi, Bluetooth e VPN | PASS |
+| Wi-Fi via Galaxy | Toque em Wi-Fi abriu tela real `com.android.settings/.Settings$WifiSettingsActivity`; Voltar retornou ao DUMONT | PASS |
+| Abertura de Meus Arquivos | Acionamento registrado nos contadores do DUMONT; foco DeX não confirmou foreground inequívoco do app | UNKNOWN para funcionamento completo |
+| Outros controles Samsung | Destinos oficiais resolvidos pelo PackageManager antes do upgrade; ativação via UI não testada | UNKNOWN |
+| Galaxy A55, widgets, DeX integração profunda, Knox restrito | Não implementado/testado nesta execução | UNKNOWN / fora do escopo |
+| Bugs/crashes | Nenhum registro de ANR/FATAL do Pilot no recorte de log recente; teste curto, não comprova estabilidade prolongada | PASS recorte / UNKNOWN longa duração |
+
+**Estado final:** Galaxy Pilot v0.8 instalado no tablet; painel Galaxy fechado, workspace livre. HOME Samsung preservado. Nenhuma rede, conta, rádio, permissão, firmware, Knox, aplicativos Samsung ou dados pessoais modificados por este teste. Preferências privadas copiadas apenas para diretório Termux local. Capturas XML transitórias de UI removidas do armazenamento compartilhado.
+
+**Próximos gates:** teste de cada aplicativo Samsung no tablet (sem expor dados), widgets via AppWidgetHost com permissão explícita, execução em DeX maximizado, UX retrato A55, métricas de bateria e decisão separada sobre HOME padrão.
