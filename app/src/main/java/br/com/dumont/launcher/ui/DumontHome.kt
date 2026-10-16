@@ -718,7 +718,7 @@ private fun ApplicationWindow(
     var query by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf("Todos") }
     val sortedApps = remember(apps) { apps.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label }) }
-    val visible = remember(sortedApps, query, category) {
+    val visible = remember(sortedApps, query, category, usageScores) {
         sortedApps.filter { app ->
             AppRules.matches(app.label, app.packageName, query) && when (category) {
                 "Samsung" -> app.packageName.startsWith("com.samsung.") ||
