@@ -67,3 +67,7 @@
 - **Tela cheia:** a aplicação continuou em modo `freeform` no ambiente desktop do tablet; execução como HOME real em tela cheia não foi validada — **UNKNOWN**.
 
 Capturas reais de tela permaneceram somente no ambiente privado do tablet e não foram publicadas no GitHub.
+
+## Atualização adicional: assinatura estável Pilot
+
+O teste de atualização local v2 → v3 foi concluído com `adb install -r`, usando a mesma keystore privada no Termux, sem perda de favoritos e sem alterar a HOME Samsung. Evidências e limites: [M2 — Assinatura estável](M2_ASSINATURA_ESTAVEL.md).
