@@ -45,7 +45,7 @@ check('Finder' not in ui and 'com.apple.' not in ui, "No Apple app icon dependen
 check('Text("Início"' not in ui, "Top bar only shows DUMONT branding")
 for item in ("app/src/main/java/br/com/dumont/launcher/MainActivity.kt",
              "app/src/test/java/br/com/dumont/launcher/data/AppRulesTest.kt",
-             "ci/android.yml.example"):
+             ".github/workflows/android.yml"):
     check((ROOT/item).is_file(), "Required source: "+item)
 relative = re.findall(r"!?(?:\[[^\]]+\])\(([^)]+)\)", readme)
 for link in relative:

@@ -34,7 +34,7 @@ com build validado antes de adotar AGP 9.
 - Gradle 8.13 (wrapper oficial), Android Gradle Plugin 8.13.2, Kotlin / Compose Compiler 2.3.20.
 - Compose BOM 2026.06.00 (Compose 1.11; compatible with compileSdk 36), Android compileSdk/targetSdk 36, minSdk 28, JDK 17.
 - Projeto: `./gradlew :app:assembleDebug :app:testDebugUnitTest`.
-- Modelo de CI em `ci/android.yml.example`; ativação bloqueada até autorizar escopo GitHub `workflow`. Nenhum envio automático a lojas, sem instalação por ADB.
+- Pipeline de validação em `.github/workflows/android.yml` após autorização explícita do escopo GitHub `workflow`. Nenhum envio automático a lojas, sem instalação por ADB.
 
 ## Gates para instalar no Tab S9 FE ou A55
 
