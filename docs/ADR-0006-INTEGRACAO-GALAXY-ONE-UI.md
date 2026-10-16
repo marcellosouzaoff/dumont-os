@@ -52,7 +52,7 @@ O DUMONT funciona como um **launcher Android alternativo**. Os aplicativos, serv
 | BUILD | Static validator, Gradle/unit tests, APK assinatura estável | UNKNOWN |
 
 **Regra de aceite:** CI PASS sozinho não comprova integração física; apontar separadamente o que foi observado e o que segue UNKNOWN.
- 
+
 ## Auditoria de integração e CI — 16/10/2026
 
 - Inventário direto por ADB do Galaxy Tab S9 FE SM-X510: pacotes Samsung de câmera, galeria, contatos, Galaxy Store, rotinas, serviços de DeX e Knox foram localizados. Isto prova presença, não prova que todos tenham atividades inicializáveis.
