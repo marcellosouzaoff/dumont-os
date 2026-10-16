@@ -71,3 +71,27 @@ Capturas reais de tela permaneceram somente no ambiente privado do tablet e não
 ## Atualização adicional: assinatura estável Pilot
 
 O teste de atualização local v2 → v3 foi concluído com `adb install -r`, usando a mesma keystore privada no Termux, sem perda de favoritos e sem alterar a HOME Samsung. Evidências e limites: [M2 — Assinatura estável](M2_ASSINATURA_ESTAVEL.md).
+
+## Piloto v0.5 — instalação autorizada e verificação no Tab S9 FE
+
+**Data:** 16/10/2026. **Commit-fonte:** `e3578c8`. **CI:** [38910639316](https://github.com/marcellosouzaoff/dumont-os/actions/runs/38910639316) — PASS. **Dispositivo:** SM-X510.
+
+| Controle | Evidência | Resultado |
+|---|---|---|
+| APK v0.5 assinado e verificado | SHA-256 `4f9512ae405e98a55f1f4dd6f31c864559a3417b1f3a8353b228ea4195c4fdfc`; certificado de desenvolvimento SHA-256 `7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7` | PASS |
+| Upgrade Pilot | `adb install -r -t` retornou `Success` | PASS |
+| Versão instalada | `versionCode=4` | PASS |
+| Preferências intactas | Antes/depois SHA-256 `5979a7c91ff6bcc9fd7a8e0802e4fa7605963d36e8ad535dc9531bfbf9e0cce9` | PASS |
+| Abertura do Pilot | `am start -W` retornou `Status: ok`, início frio ~2,08 segundos (um ensaio, não média) | PASS |
+| Workspace inicial | Hierarquia mostrou `DUMONT`, `Aplicativos`, `Atualizar`, botões `Apps` e `Termux`, sem painel de busca aberto | PASS |
+| Catálogo via barra superior | Toque no menu exibiu `Buscar aplicativos`, `Todos`, `Atualizar`, `Fechar` e `Google · 18` | PASS |
+| Alternar Todos | Resultado inconclusivo: atividade de ChatGPT assumiu o foco antes da leitura subsequente | UNKNOWN |
+| Fechar painel | Não verificado por foco externo da tela | UNKNOWN |
+| Termux pelo Dock | Ícone e rótulo presentes, mas execução pelo toque não confirmada | UNKNOWN |
+| HOME padrão | `com.sec.android.app.launcher` permaneceu no papel HOME | PASS |
+| DUMONT original | Pacote `br.com.dumont.launcher` permaneceu instalado | PASS |
+| Consumo de bateria/ANR | Sem protocolo de medição longa; nenhum erro fatal do Pilot no recorte final de logs | UNKNOWN para desempenho/bateria |
+
+**Observação:** após verificar a primeira abertura do painel, o usuário/ambiente voltou a exibir o aplicativo ChatGPT em primeiro plano. Os testes subsequentes de interface não foram forçados novamente para evitar interferência na sessão do proprietário.
+
+**Estado final:** Pilot v0.5 instalado, preferências preservadas, One UI configurada como HOME. Aguardando revisão visual do usuário para aprovar ou priorizar ajustes; nenhuma troca de HOME ou limpeza foi executada.
