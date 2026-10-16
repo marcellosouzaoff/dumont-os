@@ -72,7 +72,7 @@ DUMONT/
     └── dumont-desktop-conceito.png
 ```
 
-**Fase M2 iniciada em branch de desenvolvimento.** Código experimental Android em `feat/m2-android-foundation`; consulte [Fundação Android](docs/M2_FOUNDATION.md) e [piloto real Tab S9 FE](docs/M2_PILOTO_TAB_S9_FE_2026-10-16.md) e [estado do piloto Galaxy A55](docs/M2_PILOTO_A55_2026-10-16.md) e [auditoria de assinaturas APK](docs/M2_ASSINATURAS_APK.md). Nenhum APK ou instalação está validado antes dos testes de CI e de dispositivo.
+**Fase M2 iniciada em branch de desenvolvimento.** Código experimental Android em `feat/m2-android-foundation`; consulte [Fundação Android](docs/M2_FOUNDATION.md) e [piloto real Tab S9 FE](docs/M2_PILOTO_TAB_S9_FE_2026-10-16.md) e [estado do piloto Galaxy A55](docs/M2_PILOTO_A55_2026-10-16.md) e [auditoria de assinaturas APK](docs/M2_ASSINATURAS_APK.md) e [assinatura local estável do Pilot](docs/M2_ASSINATURA_ESTAVEL.md). Nenhum APK ou instalação está validado antes dos testes de CI e de dispositivo.
 
 ## Referências técnicas
 

@@ -31,7 +31,7 @@ for file in (manifest_file, *ROOT.glob("app/src/main/res/values/*.xml")):
         check(False, "well-formed XML " + file.name)
 
 check('compileSdk = 36' in app and 'targetSdk = 36' in app, "API 36 compile/target")
-check('applicationIdSuffix = ".preview"' in app, "Disposable debug APK uses an isolated package")
+check('applicationIdSuffix = ".pilot"' in app, "Stable local-signing pilot uses isolated package")
 check('compose-bom:2026.06.00' in app and 'compose-bom:2026.09.00' not in app, "Compose 1.11-era BOM avoids API 37 mismatch")
 check('com.android.application") version "8.13.2"' in plugins, "AGP 8.13.2")
 check('org.jetbrains.kotlin.android") version "2.3.20"' in plugins, "Kotlin 2.3.20")

@@ -14,17 +14,17 @@ android {
         applicationId = "br.com.dumont.launcher"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.4.0-dev"
+        versionCode = 2
+        versionName = "0.4.1-dev"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        // Disposable test application: coexist with the original DUMONT package.
-        // CI signing keys rotate, so preview builds are not interchangeable updates.
+        // Isolated pilot: built in CI, then re-signed locally with the same private
+        // development keystore for repeatable updates. Never replace the legacy APK.
         debug {
-            applicationIdSuffix = ".preview"
-            versionNameSuffix = "-preview"
+            applicationIdSuffix = ".pilot"
+            versionNameSuffix = "-pilot"
         }
         release {
             isMinifyEnabled = false

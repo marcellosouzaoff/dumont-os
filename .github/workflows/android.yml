@@ -29,6 +29,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: dumont-debug-unverified-device
+          name: dumont-pilot-ci-temporary-debug-signature
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7
