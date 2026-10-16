@@ -20,6 +20,12 @@ android {
     }
 
     buildTypes {
+        // Disposable test application: coexist with the original DUMONT package.
+        // CI signing keys rotate, so preview builds are not interchangeable updates.
+        debug {
+            applicationIdSuffix = ".preview"
+            versionNameSuffix = "-preview"
+        }
         release {
             isMinifyEnabled = false
         }
