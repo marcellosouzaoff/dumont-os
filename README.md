@@ -85,4 +85,10 @@ DUMONT/
 
 ## Direitos, marcas e transparência
 
-Este é um projeto independente, não afiliado a Samsung, Google ou Apple. Android, Galaxy, Google, nomes e logotipos de aplicativos pertencem aos respectivos titulares. **Referências Pantone** indicam inspiração de cor; HEX são aproximações de projeto. Mockups são ilustrações conceituais, não capturas de aplicativos em execução nos dispositivos. Nenhuma licença de código aberto foi escolhida ainda: **repositório público não implica permissão automática de reutilização**. O licenciamento será decidido antes de aceitar contribuições de código.
+Este é um projeto independente, não afiliado a Samsung, Google ou Apple. Android, Galaxy, Google, nomes e logotipos de aplicativos pertencem aos respectivos titulares. **Referências Pantone** indicam inspiração de cor; HEX são aproximações de projeto. Mockups são ilustrações conceituais, não capturas de aplicativos em execução nos dispositivos.
+
+## Licença — Apache 2.0
+
+O código-fonte que vier a ser publicado e a documentação original deste repositório são disponibilizados sob a [Apache License, Version 2.0](LICENSE), salvo indicação expressa de outra licença. A Apache 2.0 permite uso, modificação e distribuição, inclusive comercial, mediante o cumprimento de suas condições.
+
+**Escopo e marcas:** a licença de código não concede direito de uso sobre o nome e a identidade visual **DUMONT**. Mockups, imagens, fotografias, logos, ícones e outros materiais gráficos não estão abrangidos pela Apache 2.0, a menos que sejam explicitamente identificados como licenciados. Elementos e marcas de terceiros permanecem sujeitos aos direitos dos respectivos titulares. O repositório ainda está em fase documental; não há aplicativo Android publicado.
