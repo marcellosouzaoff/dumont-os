@@ -6,7 +6,7 @@
 
 - O APK original `br.com.dumont.launcher` e o APK antigo `br.com.dumont.launcher.preview` permanecem intactos.
 - Nenhuma chave privada original foi recuperada: copiar um APK ou seu certificado público não permite assinar atualizações com sua identidade.
-- O novo app de teste terá identificador **`br.com.dumont.launcher.pilot`**, rótulo **DUMONT Pilot**, versão `0.4.1-dev-pilot` e `versionCode` 2.
+- O novo app de teste terá identificador **`br.com.dumont.launcher.pilot`**, rótulo **DUMONT Pilot**, versão de teste inicialmente `0.4.1-dev-pilot` e `versionCode` 2; a atualização de validação usará `0.4.2-dev-pilot` e `versionCode` 3.
 - A compilação GitHub Actions possui uma assinatura de depuração temporária; para atualizar o Pilot posteriormente, re-assinar cada build **localmente**, com a mesma keystore protegida no Termux.
 - Somente `scripts/sign-pilot-local.sh` e documentos públicos entram no repositório; arquivos `.p12`, senhas e chaves nunca entram em commit, ZIP público, log ou pasta Downloads.
 
