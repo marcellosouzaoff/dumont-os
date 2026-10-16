@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -45,7 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,7 +77,7 @@ fun DumontHome(
         Column(
             modifier = Modifier.fillMaxSize().padding(horizontal = if (wide) 20.dp else 8.dp)
         ) {
-            TopBar()
+            TopBar(compact = !wide)
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 Wallpaper(isDark)
                 ApplicationWindow(
@@ -102,15 +100,15 @@ fun DumontHome(
 }
 
 @Composable
-private fun TopBar() {
+private fun TopBar(compact: Boolean) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(52.dp).padding(horizontal = 12.dp),
+        modifier = Modifier.fillMaxWidth().height(if (compact) 44.dp else 36.dp).padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             "DUMONT",
-            fontSize = 19.sp,
+            fontSize = if (compact) 17.sp else 16.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = 1.6.sp,
             color = MaterialTheme.colorScheme.onBackground
@@ -146,7 +144,7 @@ private fun Wallpaper(isDark: Boolean) {
             lineTo(w, 0f)
             close()
         }
-        drawPath(accent, DumontColors.red.copy(alpha = .55f))
+        drawPath(accent, DumontColors.red.copy(alpha = .35f))
     }
 }
 
@@ -196,6 +194,13 @@ private fun ApplicationWindow(
                 onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Buscar aplicativos") },
+                trailingIcon = {
+                    if (query.isNotEmpty()) {
+                        TextButton(onClick = { query = "" }) {
+                            Text("Limpar", fontSize = 12.sp)
+                        }
+                    }
+                },
                 singleLine = true
             )
             Spacer(Modifier.height(8.dp))
@@ -208,7 +213,7 @@ private fun ApplicationWindow(
             if (visible.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        if (apps.isEmpty()) "Carregando aplicativos…"
+                        if (apps.isEmpty()) "Nenhum aplicativo disponível."
                         else "Nenhum aplicativo encontrado. Toque em Todos para ampliar a lista.",
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
@@ -231,8 +236,8 @@ private fun ApplicationWindow(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Segure um ícone para fixar no Dock", fontSize = 10.sp)
-                TextButton(onClick = onChooseHome) { Text("Tela inicial", fontSize = 11.sp) }
+                Text("Segure para fixar no Dock", fontSize = 12.sp)
+                TextButton(onClick = onChooseHome) { Text("Configurar Home", fontSize = 12.sp) }
             }
         }
     }
@@ -244,7 +249,13 @@ private fun AppTile(app: AppEntry, onClick: () -> Unit, onLongClick: () -> Unit)
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .combinedClickable(
+                role = Role.Button,
+                onClickLabel = "Abrir ${app.label}",
+                onLongClickLabel = "Adicionar ou remover ${app.label} do Dock",
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .padding(vertical = 8.dp, horizontal = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -252,8 +263,8 @@ private fun AppTile(app: AppEntry, onClick: () -> Unit, onLongClick: () -> Unit)
         NativeAppIcon(app, Modifier.size(42.dp))
         Text(
             text = app.label,
-            fontSize = 11.sp,
-            lineHeight = 13.sp,
+            fontSize = 12.sp,
+            lineHeight = 15.sp,
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -303,7 +314,7 @@ private fun BottomDock(
                 favorites.forEach { app ->
                     Box(
                         modifier = Modifier.size(54.dp).clip(RoundedCornerShape(10.dp))
-                            .clickable(onClick = { onLaunch(app) }),
+                            .clickable(role = Role.Button, onClick = { onLaunch(app) }),
                         contentAlignment = Alignment.Center
                     ) {
                         NativeAppIcon(app, Modifier.size(40.dp))
