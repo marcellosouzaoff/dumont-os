@@ -2,6 +2,7 @@ package br.com.dumont.launcher.ui
 
 import android.widget.ImageView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +30,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items as listItems
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -38,17 +41,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +69,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import br.com.dumont.launcher.data.AppRules
 import br.com.dumont.launcher.model.AppEntry
+import br.com.dumont.launcher.model.SystemStatus
+import br.com.dumont.launcher.notifications.NotificationFeed
 import kotlin.math.roundToInt
 
 /**
@@ -72,6 +84,13 @@ fun DumontHome(
     usageScores: Map<String, Long>,
     barOpacity: Float,
     usageAccessGranted: Boolean,
+    deviceStatus: SystemStatus,
+    wallpaperBitmap: ImageBitmap?,
+    notificationsEnabled: Boolean,
+    onChooseWallpaper: () -> Unit,
+    onResetWallpaper: () -> Unit,
+    onNotificationPermission: () -> Unit,
+    onNotificationClick: (String) -> Unit,
     onLaunch: (AppEntry) -> Unit,
     onTogglePinned: (AppEntry) -> Unit,
     onOpenSettings: () -> Unit,
@@ -87,6 +106,7 @@ fun DumontHome(
     val isDark = isSystemInDarkTheme()
     var showApps by rememberSaveable { mutableStateOf(false) }
     var showAppearance by rememberSaveable { mutableStateOf(false) }
+    var showNotifications by rememberSaveable { mutableStateOf(false) }
     val dockKeys = remember(apps, pinnedKeys, usageScores) {
         AppRules.dockKeys(
             pinned = pinnedKeys,
@@ -104,16 +124,31 @@ fun DumontHome(
         val wide = maxWidth >= 600.dp
         // Both bars share the same horizontal inset: the original top bar is the standard.
         val barSideInset = if (wide) 12.dp else 4.dp
-        Wallpaper(isDark)
+        if (wallpaperBitmap == null) {
+            Wallpaper(isDark)
+        } else {
+            Image(
+                bitmap = wallpaperBitmap,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Box(Modifier.fillMaxSize().safeDrawingPadding()) {
             TopBar(
                 alpha = barOpacity,
                 compact = !wide,
-                onApps = { showApps = true; showAppearance = false },
+                deviceStatus = deviceStatus,
+                onNotifications = {
+                    showNotifications = !showNotifications
+                    showApps = false
+                    showAppearance = false
+                },
+                onApps = { showApps = true; showAppearance = false; showNotifications = false },
                 onSettings = onOpenSettings,
                 onTerminal = onOpenTerminal,
-                onAppearance = { showAppearance = !showAppearance; showApps = false },
+                onAppearance = { showAppearance = !showAppearance; showApps = false; showNotifications = false },
                 modifier = Modifier.align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .padding(horizontal = barSideInset, vertical = 4.dp)
@@ -146,6 +181,23 @@ fun DumontHome(
                     .fillMaxWidth()
                     .padding(horizontal = barSideInset, vertical = 8.dp)
             )
+            if (showNotifications) {
+                NotificationPanel(
+                    enabled = notificationsEnabled,
+                    onEnable = onNotificationPermission,
+                    onOpen = onNotificationClick,
+                    onClose = { showNotifications = false },
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                        .padding(
+                            top = 64.dp,
+                            bottom = 93.dp,
+                            end = if (wide) 12.dp else 4.dp
+                        )
+                        .fillMaxWidth(if (wide) .35f else .92f)
+                        .widthIn(max = 380.dp)
+                        .fillMaxHeight()
+                )
+            }
             if (showAppearance) {
                 AppearancePanel(
                     alpha = barOpacity,
@@ -155,6 +207,9 @@ fun DumontHome(
                     onChooseHome = onChooseHome,
                     onRefresh = onRefreshCatalog,
                     onUsageAccess = onOpenUsageAccess,
+                    hasCustomWallpaper = wallpaperBitmap != null,
+                    onChooseWallpaper = onChooseWallpaper,
+                    onResetWallpaper = onResetWallpaper,
                     onClose = { showAppearance = false },
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(top = 58.dp, end = if (wide) 16.dp else 6.dp)
@@ -170,6 +225,8 @@ fun DumontHome(
 private fun TopBar(
     alpha: Float,
     compact: Boolean,
+    deviceStatus: SystemStatus,
+    onNotifications: () -> Unit,
     onApps: () -> Unit,
     onSettings: () -> Unit,
     onTerminal: () -> Unit,
@@ -182,6 +239,7 @@ private fun TopBar(
         color = DumontColors.black.copy(alpha = alpha),
         shadowElevation = 3.dp
     ) {
+        // Equal slots keep system status in the actual center of the header.
         Row(
             modifier = Modifier.fillMaxSize().padding(horizontal = if (compact) 5.dp else 14.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -195,20 +253,76 @@ private fun TopBar(
                 MenuItem("Configurações", onSettings, compact)
                 MenuItem("Terminal", onTerminal, compact)
             }
-            Spacer(Modifier.width(if (compact) 3.dp else 12.dp))
-            TextButton(
-                onClick = onAppearance,
-                contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 12.dp)
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    "DUMONT",
-                    fontSize = if (compact) 12.sp else 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = .9.sp,
-                    color = Color.White
+                    deviceStatus.dateTime,
+                    maxLines = 1,
+                    fontSize = if (compact) 10.sp else 13.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    "${deviceStatus.battery}   ·   ${deviceStatus.network}",
+                    maxLines = 1,
+                    fontSize = if (compact) 9.sp else 11.sp,
+                    color = Color.White.copy(alpha = .88f),
+                    textAlign = TextAlign.Center
                 )
             }
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(
+                    onClick = onNotifications,
+                    modifier = Modifier.semantics { contentDescription = "Notificações" },
+                    contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 10.dp)
+                ) {
+                    NotificationBell()
+                }
+                TextButton(
+                    onClick = onAppearance,
+                    contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 12.dp)
+                ) {
+                    Text(
+                        "DUMONT",
+                        fontSize = if (compact) 12.sp else 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = .9.sp,
+                        color = Color.White
+                    )
+                }
+            }
         }
+    }
+}
+
+/** Neutral outline bell: standard notification affordance, not a DUMONT mark. */
+@Composable
+private fun NotificationBell() {
+    Canvas(Modifier.size(21.dp)) {
+        val w = size.width
+        val h = size.height
+        val bell = Path().apply {
+            moveTo(w * .18f, h * .73f)
+            lineTo(w * .29f, h * .58f)
+            lineTo(w * .29f, h * .39f)
+            cubicTo(w * .29f, h * .12f, w * .71f, h * .12f, w * .71f, h * .39f)
+            lineTo(w * .71f, h * .58f)
+            lineTo(w * .82f, h * .73f)
+            close()
+        }
+        drawPath(
+            bell,
+            Color.White,
+            style = Stroke(width = 1.8.dp.toPx(), cap = StrokeCap.Round)
+        )
+        drawCircle(Color.White, radius = 1.5.dp.toPx(), center = Offset(w * .5f, h * .82f))
     }
 }
 
@@ -231,6 +345,9 @@ private fun AppearancePanel(
     onChooseHome: () -> Unit,
     onRefresh: () -> Unit,
     onUsageAccess: () -> Unit,
+    hasCustomWallpaper: Boolean,
+    onChooseWallpaper: () -> Unit,
+    onResetWallpaper: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier
 ) {
@@ -266,8 +383,89 @@ private fun AppearancePanel(
             if (!usageAccessGranted) {
                 TextButton(onClick = onUsageAccess) { Text("Autorizar acesso ao uso") }
             }
+            TextButton(onClick = onChooseWallpaper) { Text("Escolher papel de parede") }
+            if (hasCustomWallpaper) {
+                TextButton(onClick = onResetWallpaper) { Text("Usar papel de parede original") }
+            }
             TextButton(onClick = onRefresh) { Text("Atualizar aplicativos") }
             TextButton(onClick = onChooseHome) { Text("Escolher aplicativo de tela inicial") }
+        }
+    }
+}
+
+@Composable
+private fun NotificationPanel(
+    enabled: Boolean,
+    onEnable: () -> Unit,
+    onOpen: (String) -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier
+) {
+    val entries by NotificationFeed.entries.collectAsState()
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 12.dp
+    ) {
+        Column(Modifier.fillMaxSize().padding(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Notificações", fontWeight = FontWeight.SemiBold)
+                TextButton(onClick = onClose) { Text("Fechar") }
+            }
+            if (!enabled) {
+                Text(
+                    "Autorize o acesso às notificações nas Configurações do Android. " +
+                        "O DUMONT não guarda ou envia mensagens.",
+                    fontSize = 13.sp
+                )
+                TextButton(onClick = onEnable) { Text("Permitir acesso no Android") }
+            } else if (entries.isEmpty()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Nenhuma notificação disponível.", textAlign = TextAlign.Center)
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    listItems(entries, key = { it.key }) { notification ->
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable { onOpen(notification.key) }
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(12.dp)
+                        ) {
+                            Text(
+                                notification.title,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 2
+                            )
+                            if (notification.detail.isNotBlank()) {
+                                Text(
+                                    notification.detail,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            Text(
+                                notification.packageName,
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .65f),
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

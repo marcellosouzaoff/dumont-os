@@ -103,3 +103,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v0.6.1 — barras alinhadas
 
 [ADR-0004 — larguras idênticas, cor sólida e Dock essencial sem Termux](docs/ADR-0004-BARRAS-IGUAIS-DOCK-ESSENCIAL.md).
+
+### DUMONT v0.7 — sistema, wallpaper e notificações
+
+[ADR-0005 — barra de status, galerias e painel direito de notificações](docs/ADR-0005-STATUS-WALLPAPER-NOTIFICACOES.md).

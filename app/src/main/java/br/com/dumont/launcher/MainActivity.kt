@@ -2,26 +2,37 @@ package br.com.dumont.launcher
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import br.com.dumont.launcher.data.AppCatalog
 import br.com.dumont.launcher.data.AppRules
 import br.com.dumont.launcher.data.DockStore
+import br.com.dumont.launcher.data.DeviceStatusReader
 import br.com.dumont.launcher.data.UsageStore
 import br.com.dumont.launcher.model.AppEntry
+import br.com.dumont.launcher.model.SystemStatus
 import br.com.dumont.launcher.ui.DumontHome
 import br.com.dumont.launcher.ui.DumontTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -34,10 +45,27 @@ class MainActivity : ComponentActivity() {
     private var barOpacity by mutableFloatStateOf(1f)
     private var catalogLoading by mutableStateOf(true)
     private var catalogError by mutableStateOf(false)
+    private var deviceStatus by mutableStateOf(SystemStatus())
+    private var wallpaperBitmap by mutableStateOf<ImageBitmap?>(null)
+    private var notificationsEnabled by mutableStateOf(false)
     private var catalogLoaded = false
     private var catalogJob: Job? = null
     private val dockStore by lazy { DockStore(this) }
     private val usageStore by lazy { UsageStore(this) }
+    private val deviceStatusReader by lazy { DeviceStatusReader(this) }
+    private val wallpaperPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            val granted = runCatching {
+                contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }.isSuccess
+            if (granted) {
+                appearancePrefs.edit().putString("wallpaper_uri", uri.toString()).apply()
+                loadWallpaper(uri)
+            } else {
+                Toast.makeText(this, "Galeria: acesso à imagem não autorizado", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
     private val appearancePrefs by lazy {
         getSharedPreferences("dumont_appearance", MODE_PRIVATE)
     }
@@ -46,6 +74,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         barOpacity = appearancePrefs.getFloat("bar_opacity", 1f).coerceIn(0.20f, 1f)
+        appearancePrefs.getString("wallpaper_uri", null)?.let { loadWallpaper(Uri.parse(it)) }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) {
+                    val result = withContext(Dispatchers.IO) { runCatching { deviceStatusReader.read() } }
+                    result.onSuccess { deviceStatus = it }
+                    notificationsEnabled = NotificationManagerCompat
+                        .getEnabledListenerPackages(this@MainActivity).contains(packageName)
+                    delay(30_000)
+                }
+            }
+        }
         setContent {
             DumontTheme {
                 DumontHome(
@@ -54,6 +94,13 @@ class MainActivity : ComponentActivity() {
                     usageScores = usageScores,
                     barOpacity = barOpacity,
                     usageAccessGranted = usageAccessGranted,
+                    deviceStatus = deviceStatus,
+                    wallpaperBitmap = wallpaperBitmap,
+                    notificationsEnabled = notificationsEnabled,
+                    onChooseWallpaper = { wallpaperPicker.launch(arrayOf("image/*")) },
+                    onResetWallpaper = ::resetWallpaper,
+                    onNotificationPermission = ::openNotificationPermission,
+                    onNotificationClick = ::openNotification,
                     onLaunch = ::launch,
                     onTogglePinned = ::togglePinned,
                     onOpenSettings = ::openSystemSettings,
@@ -163,6 +210,53 @@ class MainActivity : ComponentActivity() {
         try { startActivity(Intent(Settings.ACTION_SETTINGS)) }
         catch (_: ActivityNotFoundException) {
             Toast.makeText(this, "Configurações Android indisponíveis", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadWallpaper(uri: Uri) {
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    val source = ImageDecoder.createSource(contentResolver, uri)
+                    ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+                        val original = info.size
+                        val maxSide = maxOf(original.width, original.height)
+                        val factor = minOf(1f, 2048f / maxSide.coerceAtLeast(1))
+                        decoder.setTargetSize(
+                            (original.width * factor).toInt().coerceAtLeast(1),
+                            (original.height * factor).toInt().coerceAtLeast(1)
+                        )
+                    }.asImageBitmap()
+                }
+            }
+            result.onSuccess { wallpaperBitmap = it }
+                .onFailure {
+                    wallpaperBitmap = null
+                    Toast.makeText(this@MainActivity, "Não foi possível carregar a imagem", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun resetWallpaper() {
+        wallpaperBitmap = null
+        appearancePrefs.edit().remove("wallpaper_uri").apply()
+    }
+
+    private fun openNotificationPermission() {
+        try { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
+        catch (_: ActivityNotFoundException) {
+            Toast.makeText(this, "Abra Configurações > Notificações > Acesso às notificações",
+                Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun openNotification(key: String) {
+        val service = br.com.dumont.launcher.notifications.DumontNotificationListener.current
+        val notification = try { service?.activeNotifications?.firstOrNull { it.key == key } }
+        catch (_: SecurityException) { null }
+        try { notification?.notification?.contentIntent?.send() }
+        catch (_: android.app.PendingIntent.CanceledException) {
+            Toast.makeText(this, "Notificação indisponível", Toast.LENGTH_SHORT).show()
         }
     }
 
