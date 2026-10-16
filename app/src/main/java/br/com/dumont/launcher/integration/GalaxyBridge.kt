@@ -71,8 +71,8 @@ object GalaxyBridge {
             "privacy" -> Settings.ACTION_PRIVACY_SETTINGS
             "security" -> Settings.ACTION_SECURITY_SETTINGS
             "apps" -> Settings.ACTION_APPLICATION_SETTINGS
-            "notifications" -> Settings.ACTION_NOTIFICATION_SETTINGS
-            "wallpaper" -> Settings.ACTION_WALLPAPER_SETTINGS
+            "notifications" -> "android.settings.NOTIFICATION_SETTINGS"
+            "wallpaper" -> Intent.ACTION_SET_WALLPAPER
             else -> return null
         }
         return Intent(action)
