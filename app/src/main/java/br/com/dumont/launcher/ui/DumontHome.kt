@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,12 +24,16 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,108 +53,216 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import br.com.dumont.launcher.data.AppRules
 import br.com.dumont.launcher.model.AppEntry
+import kotlin.math.roundToInt
 
+/**
+ * Original DUMONT wallpaper fills the entire Android Activity, including behind the safe
+ * drawing insets. Bars float above it; Android owns the status and navigation system UI.
+ */
 @Composable
 fun DumontHome(
     apps: List<AppEntry>,
-    favoriteKeys: List<String>,
+    pinnedKeys: List<String>,
+    usageScores: Map<String, Long>,
+    barOpacity: Float,
+    usageAccessGranted: Boolean,
     onLaunch: (AppEntry) -> Unit,
-    onToggleFavorite: (AppEntry) -> Unit,
+    onTogglePinned: (AppEntry) -> Unit,
+    onOpenSettings: () -> Unit,
+    onOpenTerminal: () -> Unit,
     onChooseHome: () -> Unit,
+    onOpenUsageAccess: () -> Unit,
+    onOpacityChange: (Float) -> Unit,
+    onOpacitySave: () -> Unit,
     isCatalogLoading: Boolean,
     catalogError: Boolean,
     onRefreshCatalog: () -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
     var showApps by rememberSaveable { mutableStateOf(false) }
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .safeDrawingPadding()
-    ) {
+    var showAppearance by rememberSaveable { mutableStateOf(false) }
+    val dockKeys = remember(apps, pinnedKeys, usageScores) {
+        AppRules.dockKeys(
+            pinned = pinnedKeys,
+            usage = usageScores,
+            available = apps.map { it.key }.toSet()
+        )
+    }
+    val dockApps = remember(apps, dockKeys) {
+        dockKeys.mapNotNull { key -> apps.firstOrNull { it.key == key } }
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         val wide = maxWidth >= 600.dp
-        val gridCount = if (wide) 5 else if (maxWidth < 370.dp) 3 else 4
-        val termux = apps.firstOrNull { it.packageName == "com.termux" }
-        val dockApps = remember(apps, favoriteKeys) {
-            favoriteKeys.mapNotNull { key -> apps.firstOrNull { it.key == key } }
-        }
-        Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = if (wide) 8.dp else 4.dp)
-        ) {
+        Wallpaper(isDark)
+
+        Box(Modifier.fillMaxSize().safeDrawingPadding()) {
             TopBar(
+                alpha = barOpacity,
                 compact = !wide,
-                onApps = { showApps = !showApps },
-                onRefresh = onRefreshCatalog,
-                onTerminal = termux?.let { entry -> { onLaunch(entry) } }
+                onApps = { showApps = true; showAppearance = false },
+                onSettings = onOpenSettings,
+                onTerminal = onOpenTerminal,
+                onAppearance = { showAppearance = !showAppearance; showApps = false },
+                modifier = Modifier.align(Alignment.TopCenter)
+                    .padding(horizontal = if (wide) 12.dp else 4.dp, vertical = 4.dp)
             )
-            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                Wallpaper(isDark)
-                if (showApps) {
-                    ApplicationWindow(
-                        apps = apps,
-                        gridCount = gridCount,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .fillMaxWidth(if (wide) .98f else 1f)
-                            .fillMaxHeight(.96f)
-                            .heightIn(min = 180.dp, max = 760.dp),
-                        isCatalogLoading = isCatalogLoading,
-                        catalogError = catalogError,
-                        onRefresh = onRefreshCatalog,
-                        onClose = { showApps = false },
-                        onLaunch = onLaunch,
-                        onToggleFavorite = onToggleFavorite,
-                        onChooseHome = onChooseHome
-                    )
-                }
+            if (showApps) {
+                ApplicationWindow(
+                    apps = apps,
+                    pinnedKeys = pinnedKeys,
+                    minCellSize = if (wide) 105.dp else 82.dp,
+                    modifier = Modifier.align(Alignment.Center)
+                        .fillMaxWidth(if (wide) .83f else .96f)
+                        .widthIn(max = 960.dp)
+                        .fillMaxHeight(if (wide) .76f else .73f)
+                        .heightIn(max = 720.dp),
+                    isCatalogLoading = isCatalogLoading,
+                    catalogError = catalogError,
+                    onRefresh = onRefreshCatalog,
+                    onClose = { showApps = false },
+                    onLaunch = onLaunch,
+                    onTogglePinned = onTogglePinned
+                )
             }
             BottomDock(
-                favorites = dockApps,
-                termux = termux,
+                apps = dockApps,
+                pinnedKeys = pinnedKeys,
+                alpha = barOpacity,
                 onLaunch = onLaunch,
-                onApps = { showApps = !showApps },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                onTogglePinned = onTogglePinned,
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .padding(horizontal = if (wide) 18.dp else 8.dp, vertical = 8.dp)
+                    .fillMaxWidth(if (wide) .70f else .96f)
             )
-            Spacer(Modifier.height(4.dp))
+            if (showAppearance) {
+                AppearancePanel(
+                    alpha = barOpacity,
+                    usageAccessGranted = usageAccessGranted,
+                    onOpacityChange = onOpacityChange,
+                    onOpacitySave = onOpacitySave,
+                    onChooseHome = onChooseHome,
+                    onRefresh = onRefreshCatalog,
+                    onUsageAccess = onOpenUsageAccess,
+                    onClose = { showAppearance = false },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .padding(top = 58.dp, end = if (wide) 16.dp else 6.dp)
+                        .fillMaxWidth(if (wide) .34f else .88f)
+                        .widthIn(max = 340.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun TopBar(
+    alpha: Float,
     compact: Boolean,
     onApps: () -> Unit,
-    onRefresh: () -> Unit,
-    onTerminal: (() -> Unit)?
+    onSettings: () -> Unit,
+    onTerminal: () -> Unit,
+    onAppearance: () -> Unit,
+    modifier: Modifier
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .height(if (compact) 48.dp else 44.dp)
-            .padding(horizontal = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 12.dp)
+    Surface(
+        modifier = modifier.fillMaxWidth().height(52.dp),
+        shape = RoundedCornerShape(15.dp),
+        color = DumontColors.black.copy(alpha = alpha),
+        shadowElevation = 3.dp
     ) {
-        Text(
-            "DUMONT",
-            fontSize = if (compact) 15.sp else 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = 1.sp,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        TextButton(onClick = onApps) { Text("Aplicativos", fontSize = if (compact) 11.sp else 13.sp) }
-        if (onTerminal != null) {
-            TextButton(onClick = onTerminal) { Text("Termux", fontSize = if (compact) 11.sp else 13.sp) }
+        Row(
+            modifier = Modifier.fillMaxSize().padding(horizontal = if (compact) 5.dp else 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier.weight(1f).horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(if (compact) 1.dp else 8.dp)
+            ) {
+                MenuItem("Aplicativos", onApps, compact)
+                MenuItem("Configurações", onSettings, compact)
+                MenuItem("Terminal", onTerminal, compact)
+            }
+            Spacer(Modifier.width(if (compact) 3.dp else 12.dp))
+            TextButton(
+                onClick = onAppearance,
+                contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 12.dp)
+            ) {
+                Text(
+                    "DUMONT",
+                    fontSize = if (compact) 12.sp else 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = .9.sp,
+                    color = Color.White
+                )
+            }
         }
-        if (!compact) {
-            TextButton(onClick = onRefresh) { Text("Atualizar", fontSize = 13.sp) }
+    }
+}
+
+@Composable
+private fun MenuItem(label: String, onClick: () -> Unit, compact: Boolean) {
+    TextButton(
+        onClick = onClick,
+        contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 8.dp)
+    ) {
+        Text(label, color = Color.White, fontSize = if (compact) 11.sp else 13.sp, maxLines = 1)
+    }
+}
+
+@Composable
+private fun AppearancePanel(
+    alpha: Float,
+    usageAccessGranted: Boolean,
+    onOpacityChange: (Float) -> Unit,
+    onOpacitySave: () -> Unit,
+    onChooseHome: () -> Unit,
+    onRefresh: () -> Unit,
+    onUsageAccess: () -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 12.dp
+    ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically) {
+                Text("Aparência DUMONT", fontWeight = FontWeight.SemiBold)
+                TextButton(onClick = onClose) { Text("Fechar") }
+            }
+            Text("Transparência das barras: ${(100 - alpha * 100).roundToInt()}%")
+            Slider(
+                value = alpha,
+                onValueChange = onOpacityChange,
+                onValueChangeFinished = onOpacitySave,
+                valueRange = .20f.. .95f
+            )
+            Text(
+                "Os favoritos são fixados ao segurar um aplicativo. Outros aparecem após o uso.",
+                fontSize = 12.sp
+            )
+            Text(
+                if (usageAccessGranted) "Mais usados: últimos 7 dias no dispositivo"
+                else "Mais usados: abertos pelo DUMONT",
+                fontSize = 12.sp
+            )
+            if (!usageAccessGranted) {
+                TextButton(onClick = onUsageAccess) { Text("Autorizar acesso ao uso") }
+            }
+            TextButton(onClick = onRefresh) { Text("Atualizar aplicativos") }
+            TextButton(onClick = onChooseHome) { Text("Escolher aplicativo de tela inicial") }
         }
-        // Android renders the actual status indicators outside this app.
     }
 }
 
@@ -187,48 +300,33 @@ private fun Wallpaper(isDark: Boolean) {
 @Composable
 private fun ApplicationWindow(
     apps: List<AppEntry>,
-    gridCount: Int,
+    pinnedKeys: List<String>,
+    minCellSize: Dp,
     modifier: Modifier,
     isCatalogLoading: Boolean,
     catalogError: Boolean,
     onRefresh: () -> Unit,
     onClose: () -> Unit,
     onLaunch: (AppEntry) -> Unit,
-    onToggleFavorite: (AppEntry) -> Unit,
-    onChooseHome: () -> Unit
+    onTogglePinned: (AppEntry) -> Unit
 ) {
-    var query by remember { mutableStateOf("") }
-    var showAll by remember { mutableStateOf(false) }
-    val visible = remember(apps, query, showAll) {
-        apps.filter { app ->
-            (showAll || AppRules.isGoogleApp(app.packageName)) &&
-                AppRules.matches(app.label, app.packageName, query)
-        }
+    var query by rememberSaveable { mutableStateOf("") }
+    val visible = remember(apps, query) {
+        apps.filter { AppRules.matches(it.label, it.packageName, query) }
     }
 
     Surface(
-        modifier = modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(20.dp)),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp,
-        shadowElevation = 8.dp
+        modifier = modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(18.dp)),
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = .97f),
+        shadowElevation = 9.dp
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(12.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "Aplicativos",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        Column(Modifier.fillMaxSize().padding(12.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Aplicativos", style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = { showAll = !showAll }) {
-                        Text(if (showAll) "Google" else "Todos")
-                    }
                     TextButton(onClick = onRefresh) { Text("Atualizar", fontSize = 12.sp) }
                     TextButton(onClick = onClose) { Text("Fechar", fontSize = 12.sp) }
                 }
@@ -240,27 +338,21 @@ private fun ApplicationWindow(
                 placeholder = { Text("Buscar aplicativos") },
                 trailingIcon = {
                     if (query.isNotEmpty()) {
-                        TextButton(onClick = { query = "" }) {
-                            Text("Limpar", fontSize = 12.sp)
-                        }
+                        TextButton(onClick = { query = "" }) { Text("Limpar", fontSize = 12.sp) }
                     }
                 },
                 singleLine = true
             )
             Spacer(Modifier.height(8.dp))
-            Text(
-                if (showAll) "Todos os aplicativos visíveis · " + visible.size
-                else "Google · " + visible.size,
-                style = MaterialTheme.typography.labelSmall
-            )
+            Text("Aplicativos disponíveis · ${visible.size}", style = MaterialTheme.typography.labelSmall)
             Spacer(Modifier.height(8.dp))
             if (isCatalogLoading || catalogError || visible.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
                         when {
                             isCatalogLoading -> "Carregando aplicativos…"
-                            catalogError -> "Falha ao consultar aplicativos. Toque em Atualizar no menu."
-                            else -> "Nenhum aplicativo encontrado. Toque em Todos para ampliar a lista."
+                            catalogError -> "Falha na consulta. Toque em Atualizar."
+                            else -> "Nenhum aplicativo corresponde à busca."
                         },
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
@@ -268,55 +360,48 @@ private fun ApplicationWindow(
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(gridCount),
+                    columns = GridCells.Adaptive(minCellSize),
                     modifier = Modifier.weight(1f).fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     items(visible, key = { it.key }) { app ->
-                        AppTile(app, onClick = { onLaunch(app) }, onLongClick = { onToggleFavorite(app) })
+                        AppTile(
+                            app = app,
+                            isPinned = app.key in pinnedKeys,
+                            onClick = { onLaunch(app) },
+                            onLongClick = { onTogglePinned(app) }
+                        )
                     }
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Segure para fixar no Dock", fontSize = 12.sp)
-                TextButton(onClick = onChooseHome) { Text("Configurar Home", fontSize = 12.sp) }
-            }
+            Text("Segure um ícone para fixar ou desafixar no Dock", fontSize = 12.sp)
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun AppTile(app: AppEntry, onClick: () -> Unit, onLongClick: () -> Unit) {
+private fun AppTile(app: AppEntry, isPinned: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .combinedClickable(
                 role = Role.Button,
                 onClickLabel = "Abrir ${app.label}",
-                onLongClickLabel = "Adicionar ou remover ${app.label} do Dock",
+                onLongClickLabel = "Fixar ou desafixar ${app.label} do Dock",
                 onClick = onClick,
                 onLongClick = onLongClick
             )
-            .padding(vertical = 8.dp, horizontal = 2.dp),
+            .padding(vertical = 6.dp, horizontal = 3.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         NativeAppIcon(app, Modifier.size(42.dp))
-        Text(
-            text = app.label,
-            fontSize = 12.sp,
-            lineHeight = 15.sp,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        Text(app.label, fontSize = 12.sp, lineHeight = 14.sp,
+            textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onSurface)
+        if (isPinned) Text("Fixado", fontSize = 10.sp, color = DumontColors.mocha)
     }
 }
 
@@ -337,45 +422,48 @@ private fun NativeAppIcon(app: AppEntry, modifier: Modifier = Modifier) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomDock(
-    favorites: List<AppEntry>,
-    termux: AppEntry?,
+    apps: List<AppEntry>,
+    pinnedKeys: List<String>,
+    alpha: Float,
     onLaunch: (AppEntry) -> Unit,
-    onApps: () -> Unit,
+    onTogglePinned: (AppEntry) -> Unit,
     modifier: Modifier
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(.99f).height(68.dp),
-        shape = RoundedCornerShape(16.dp),
-        color = DumontColors.black,
-        shadowElevation = 4.dp
+        modifier = modifier.height(76.dp),
+        shape = RoundedCornerShape(20.dp),
+        color = DumontColors.black.copy(alpha = alpha),
+        shadowElevation = 5.dp
     ) {
-        Row(
-            modifier = Modifier.horizontalScroll(androidx.compose.foundation.rememberScrollState())
-                .padding(horizontal = 8.dp, vertical = 5.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextButton(onClick = onApps) { Text("Apps", color = Color.White, fontSize = 13.sp) }
-            if (termux != null) {
-                Column(
-                    modifier = Modifier.size(56.dp).clip(RoundedCornerShape(10.dp))
-                        .clickable(role = Role.Button, onClick = { onLaunch(termux) }),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    NativeAppIcon(termux, Modifier.size(35.dp))
-                    Text("Termux", color = Color.White, fontSize = 10.sp)
-                }
-            }
-            favorites.filterNot { it.packageName == "com.termux" }.forEach { app ->
-                Box(
-                    modifier = Modifier.size(52.dp).clip(RoundedCornerShape(10.dp))
-                        .clickable(role = Role.Button, onClick = { onLaunch(app) }),
-                    contentAlignment = Alignment.Center
-                ) {
-                    NativeAppIcon(app, Modifier.size(39.dp))
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(9.dp)
+            ) {
+                apps.forEach { app ->
+                    Column(
+                        modifier = Modifier.size(58.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .combinedClickable(
+                                role = Role.Button,
+                                onClickLabel = "Abrir ${app.label}",
+                                onLongClickLabel = "Fixar ou desafixar ${app.label}",
+                                onClick = { onLaunch(app) },
+                                onLongClick = { onTogglePinned(app) }
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        NativeAppIcon(app, Modifier.size(41.dp))
+                        if (app.key in pinnedKeys) {
+                            Text("•", color = Color.White, fontSize = 10.sp, lineHeight = 10.sp)
+                        }
+                    }
                 }
             }
         }

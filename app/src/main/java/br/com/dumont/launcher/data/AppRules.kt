@@ -31,6 +31,26 @@ object AppRules {
         }.take(9)
     }
 
+    /**
+     * Only pinned or actually-used launchable apps appear in the Dock.
+     * Existing pin order wins over descending usage; no automatic Google/Termux entries.
+     */
+    fun dockKeys(
+        pinned: List<String>,
+        usage: Map<String, Long>,
+        available: Set<String>,
+        limit: Int = 9
+    ): List<String> {
+        val fixed = pinned.distinct().filter { it in available }.take(limit)
+        val frequent = usage.entries.asSequence()
+            .filter { (key, score) -> key in available && score > 0L && key !in fixed }
+            .sortedWith(compareByDescending<Map.Entry<String, Long>> { it.value }.thenBy { it.key })
+            .map { it.key }
+            .take((limit - fixed.size).coerceAtLeast(0))
+            .toList()
+        return fixed + frequent
+    }
+
     fun toggleFavorite(current: List<String>, key: String, limit: Int = 9): List<String> =
         if (key in current) current - key
         else if (current.size < limit) current + key

@@ -95,3 +95,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### Revisão de ergonomia v0.5
 
 [ADR-0002 — Workspace, menu superior, Dock e acesso ao Termux](docs/ADR-0002-ERGONOMIA-MACOS.md). Etapa experimental; não altera a HOME padrão.
+
+### DUMONT v0.6 — revisão da navegação
+
+[ADR-0003 — barras translúcidas, catálogo completo e Dock por uso](docs/ADR-0003-DOCK-E-BARRAS-TRANSLUCIDAS.md).

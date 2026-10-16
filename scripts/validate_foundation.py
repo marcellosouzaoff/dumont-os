@@ -37,7 +37,13 @@ check('com.android.application") version "8.13.2"' in plugins, "AGP 8.13.2")
 check('org.jetbrains.kotlin.android") version "2.3.20"' in plugins, "Kotlin 2.3.20")
 check('android.intent.category.HOME' in manifest and 'android.intent.category.DEFAULT' in manifest, "Android HOME role declared")
 check('android.intent.category.LAUNCHER' in manifest, "App can be opened without selecting default HOME")
-check('android.permission.' not in manifest, "No runtime permissions requested")
+allowed_permissions = {"android.permission.PACKAGE_USAGE_STATS"}
+declared_permissions = {
+    e.attrib["{http://schemas.android.com/apk/res/android}name"]
+    for e in ET.fromstring(manifest).findall("uses-permission")
+}
+check(declared_permissions <= allowed_permissions,
+      "Only optional, user-granted Usage Access can be requested")
 check(all(item not in manifest for item in ("QUERY_ALL_PACKAGES", "BIND_ACCESSIBILITY_SERVICE", "MANAGE_EXTERNAL_STORAGE", "DEVICE_ADMIN")), "No dangerous privileged app capabilities")
 check(all(k in theme for k in ("F1EEE7", "4E5353", "252525", "A47864", "CD212A")), "Canonical palette present")
 check(all(k in tokens["palette"] for k in ("cloud","charcoal","black","mocha","red")), "Design tokens present")

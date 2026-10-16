@@ -28,4 +28,13 @@ class AppRulesTest {
         assertEquals(emptyList<String>(), AppRules.toggleFavorite(listOf("chrome"), "chrome"))
         assertEquals(listOf("one"), AppRules.toggleFavorite(listOf("one"), "two", limit = 1))
     }
+    @Test fun dockShowsPinnedThenActualUsageOnly() {
+        val available = setOf("terminal", "camera", "browser", "files")
+        val scores = mapOf("camera" to 6L, "browser" to 12L, "files" to 0L)
+        assertEquals(listOf("terminal", "browser", "camera"),
+            AppRules.dockKeys(listOf("terminal"), scores, available))
+        assertEquals(emptyList<String>(), AppRules.dockKeys(emptyList(), emptyMap(), available))
+        assertEquals(listOf("browser"), AppRules.dockKeys(listOf("invalid"), scores, available, limit=1))
+    }
+
 }
