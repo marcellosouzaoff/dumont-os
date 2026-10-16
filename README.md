@@ -2,7 +2,7 @@
 
 **DUMONT OS · design system e planejamento do launcher Android**
 
-> **Status: DOCUMENTAÇÃO / PRÉ-CÓDIGO.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
+> **Status: M2 / FOUNDATION BRANCH.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
 
 > **Mockups aprovados:** imagens do tablet e smartphone preparadas no pacote v0.3, ainda pendentes de upload para este repositório. A publicação gráfica não está concluída.
 
@@ -72,7 +72,7 @@ DUMONT/
     └── dumont-desktop-conceito.png
 ```
 
-**Ainda não contém código-fonte Android.** O início da implementação exige aprovação explícita da documentação, da conta GitHub de destino e da publicação.
+**Fase M2 iniciada em branch de desenvolvimento.** Código experimental Android em `feat/m2-android-foundation`; consulte [Fundação Android](docs/M2_FOUNDATION.md). Nenhum APK ou instalação está validado antes dos testes de CI e de dispositivo.
 
 ## Referências técnicas
 
