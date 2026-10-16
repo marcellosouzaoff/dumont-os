@@ -120,3 +120,27 @@ O teste de atualização local v2 → v3 foi concluído com `adb install -r`, us
 **Teste visual pendente:** proprietário abrir o DUMONT Pilot v0.6, verificar desktop, menu superior, centralização do catálogo, botão Terminal, Configurações nativas, navegação de apps, fixação por toque longo, controles de transparência e persistência após reinício. Bateria e memória seguem sem baseline comparativo.
 
 **Nota sobre uso de aplicativos:** autorização de Usage Access não foi dada via ADB; o `AppOps` permanece no modo padrão. Sem opt-in, ranking automático conta exclusivamente aberturas realizadas pelo DUMONT.
+
+## v0.6.1 — Instalação e verificação física das barras alinhadas
+
+**Data:** 16/10/2026. **CI:** [38919269533](https://github.com/marcellosouzaoff/dumont-os/actions/runs/38919269533), PASS. **Commit do código:** `ea29ec338ff9b804e636ee443850a22c5fa86343`.
+
+| Verificação | Evidência | Estado |
+|---|---|---|
+| APK testado | SHA-256 `f5af9e1efe06e1533fd1afef05ef543532c473fee7bcc8ad4fab04628332702b`; certificado SHA-256 `7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7` | PASS |
+| Atualização Pilot v0.6 para v0.6.1 | `adb install -r -t` → `Success`; Android indica `versionCode=6` | PASS |
+| Segurança e reversibilidade | `com.sec.android.app.launcher` continua HOME; pacotes `br.com.dumont.launcher` e `.pilot` permanecem instalados | PASS |
+| Preferências de favoritos | SHA-256 antes e depois `3d9c77953233187ff6b456ee1ffa3503761b401d99dbd41ac69336a86df1b9fe` | PASS |
+| Histórico de abertura de apps | Arquivo local `dumont_local_launches.xml` idêntico antes/depois da atualização | PASS |
+| TopBar e Dock | Captura ADB local privada conferida; ambos começam e terminam nas mesmas margens laterais | PASS visual, sem inspeção de pixel subjacente automatizada |
+| Cor sólida | Imagem da tela exibe barras escuras opacas | PASS visual |
+| Dock inicial | Ícones essenciais visíveis e centralizados (Chrome, Arquivos, Gmail, Agenda, Drive, Fotos, Play Store, WhatsApp) | PASS visual |
+| Termux | Não aparece no Dock DUMONT; acesso permanece pelo menu superior Terminal | PASS visual/menu |
+| Menus superiores | `Aplicativos`, `Configurações`, `Terminal` à esquerda e `DUMONT` à direita na árvore de interface | PASS |
+| Ajustes de aparência | Toque na marca DUMONT abre painel `Aparência DUMONT`; mostra `Transparência das barras: 0%` e slider; Fechar restaura a área de trabalho | PASS para abertura/fechamento; persistência do slider não testada |
+| Faixa branca observada | Barra de título branca pertencente à janela Samsung DeX, fora da superfície DUMONT; permanece no modo janela | Externo, não modificado |
+| Consumo de bateria | Sem medição controlada Samsung vs DUMONT | UNKNOWN |
+
+**Dados e backup:** cópias de preferências guardadas apenas no diretório privado Termux `dumont-validation/private/v061-rollback/`, sem upload. Tela Samsung/Knox/firmware/bootloader não alterados. App A55 não alterado.
+
+**Pendente:** validar em telefone, alternância real da transparência e persistência, toque/abertura dos apps essenciais, layout em janela maximizada ou modo HOME, acessibilidade, desempenho e bateria.
