@@ -40,3 +40,18 @@ A linha branca observada na janela do tablet é do Samsung DeX, não da superfí
 - Tablet SM-X510 continua com Pilot versionCode 6 (v0.6.1) e com a Samsung com.sec.android.app.launcher como HOME.
 - Testes físicos pendentes: relógio/data/bateria/network, redimensionamento retrato/paisagem, seleção e persistência de imagem via galeria, botão sino/painel lateral, permissão de notifications listener, retorno ao desenho e impacto em bateria.
 - Teste de A55 permanece UNKNOWN, sem instalação.
+
+## Tablet Pilot v0.7 — implantação autorizada e testes físicos (16/10/2026)
+
+- Dispositivo Galaxy Tab S9 FE SM-X510; build CI 38922519573 PASS; artefato assinado com cert SHA-256 7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7.
+- APK SHA-256 497a2f3b33002c2810ba5797d8c275f283475e4b71df7cc87b4f59d2de95f71e, privado no Termux.
+- Atualização exclusivamente no package br.com.dumont.launcher.pilot, via adb install -r -t, retornou Success; Android reportou versionCode 7. DUMONT original br.com.dumont.launcher permaneceu instalado e One UI com.sec.android.app.launcher permaneceu HOME.
+- Backup privado e verificação byte-identical antes/depois: dumont_dock SHA-256 3d9c77953233187ff6b456ee1ffa3503761b401d99dbd41ac69336a86df1b9fe; dumont_appearance 3088ba50816d63e4ca1fba0610b68a16257e4d9c5824c8fa180202bb928e29d3; dumont_local_launches 49e48ff37f50e31157df046555c57cc10c1de5824d20cccb435ecfa2c6ae5cc7.
+- Início frio de Pilot: am start -W retornou Status ok e TotalTime 1227 ms (amostra única).
+- PASS no widget de status da barra superior: data/hora reais, bateria com estado de carregamento e Wi-Fi em dois rótulos no centro. PASS nos menus Aplicativos/Configurações/Terminal à esquerda, botão notificações neutro antes da marca DUMONT à direita; HOME Samsung inalterada.
+- PASS no botão minimalista de notificações: abre painel à direita e Fecha retorna ao workspace. Durante verificação, painel apresentou notificações reais. A consulta do parâmetro seguro enabled_notification_listeners encontrou o Pilot habilitado nesse instante. A equipe NÃO concedeu, revogou nem alterou autorização. A origem/momento dessa autorização não foi determinada. Nenhum título ou texto de notificação pessoal é transcrito neste relatório.
+- PASS na existência do botão Escolher papel de parede em Aparência DUMONT e abertura da ação de seleção. Android resolveu a intent de documento para com.google.android.documentsui/com.android.documentsui.picker.PickActivity. A transição de foco para o seletor não pôde ser comprovada pelo breve teste, e a operação foi cancelada sem selecionar imagens. Salvar/persistir wallpaper personalizado: UNKNOWN; deve ser testado manualmente pelo proprietário.
+- PASS abertura do painel Aparência e fechamento; preferências permaneceram intactas; não foi alterado percentual de transparência.
+- PASS no Dock sem Termux via árvore da interface, com ícones de apps essenciais, ambos os painéis fechados e tela de trabalho pronta.
+- PENDÊNCIAS: teste manual de persistência e restauração de wallpaper, comportamento da ação de notificação após toque, actualização de indicadores sob mudança de Wi-Fi/bateria, telefone A55, janela Samsung DeX/maximização e medição de bateria.
+- Segurança: nenhum root/ROM/Knox, nenhum launcher HOME alterado, nenhum aplicativo removido, nenhum acesso de notificações concedido programaticamente, nenhuma notificação pessoal guardada no log do projeto.
