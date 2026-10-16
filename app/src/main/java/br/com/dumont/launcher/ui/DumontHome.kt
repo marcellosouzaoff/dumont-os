@@ -91,7 +91,9 @@ fun DumontHome(
         AppRules.dockKeys(
             pinned = pinnedKeys,
             usage = usageScores,
-            available = apps.map { it.key }.toSet()
+            available = apps.map { it.key }.toSet(),
+            essentials = AppRules.essentialDockKeys(apps.map { it.packageName to it.key }),
+            excluded = apps.filter { it.packageName == "com.termux" }.map { it.key }.toSet()
         )
     }
     val dockApps = remember(apps, dockKeys) {
@@ -100,6 +102,8 @@ fun DumontHome(
 
     BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         val wide = maxWidth >= 600.dp
+        // Both bars share the same horizontal inset: the original top bar is the standard.
+        val barSideInset = if (wide) 12.dp else 4.dp
         Wallpaper(isDark)
 
         Box(Modifier.fillMaxSize().safeDrawingPadding()) {
@@ -111,7 +115,8 @@ fun DumontHome(
                 onTerminal = onOpenTerminal,
                 onAppearance = { showAppearance = !showAppearance; showApps = false },
                 modifier = Modifier.align(Alignment.TopCenter)
-                    .padding(horizontal = if (wide) 12.dp else 4.dp, vertical = 4.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = barSideInset, vertical = 4.dp)
             )
             if (showApps) {
                 ApplicationWindow(
@@ -138,8 +143,8 @@ fun DumontHome(
                 onLaunch = onLaunch,
                 onTogglePinned = onTogglePinned,
                 modifier = Modifier.align(Alignment.BottomCenter)
-                    .padding(horizontal = if (wide) 18.dp else 8.dp, vertical = 8.dp)
-                    .fillMaxWidth(if (wide) .70f else .96f)
+                    .fillMaxWidth()
+                    .padding(horizontal = barSideInset, vertical = 8.dp)
             )
             if (showAppearance) {
                 AppearancePanel(
@@ -242,11 +247,12 @@ private fun AppearancePanel(
                 TextButton(onClick = onClose) { Text("Fechar") }
             }
             Text("Transparência das barras: ${(100 - alpha * 100).roundToInt()}%")
+            Text("Cor sólida: preto DUMONT (#252525). Em 0%, as barras são opacas.", fontSize = 12.sp)
             Slider(
                 value = alpha,
                 onValueChange = onOpacityChange,
                 onValueChangeFinished = onOpacitySave,
-                valueRange = .20f.. .95f
+                valueRange = .20f..1f
             )
             Text(
                 "Os favoritos são fixados ao segurar um aplicativo. Outros aparecem após o uso.",
@@ -368,7 +374,7 @@ private fun ApplicationWindow(
                     items(visible, key = { it.key }) { app ->
                         AppTile(
                             app = app,
-                            isPinned = app.key in pinnedKeys,
+                            isPinned = app.key in pinnedKeys && app.packageName != "com.termux",
                             onClick = { onLaunch(app) },
                             onLongClick = { onTogglePinned(app) }
                         )

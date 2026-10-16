@@ -99,3 +99,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v0.6 — revisão da navegação
 
 [ADR-0003 — barras translúcidas, catálogo completo e Dock por uso](docs/ADR-0003-DOCK-E-BARRAS-TRANSLUCIDAS.md).
+
+### DUMONT v0.6.1 — barras alinhadas
+
+[ADR-0004 — larguras idênticas, cor sólida e Dock essencial sem Termux](docs/ADR-0004-BARRAS-IGUAIS-DOCK-ESSENCIAL.md).

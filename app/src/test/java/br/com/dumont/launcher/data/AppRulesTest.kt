@@ -37,4 +37,32 @@ class AppRulesTest {
         assertEquals(listOf("browser"), AppRules.dockKeys(listOf("invalid"), scores, available, limit=1))
     }
 
+    @Test fun essentialsFillEmptyDockButNeverOverridePinsOrUsage() {
+        val known = listOf(
+            "com.android.chrome" to "chrome",
+            "com.google.android.gm" to "gmail",
+            "com.android.vending" to "store",
+            "com.termux" to "termux"
+        )
+        val essentials = AppRules.essentialDockKeys(known)
+        assertEquals(listOf("chrome", "gmail", "store"), essentials)
+        assertEquals(listOf("chrome", "gmail", "store"),
+            AppRules.dockKeys(emptyList(), emptyMap(), known.map { it.second }.toSet(), essentials))
+        assertEquals(listOf("gmail", "store", "chrome"),
+            AppRules.dockKeys(listOf("gmail"), mapOf("store" to 9L), known.map { it.second }.toSet(), essentials))
+    }
+
+    @Test fun terminalNeverAppearsInDockEvenWhenPinnedOrUsed() {
+        val available = setOf("termux", "chrome", "gmail")
+        val essentials = listOf("chrome", "gmail")
+        assertEquals(listOf("chrome", "gmail"),
+            AppRules.dockKeys(
+                pinned = listOf("termux"),
+                usage = mapOf("termux" to 999L),
+                available = available,
+                essentials = essentials,
+                excluded = setOf("termux")
+            ))
+    }
+
 }

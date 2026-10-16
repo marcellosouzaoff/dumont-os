@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     private var pinnedKeys by mutableStateOf(emptyList<String>())
     private var usageScores by mutableStateOf(emptyMap<String, Long>())
     private var usageAccessGranted by mutableStateOf(false)
-    private var barOpacity by mutableFloatStateOf(0.70f)
+    private var barOpacity by mutableFloatStateOf(1f)
     private var catalogLoading by mutableStateOf(true)
     private var catalogError by mutableStateOf(false)
     private var catalogLoaded = false
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        barOpacity = appearancePrefs.getFloat("bar_opacity", 0.70f).coerceIn(0.20f, 0.95f)
+        barOpacity = appearancePrefs.getFloat("bar_opacity", 1f).coerceIn(0.20f, 1f)
         setContent {
             DumontTheme {
                 DumontHome(
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     onOpenTerminal = ::openTerminal,
                     onChooseHome = ::chooseHome,
                     onOpenUsageAccess = ::openUsageAccess,
-                    onOpacityChange = { barOpacity = it.coerceIn(0.20f, 0.95f) },
+                    onOpacityChange = { barOpacity = it.coerceIn(0.20f, 1f) },
                     onOpacitySave = { appearancePrefs.edit().putFloat("bar_opacity", barOpacity).apply() },
                     isCatalogLoading = catalogLoading,
                     catalogError = catalogError,
@@ -127,6 +127,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun togglePinned(app: AppEntry) {
+        if (app.packageName == "com.termux") {
+            Toast.makeText(this, "Terminal fica somente no menu superior", Toast.LENGTH_SHORT).show()
+            return
+        }
         val revised = AppRules.toggleFavorite(pinnedKeys, app.key, limit = 9)
         if (revised == pinnedKeys) {
             Toast.makeText(this, "O Dock comporta até 9 apps", Toast.LENGTH_SHORT).show()
