@@ -115,3 +115,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v0.9 — sidebar e harmonia cromática
 
 [ADR-0007 — nova barra superior e painel lateral direito](docs/ADR-0007-DESIGN-SIDEBAR-V09.md).
+
+### DUMONT v1.0-dev — correções de ergonomia
+
+[ADR-0008 — Mural, catálogo classificável e limites Samsung DeX](docs/ADR-0008-ERGONOMIA-DEX-CATALOGO-MURAL.md).

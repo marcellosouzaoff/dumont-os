@@ -14,8 +14,8 @@ android {
         applicationId = "br.com.dumont.launcher"
         minSdk = 28
         targetSdk = 36
-        versionCode = 9
-        versionName = "0.9.0-dev"
+        versionCode = 10
+        versionName = "1.0.0-dev"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

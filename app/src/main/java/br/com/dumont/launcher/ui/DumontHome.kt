@@ -163,10 +163,9 @@ fun DumontHome(
                     pinnedKeys = pinnedKeys,
                     minCellSize = if (wide) 105.dp else 82.dp,
                     modifier = Modifier.align(Alignment.Center)
-                        .fillMaxWidth(if (wide) .83f else .96f)
-                        .widthIn(max = 960.dp)
-                        .fillMaxHeight(if (wide) .76f else .73f)
-                        .heightIn(max = 720.dp),
+                        .fillMaxWidth(if (wide) .91f else .96f)
+                        .fillMaxHeight()
+                        .padding(top = 64.dp, bottom = 94.dp, end = if (wide) 68.dp else 60.dp),
                     isCatalogLoading = isCatalogLoading,
                     catalogError = catalogError,
                     onRefresh = onRefreshCatalog,
@@ -424,13 +423,13 @@ private fun RightRail(
 ) {
     val sections = listOf("Notificações", "Conexões", "Dispositivo", "Segurança", "Sistema")
     Surface(modifier = modifier.width(60.dp), shape = RoundedCornerShape(14.dp),
-        color = DumontColors.black.copy(alpha = alpha), shadowElevation = 3.dp) {
+        color = DumontColors.black.copy(alpha = alpha.coerceAtLeast(.88f)), shadowElevation = 6.dp) {
         Column(Modifier.fillMaxSize().padding(vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
             sections.forEachIndexed { i, section ->
                 Box(Modifier.size(48.dp).clip(RoundedCornerShape(10.dp))
-                    .background(if (selected == section) DumontColors.mocha.copy(alpha = .68f)
+                    .background(if (selected == section) DumontColors.mocha.copy(alpha = .92f)
                         else Color.Transparent)
                     .clickable { onChoose(section) }
                     .semantics { contentDescription = section },
@@ -596,16 +595,27 @@ private fun NotificationPanel(
                 }
             } else {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxSize()
+                    verticalArrangement = Arrangement.spacedBy(9.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 12.dp)
                 ) {
+                    item {
+                        Text("Mural de notificações · ${entries.size}",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp)
+                    }
                     listItems(entries, key = { it.key }) { notification ->
                         Column(
                             modifier = Modifier.fillMaxWidth()
                                 .clip(RoundedCornerShape(12.dp))
                                 .clickable { onOpen(notification.key) }
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(12.dp)
+                                .background(DumontColors.charcoal.copy(alpha = .16f))
+                                .border(
+                                    1.dp,
+                                    DumontColors.mocha.copy(alpha = .35f),
+                                    RoundedCornerShape(12.dp)
+                                )
+                                .padding(14.dp)
                         ) {
                             Text(
                                 notification.title,
@@ -681,8 +691,20 @@ private fun ApplicationWindow(
     onTogglePinned: (AppEntry) -> Unit
 ) {
     var query by rememberSaveable { mutableStateOf("") }
-    val visible = remember(apps, query) {
-        apps.filter { AppRules.matches(it.label, it.packageName, query) }
+    var category by rememberSaveable { mutableStateOf("Todos") }
+    val sortedApps = remember(apps) { apps.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label }) }
+    val visible = remember(sortedApps, query, category) {
+        sortedApps.filter { app ->
+            AppRules.matches(app.label, app.packageName, query) && when (category) {
+                "Samsung" -> app.packageName.startsWith("com.samsung.") ||
+                    app.packageName.startsWith("com.sec.")
+                "Google" -> app.packageName.startsWith("com.google.") ||
+                    app.packageName == "com.android.chrome"
+                "Sistema" -> app.packageName.startsWith("com.android.") ||
+                    app.packageName.startsWith("com.sec.android.")
+                else -> true
+            }
+        }
     }
 
     Surface(
@@ -713,7 +735,22 @@ private fun ApplicationWindow(
                 },
                 singleLine = true
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.dp))
+            Row(
+                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                listOf("Todos", "Samsung", "Google", "Sistema").forEach { tab ->
+                    TextButton(onClick = { category = tab }) {
+                        Text(
+                            tab,
+                            color = if (category == tab) DumontColors.mocha
+                                else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (category == tab) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                }
+            }
             Text("Aplicativos disponíveis · ${visible.size}", style = MaterialTheme.typography.labelSmall)
             Spacer(Modifier.height(8.dp))
             if (isCatalogLoading || catalogError || visible.isEmpty()) {
