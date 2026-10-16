@@ -26,6 +26,7 @@ import br.com.dumont.launcher.data.AppRules
 import br.com.dumont.launcher.data.DockStore
 import br.com.dumont.launcher.data.DeviceStatusReader
 import br.com.dumont.launcher.data.UsageStore
+import br.com.dumont.launcher.integration.GalaxyBridge
 import br.com.dumont.launcher.model.AppEntry
 import br.com.dumont.launcher.model.SystemStatus
 import br.com.dumont.launcher.ui.DumontHome
@@ -104,6 +105,7 @@ class MainActivity : ComponentActivity() {
                     onLaunch = ::launch,
                     onTogglePinned = ::togglePinned,
                     onOpenSettings = ::openSystemSettings,
+                    onGalaxyAction = ::openGalaxyAction,
                     onOpenTerminal = ::openTerminal,
                     onChooseHome = ::chooseHome,
                     onOpenUsageAccess = ::openUsageAccess,
@@ -205,6 +207,23 @@ class MainActivity : ComponentActivity() {
 
     private fun showTerminalUnavailable() =
         Toast.makeText(this, "Termux não está disponível neste perfil", Toast.LENGTH_SHORT).show()
+
+    /** A Samsung/Android action is a real public Settings activity, never a hidden API. */
+    private fun openGalaxyAction(id: String) {
+        val intent = GalaxyBridge.intentFor(id) ?: return
+        try {
+            startActivity(intent)
+        } catch (_: RuntimeException) {
+            try {
+                startActivity(Intent(Settings.ACTION_SETTINGS))
+                Toast.makeText(this, "Esta tela não está disponível: mostrando Configurações",
+                    Toast.LENGTH_SHORT).show()
+            } catch (_: RuntimeException) {
+                Toast.makeText(this, "Função indisponível neste dispositivo",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     private fun openSystemSettings() {
         try { startActivity(Intent(Settings.ACTION_SETTINGS)) }

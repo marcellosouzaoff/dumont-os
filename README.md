@@ -107,3 +107,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v0.7 — sistema, wallpaper e notificações
 
 [ADR-0005 — barra de status, galerias e painel direito de notificações](docs/ADR-0005-STATUS-WALLPAPER-NOTIFICACOES.md).
+
+### DUMONT v0.8 — Integração nativa Samsung / Android
+
+[ADR-0006 — painel Galaxy, controles públicos, limites Knox e plano de widgets](docs/ADR-0006-INTEGRACAO-GALAXY-ONE-UI.md).

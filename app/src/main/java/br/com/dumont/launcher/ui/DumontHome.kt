@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import br.com.dumont.launcher.data.AppRules
+import br.com.dumont.launcher.integration.GalaxyBridge
 import br.com.dumont.launcher.model.AppEntry
 import br.com.dumont.launcher.model.SystemStatus
 import br.com.dumont.launcher.notifications.NotificationFeed
@@ -94,6 +95,7 @@ fun DumontHome(
     onLaunch: (AppEntry) -> Unit,
     onTogglePinned: (AppEntry) -> Unit,
     onOpenSettings: () -> Unit,
+    onGalaxyAction: (String) -> Unit,
     onOpenTerminal: () -> Unit,
     onChooseHome: () -> Unit,
     onOpenUsageAccess: () -> Unit,
@@ -107,6 +109,7 @@ fun DumontHome(
     var showApps by rememberSaveable { mutableStateOf(false) }
     var showAppearance by rememberSaveable { mutableStateOf(false) }
     var showNotifications by rememberSaveable { mutableStateOf(false) }
+    var showGalaxy by rememberSaveable { mutableStateOf(false) }
     val dockKeys = remember(apps, pinnedKeys, usageScores) {
         AppRules.dockKeys(
             pinned = pinnedKeys,
@@ -144,15 +147,40 @@ fun DumontHome(
                     showNotifications = !showNotifications
                     showApps = false
                     showAppearance = false
+                    showGalaxy = false
                 },
-                onApps = { showApps = true; showAppearance = false; showNotifications = false },
+                onApps = { showApps = true; showAppearance = false; showNotifications = false; showGalaxy = false },
                 onSettings = onOpenSettings,
+                onGalaxy = {
+                    showGalaxy = !showGalaxy
+                    showApps = false
+                    showAppearance = false
+                    showNotifications = false
+                },
                 onTerminal = onOpenTerminal,
-                onAppearance = { showAppearance = !showAppearance; showApps = false; showNotifications = false },
+                onAppearance = {
+                    showAppearance = !showAppearance
+                    showApps = false
+                    showNotifications = false
+                    showGalaxy = false
+                },
                 modifier = Modifier.align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .padding(horizontal = barSideInset, vertical = 4.dp)
             )
+            if (showGalaxy) {
+                GalaxyPanel(
+                    apps = apps,
+                    onOpenAction = onGalaxyAction,
+                    onLaunch = onLaunch,
+                    onClose = { showGalaxy = false },
+                    modifier = Modifier.align(Alignment.Center)
+                        .fillMaxWidth(if (wide) .76f else .96f)
+                        .widthIn(max = 880.dp)
+                        .fillMaxHeight(if (wide) .78f else .80f)
+                        .heightIn(max = 750.dp)
+                )
+            }
             if (showApps) {
                 ApplicationWindow(
                     apps = apps,
@@ -229,6 +257,7 @@ private fun TopBar(
     onNotifications: () -> Unit,
     onApps: () -> Unit,
     onSettings: () -> Unit,
+    onGalaxy: () -> Unit,
     onTerminal: () -> Unit,
     onAppearance: () -> Unit,
     modifier: Modifier
@@ -252,6 +281,7 @@ private fun TopBar(
                 MenuItem("Aplicativos", onApps, compact)
                 MenuItem("Configurações", onSettings, compact)
                 MenuItem("Terminal", onTerminal, compact)
+                MenuItem("Galaxy", onGalaxy, compact)
             }
             Column(
                 modifier = Modifier.weight(1f),
@@ -296,6 +326,92 @@ private fun TopBar(
                         letterSpacing = .9.sp,
                         color = Color.White
                     )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Real Samsung entrypoints and Android Settings screens.
+ * Features available only to system/Knox stay in the existing Samsung environment.
+ */
+@Composable
+private fun GalaxyPanel(
+    apps: List<AppEntry>,
+    onOpenAction: (String) -> Unit,
+    onLaunch: (AppEntry) -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier
+) {
+    val samsungApps = remember(apps) { GalaxyBridge.availableSamsungApps(apps) }
+    val sections = remember { GalaxyBridge.systemActions.groupBy { it.section } }
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(18.dp),
+        shadowElevation = 12.dp
+    ) {
+        Column(Modifier.fillMaxSize().padding(14.dp)) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Integração Galaxy",
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                TextButton(onClick = onClose) { Text("Fechar") }
+            }
+            Text(
+                "Aplicativos instalados e configurações oficiais da Samsung/Android. " +
+                    "Recursos internos protegidos continuam na One UI.",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(Modifier.height(8.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                item { Text("Aplicativos Samsung disponíveis", fontWeight = FontWeight.SemiBold) }
+                if (samsungApps.isEmpty()) {
+                    item { Text("Nenhum aplicativo Samsung com atividade acessível neste perfil.") }
+                }
+                listItems(samsungApps, key = { "app-" + it.key }) { app ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable { onLaunch(app) }
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        NativeAppIcon(app, Modifier.size(34.dp))
+                        Text(app.label, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+                sections.forEach { (section, actions) ->
+                    item(key = "section-$section") {
+                        Spacer(Modifier.height(10.dp))
+                        Text(section, fontWeight = FontWeight.SemiBold)
+                    }
+                    listItems(actions, key = { "settings-" + it.id }) { action ->
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable { onOpenAction(action.id) }
+                                .padding(horizontal = 12.dp, vertical = 9.dp)
+                        ) {
+                            Text(action.title, color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Medium)
+                            Text(action.description, fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .7f))
+                        }
+                    }
                 }
             }
         }
