@@ -115,8 +115,7 @@ private fun TopBar() {
             letterSpacing = 1.6.sp,
             color = MaterialTheme.colorScheme.onBackground
         )
-        // Android retains the real status bar; the app does not forge status indicators.
-        Text("Início", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground)
+        // The real Android status bar shows system indicators. Never fabricate them here.
     }
 }
 

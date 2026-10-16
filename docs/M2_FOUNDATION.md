@@ -13,6 +13,13 @@
 - Modo claro e escuro acompanhando o sistema operacional.
 - Nenhuma permissão perigosa, acesso a armazenamento, root, telemetria ou serviço de acessibilidade.
 
+## Compatibilidade de dependências
+
+A Compose BOM 2026.09.00 do protótipo inicial foi corrigida para 2026.06.00:
+as versões Compose 1.12+ requerem compileSdk 37 e Android Gradle Plugin 9.1.1+,
+enquanto esta fundação fixa compileSdk 36 e AGP 8.13.2. Reavaliar a atualização
+com build validado antes de adotar AGP 9.
+
 ## Limitações intencionais
 
 - A janela central é um painel próprio DUMONT; não há janelas de apps terceiros.
@@ -25,7 +32,7 @@
 ## Ambiente de build
 
 - Gradle 8.13 (wrapper oficial), Android Gradle Plugin 8.13.2, Kotlin / Compose Compiler 2.3.20.
-- Compose BOM 2026.09.00, Android compileSdk/targetSdk 36, minSdk 28, JDK 17.
+- Compose BOM 2026.06.00 (Compose 1.11; compatible with compileSdk 36), Android compileSdk/targetSdk 36, minSdk 28, JDK 17.
 - Projeto: `./gradlew :app:assembleDebug :app:testDebugUnitTest`.
 - Modelo de CI em `ci/android.yml.example`; ativação bloqueada até autorizar escopo GitHub `workflow`. Nenhum envio automático a lojas, sem instalação por ADB.
 
