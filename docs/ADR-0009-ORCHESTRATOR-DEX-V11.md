@@ -22,3 +22,15 @@ Testes de aplicativo conhecido (um único Chrome/Files), retorno via Android e r
 - G3: instalação Pilot no SM-X510 sem alterar HOME: não executada.
 - G4: ida e volta de aplicativo sem janelas extras: não executada.
 - G5: DeX e gerenciamento de janelas profundamente unificados: não implementado (limite Samsung).
+
+## Validação física — 16/10/2026
+
+- Build CI `38938989177` PASS: compilação, testes unitários e artifact.
+- APK Pilot v1.1 SHA-256: `63c5455a2a123216e6ee40a9d4ed235e7f518fa8190c82779f66c2fd5ea40cd2`, certificado SHA-256 `7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7`; verificação v3 PASS.
+- Galaxy Tab S9 FE `SM-X510`: `adb install --no-streaming -r -t` retornou Success; Pilot versionCode 12.
+- Preferências `dumont_dock` e `dumont_appearance` preservadas byte a byte, com backup privado no Termux. HOME Samsung `com.sec.android.app.launcher` não alterada; aplicativo original preservado.
+- Primeiro teste: DUMONT → Aplicativos → Chrome abriu janela `com.android.chrome/com.google.android.apps.chrome.Main`. Tarefa Chrome existente `#13470` foi reutilizada, modo `freeform`. Não surgiu outra tarefa Chrome no inventário de tarefas.
+- Reabertura do DUMONT: Android informou `its current task has been brought to the front`, sem criar uma nova instância do launcher.
+- Segundo teste: Chrome foi reaberto a partir do catálogo, continuou na mesma tarefa `#13470`; retorno trouxe DUMONT ao primeiro plano. PASS para dois ciclos controlados.
+- Não foram alteradas configurações, conteúdo do Chrome, dados do usuário, aplicações Samsung, navegação ou parâmetros DeX. Arquivos transitórios de UI foram limpos.
+- Ainda UNKNOWN: outros aplicativos, maximização/tamanho de janelas, gestos no DeX, múltiplos monitores, autonomia e comportamento longo. A fusão com o gerenciador de janelas privado Samsung não foi tentada.
