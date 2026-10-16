@@ -48,6 +48,8 @@
 
 **Nota de segurança:** removida a cópia transitória **sem criptografia** da chave privada (`private-key.pem`) após validar a keystore PKCS#12. Foram preservados somente a keystore, o certificado público e o arquivo de senha na área privada do Termux. A chave privada **não foi enviada ao GitHub**.
 
+O favorito de teste foi removido após a validação, restaurando os **8 favoritos iniciais** do Pilot. A restauração foi confirmada por leitura de preferências no aparelho.
+
 **Limite essencial:** o primeiro APK original continua com certificado distinto (`9feb2917…06270892f`) e não pode ser atualizado usando esta chave nova. A compatibilidade de atualização foi comprovada **somente para `br.com.dumont.launcher.pilot`**.
 
 **Próximo gate:** fazer backup cifrado independente da keystore e da senha antes de adotar o Pilot como caminho definitivo. Ainda não há validação de produção, de HOME padrão ou de instalação no Galaxy A55.
