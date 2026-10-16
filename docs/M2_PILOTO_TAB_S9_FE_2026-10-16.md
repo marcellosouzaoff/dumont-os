@@ -95,3 +95,28 @@ O teste de atualização local v2 → v3 foi concluído com `adb install -r`, us
 **Observação:** após verificar a primeira abertura do painel, o usuário/ambiente voltou a exibir o aplicativo ChatGPT em primeiro plano. Os testes subsequentes de interface não foram forçados novamente para evitar interferência na sessão do proprietário.
 
 **Estado final:** Pilot v0.5 instalado, preferências preservadas, One UI configurada como HOME. Aguardando revisão visual do usuário para aprovar ou priorizar ajustes; nenhuma troca de HOME ou limpeza foi executada.
+
+## DUMONT v0.6 — Layout solicitado, build e instalação sem ativar HOME
+
+**Data:** 16/10/2026. **Commit:** `06a3d9d`. **Build CI:** [38915796996](https://github.com/marcellosouzaoff/dumont-os/actions/runs/38915796996) — PASS: arquitetura estática, build/testes e upload do APK.
+
+| Critério | Evidência | Resultado |
+|---|---|---|
+| Barra superior reorganizada e barras flutuantes | Revisão de Compose implementou Aplicativos / Configurações Android / Terminal à esquerda e DUMONT à direita | PASS código / UNKNOWN visual |
+| Papel de parede completo | Wallpaper preenchendo Box raiz; barras aplicadas sobre wallpaper, enableEdgeToEdge e safeDrawingPadding | PASS código / UNKNOWN visual |
+| Transparência | 5–80% com configuração local, padrão 30%, painel aberto por DUMONT | PASS código / UNKNOWN interação |
+| Menu Aplicativos | Primeiro estado mostra todos os componentes MAIN/LAUNCHER visíveis e filtráveis | PASS código / UNKNOWN interação |
+| Dock inferior | Sem botão Apps e sem Termux/Google forçados; pins manuais + usos reais | PASS código / UNKNOWN interação |
+| Estatísticas mais usadas | Contagem local por aberturas no DUMONT; estatísticas Android 7 dias somente após autorização especial de Acesso ao uso | PASS código / UNKNOWN permissão |
+| CI | Run 38915796996, conclusão success | PASS |
+| APK CI | SHA-256 `6510c0d3f6d289cc103e279b5ea93d96ca2f2c09fb107928b9ae299ee77f66e0` | PASS |
+| APK assinado localmente | SHA-256 `53fe96064bfe9327ae4c23c285d08906e4ef6c24fea6704500fc45d9e6081c64`, certificado `7898a5f8177537852038b78de14115a4a3f1ef3cfc9bf9dd7174c56b413beda7` | PASS |
+| Upgrade de Pilot | `adb install -r -t` retornou `Success`, versão instalada `versionCode=5` | PASS |
+| Preferências antigas | Antes/depois hash SHA-256 `5979a7c91ff6bcc9fd7a8e0802e4fa7605963d36e8ad535dc9531bfbf9e0cce9`, backup local protegido | PASS |
+| DUMONT original / HOME Samsung | `br.com.dumont.launcher` preservado; role HOME ainda `com.sec.android.app.launcher` | PASS |
+| Tela do proprietário | ChatGPT em primeiro plano; nenhum novo teste de interação executado para evitar interrupção | UNKNOWN funcional em dispositivo |
+| Galaxy A55 | Nenhuma instalação nem alteração nesta revisão | Não testado |
+
+**Teste visual pendente:** proprietário abrir o DUMONT Pilot v0.6, verificar desktop, menu superior, centralização do catálogo, botão Terminal, Configurações nativas, navegação de apps, fixação por toque longo, controles de transparência e persistência após reinício. Bateria e memória seguem sem baseline comparativo.
+
+**Nota sobre uso de aplicativos:** autorização de Usage Access não foi dada via ADB; o `AppOps` permanece no modo padrão. Sem opt-in, ranking automático conta exclusivamente aberturas realizadas pelo DUMONT.
