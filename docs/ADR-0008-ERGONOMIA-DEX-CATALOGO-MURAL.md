@@ -24,3 +24,11 @@ Data: 16/10/2026. Estado: desenvolvimento; testes no aparelho pendentes.
 | UI-04 | Painel usa espaço vertical entre barras, rolagem acessível | Pendente aparelho |
 | SAFE-01 | HOME Samsung preservada, sem apagar dados | Pendente aparelho |
 | BUILD | CI, testes e assinatura estável | Pendente |
+
+
+## Correção de requisito — Ghost sidebar (proprietário, 16/10/2026)
+- O trilho NÃO permanece visível. Quando recolhido, não pode existir rail, ícone, faixa, sombra ou fundo aparente.
+- Um alvo de gesto transparente de 26 dp na borda direita abre o painel ao arrastar para a esquerda, sem obstruir a área de trabalho.
+- Expandido, o trilho e o mural aparecem juntos; ao arrastar para a direita, recolhem novamente.
+- A transparência configurável aplica-se ao trilho somente quando expandido.
+- A regra anterior de "trilho sempre visível" está revogada. Teste físico do gesto pendente.

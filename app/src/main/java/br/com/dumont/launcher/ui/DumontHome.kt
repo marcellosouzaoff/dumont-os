@@ -184,12 +184,12 @@ fun DumontHome(
                     .fillMaxWidth()
                     .padding(horizontal = barSideInset, vertical = 8.dp)
             )
-            Row(
+            if (sidebarExpanded) Row(
                 modifier = Modifier.align(Alignment.CenterEnd)
                     .padding(top = 64.dp, bottom = 94.dp, end = barSideInset)
                     .fillMaxHeight()
                     .fillMaxWidth(if (wide) .43f else .94f)
-                    .pointerInput(sidebarExpanded) {
+                    .pointerInput(Unit) {
                         var total = 0f
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { _, delta -> total += delta },
@@ -202,8 +202,7 @@ fun DumontHome(
                     },
                 horizontalArrangement = Arrangement.End
             ) {
-                if (sidebarExpanded) {
-                    Box(Modifier.weight(1f).fillMaxHeight()) {
+                Box(Modifier.weight(1f).fillMaxHeight()) {
                         if (activeSidebar == "Notificações") {
                             NotificationPanel(
                                 enabled = notificationsEnabled,
@@ -223,7 +222,6 @@ fun DumontHome(
                             )
                         }
                     }
-                }
                 RightRail(
                     selected = activeSidebar,
                     alpha = barOpacity,
@@ -234,6 +232,31 @@ fun DumontHome(
                         showAppearance = false
                     },
                     modifier = Modifier.fillMaxHeight()
+                )
+            }
+            // Invisible, narrow edge target: no rail, icon, background or shadow while closed.
+            if (!sidebarExpanded) {
+                Box(
+                    Modifier.align(Alignment.CenterEnd)
+                        .padding(top = 64.dp, bottom = 94.dp, end = barSideInset)
+                        .width(26.dp)
+                        .fillMaxHeight()
+                        .pointerInput(Unit) {
+                            var displacement = 0f
+                            detectHorizontalDragGestures(
+                                onHorizontalDrag = { _, delta -> displacement += delta },
+                                onDragEnd = {
+                                    if (displacement < -38f) {
+                                        activeSidebar = "Notificações"
+                                        sidebarExpanded = true
+                                        showApps = false
+                                        showAppearance = false
+                                    }
+                                    displacement = 0f
+                                }
+                            )
+                        }
+                        .semantics { contentDescription = "Abrir painel lateral com gesto da direita" }
                 )
             }
             if (showAppearance) {
