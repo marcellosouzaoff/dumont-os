@@ -51,3 +51,19 @@
 4. Somente após aprovação separada, ensaiar DUMONT como HOME padrão e demonstrar reversão para One UI.
 
 **Conclusão:** instalação, abertura, busca, Dock, persistência básica de favoritos e preservação da HOME Samsung foram observados em aparelho real. Não declarar conclusão do MVP, validação dos dois aparelhos, disponibilidade para distribuição pública ou aprovação da substituição da HOME.
+
+## Teste adicional: DUMONT Preview (sem substituir a instalação original)
+
+**Build:** commit `1a1b35f`; execução [38898851075](https://github.com/marcellosouzaoff/dumont-os/actions/runs/38898851075) — compilação, testes unitários e artefato **PASS**.
+
+- Pacote de depuração independente: `br.com.dumont.launcher.preview`.
+- SHA-256 do APK: `7aa671eae633a7e4ec17ea3523b74aff58c4bd5986446bbc8a61673172083404`.
+- Instalação ADB retornou `Success`; PackageManager confirmou presença simultânea de `br.com.dumont.launcher.preview` e `br.com.dumont.launcher`.
+- Abertura explícita `br.com.dumont.launcher.preview/br.com.dumont.launcher.MainActivity`: `Status: ok` e processo observado — **PASS**.
+- Hierarquia UI confirmou `DUMONT`, `Aplicativos`, `Buscar aplicativos`, `Configurar Home` e `Google · 18` — **PASS**.
+- Busca `Maps`: `Google · 1` e ação `Limpar` presentes — **PASS**. Acionar `Limpar` restaurou `Google · 18` — **PASS**.
+- O launcher Samsung continuou como detentor de `android.app.role.HOME` — **PASS**.
+- Tentativa de atualização do pacote original usando outro APK debug retornou `INSTALL_FAILED_UPDATE_INCOMPATIBLE` — **FAIL esperado por assinatura diferente**, sem desinstalar nem perder favoritos. A variante Preview separada elimina a necessidade de remoção do app original, mas não substitui uma solução estável de assinatura.
+- **Tela cheia:** a aplicação continuou em modo `freeform` no ambiente desktop do tablet; execução como HOME real em tela cheia não foi validada — **UNKNOWN**.
+
+Capturas reais de tela permaneceram somente no ambiente privado do tablet e não foram publicadas no GitHub.
