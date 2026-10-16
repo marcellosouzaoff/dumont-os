@@ -111,3 +111,7 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 ### DUMONT v0.8 — Integração nativa Samsung / Android
 
 [ADR-0006 — painel Galaxy, controles públicos, limites Knox e plano de widgets](docs/ADR-0006-INTEGRACAO-GALAXY-ONE-UI.md).
+
+### DUMONT v0.9 — sidebar e harmonia cromática
+
+[ADR-0007 — nova barra superior e painel lateral direito](docs/ADR-0007-DESIGN-SIDEBAR-V09.md).

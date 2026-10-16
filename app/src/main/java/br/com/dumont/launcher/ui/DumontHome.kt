@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -66,6 +68,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Wifi
+import androidx.compose.material.icons.outlined.WifiOff
+import androidx.compose.material.icons.outlined.BatteryFull
 import androidx.compose.ui.viewinterop.AndroidView
 import br.com.dumont.launcher.data.AppRules
 import br.com.dumont.launcher.integration.GalaxyBridge
@@ -108,8 +114,8 @@ fun DumontHome(
     val isDark = isSystemInDarkTheme()
     var showApps by rememberSaveable { mutableStateOf(false) }
     var showAppearance by rememberSaveable { mutableStateOf(false) }
-    var showNotifications by rememberSaveable { mutableStateOf(false) }
-    var showGalaxy by rememberSaveable { mutableStateOf(false) }
+    var activeSidebar by rememberSaveable { mutableStateOf("Notificações") }
+    var sidebarExpanded by rememberSaveable { mutableStateOf(false) }
     val dockKeys = remember(apps, pinnedKeys, usageScores) {
         AppRules.dockKeys(
             pinned = pinnedKeys,
@@ -143,44 +149,18 @@ fun DumontHome(
                 alpha = barOpacity,
                 compact = !wide,
                 deviceStatus = deviceStatus,
-                onNotifications = {
-                    showNotifications = !showNotifications
-                    showApps = false
-                    showAppearance = false
-                    showGalaxy = false
-                },
-                onApps = { showApps = true; showAppearance = false; showNotifications = false; showGalaxy = false },
+                onApps = { showApps = true; showAppearance = false; sidebarExpanded = false },
                 onSettings = onOpenSettings,
-                onGalaxy = {
-                    showGalaxy = !showGalaxy
-                    showApps = false
-                    showAppearance = false
-                    showNotifications = false
-                },
                 onTerminal = onOpenTerminal,
                 onAppearance = {
                     showAppearance = !showAppearance
                     showApps = false
-                    showNotifications = false
-                    showGalaxy = false
+                    sidebarExpanded = false
                 },
                 modifier = Modifier.align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .padding(horizontal = barSideInset, vertical = 4.dp)
             )
-            if (showGalaxy) {
-                GalaxyPanel(
-                    apps = apps,
-                    onOpenAction = onGalaxyAction,
-                    onLaunch = onLaunch,
-                    onClose = { showGalaxy = false },
-                    modifier = Modifier.align(Alignment.Center)
-                        .fillMaxWidth(if (wide) .76f else .96f)
-                        .widthIn(max = 880.dp)
-                        .fillMaxHeight(if (wide) .78f else .80f)
-                        .heightIn(max = 750.dp)
-                )
-            }
             if (showApps) {
                 ApplicationWindow(
                     apps = apps,
@@ -209,21 +189,56 @@ fun DumontHome(
                     .fillMaxWidth()
                     .padding(horizontal = barSideInset, vertical = 8.dp)
             )
-            if (showNotifications) {
-                NotificationPanel(
-                    enabled = notificationsEnabled,
-                    onEnable = onNotificationPermission,
-                    onOpen = onNotificationClick,
-                    onClose = { showNotifications = false },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                        .padding(
-                            top = 64.dp,
-                            bottom = 93.dp,
-                            end = if (wide) 12.dp else 4.dp
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd)
+                    .padding(top = 64.dp, bottom = 94.dp, end = barSideInset)
+                    .fillMaxHeight()
+                    .fillMaxWidth(if (wide) .43f else .94f)
+                    .pointerInput(sidebarExpanded) {
+                        var total = 0f
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { _, delta -> total += delta },
+                            onDragEnd = {
+                                if (total < -45f) sidebarExpanded = true
+                                if (total > 45f) sidebarExpanded = false
+                                total = 0f
+                            }
                         )
-                        .fillMaxWidth(if (wide) .35f else .92f)
-                        .widthIn(max = 380.dp)
-                        .fillMaxHeight()
+                    },
+                horizontalArrangement = Arrangement.End
+            ) {
+                if (sidebarExpanded) {
+                    Box(Modifier.weight(1f).fillMaxHeight()) {
+                        if (activeSidebar == "Notificações") {
+                            NotificationPanel(
+                                enabled = notificationsEnabled,
+                                onEnable = onNotificationPermission,
+                                onOpen = onNotificationClick,
+                                onClose = { sidebarExpanded = false },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            GalaxyPanel(
+                                apps = apps,
+                                onOpenAction = onGalaxyAction,
+                                onLaunch = onLaunch,
+                                onClose = { sidebarExpanded = false },
+                                section = activeSidebar,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+                }
+                RightRail(
+                    selected = activeSidebar,
+                    alpha = barOpacity,
+                    onChoose = { section ->
+                        sidebarExpanded = if (activeSidebar == section) !sidebarExpanded else true
+                        activeSidebar = section
+                        showApps = false
+                        showAppearance = false
+                    },
+                    modifier = Modifier.fillMaxHeight()
                 )
             }
             if (showAppearance) {
@@ -254,10 +269,8 @@ private fun TopBar(
     alpha: Float,
     compact: Boolean,
     deviceStatus: SystemStatus,
-    onNotifications: () -> Unit,
     onApps: () -> Unit,
     onSettings: () -> Unit,
-    onGalaxy: () -> Unit,
     onTerminal: () -> Unit,
     onAppearance: () -> Unit,
     modifier: Modifier
@@ -281,26 +294,26 @@ private fun TopBar(
                 MenuItem("Aplicativos", onApps, compact)
                 MenuItem("Configurações", onSettings, compact)
                 MenuItem("Terminal", onTerminal, compact)
-                MenuItem("Galaxy", onGalaxy, compact)
             }
-            Column(
+            Row(
                 modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    deviceStatus.dateTime,
-                    maxLines = 1,
-                    fontSize = if (compact) 10.sp else 13.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    "${deviceStatus.battery}   ·   ${deviceStatus.network}",
-                    maxLines = 1,
-                    fontSize = if (compact) 9.sp else 11.sp,
-                    color = Color.White.copy(alpha = .88f),
-                    textAlign = TextAlign.Center
+                Box(Modifier.size(40.dp, 24.dp), contentAlignment = Alignment.Center) {
+                    Icon(Icons.Outlined.BatteryFull, contentDescription = "Bateria",
+                        tint = Color.White, modifier = Modifier.fillMaxSize())
+                    Text(deviceStatus.battery.substringBefore(" ").take(4),
+                        fontSize = 8.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
+                Spacer(Modifier.width(if (compact) 2.dp else 8.dp))
+                Text(deviceStatus.dateTime, maxLines = 1, color = Color.White,
+                    fontSize = if (compact) 9.sp else 12.sp)
+                Spacer(Modifier.width(if (compact) 2.dp else 8.dp))
+                Icon(
+                    if (deviceStatus.network == "Wi-Fi") Icons.Outlined.Wifi else Icons.Outlined.WifiOff,
+                    contentDescription = deviceStatus.network,
+                    tint = Color.White, modifier = Modifier.size(19.dp)
                 )
             }
             Row(
@@ -308,13 +321,6 @@ private fun TopBar(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(
-                    onClick = onNotifications,
-                    modifier = Modifier.semantics { contentDescription = "Notificações" },
-                    contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 10.dp)
-                ) {
-                    NotificationBell()
-                }
                 TextButton(
                     onClick = onAppearance,
                     contentPadding = PaddingValues(horizontal = if (compact) 4.dp else 12.dp)
@@ -342,10 +348,13 @@ private fun GalaxyPanel(
     onOpenAction: (String) -> Unit,
     onLaunch: (AppEntry) -> Unit,
     onClose: () -> Unit,
+    section: String,
     modifier: Modifier
 ) {
     val samsungApps = remember(apps) { GalaxyBridge.availableSamsungApps(apps) }
-    val sections = remember { GalaxyBridge.systemActions.groupBy { it.section } }
+    val sections = remember(section) {
+        GalaxyBridge.systemActions.filter { it.section == section }.groupBy { it.section }
+    }
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.surface,
@@ -359,7 +368,7 @@ private fun GalaxyPanel(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Integração Galaxy",
+                    section,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -377,23 +386,6 @@ private fun GalaxyPanel(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                item { Text("Aplicativos Samsung disponíveis", fontWeight = FontWeight.SemiBold) }
-                if (samsungApps.isEmpty()) {
-                    item { Text("Nenhum aplicativo Samsung com atividade acessível neste perfil.") }
-                }
-                listItems(samsungApps, key = { "app-" + it.key }) { app ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable { onLaunch(app) }
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        NativeAppIcon(app, Modifier.size(34.dp))
-                        Text(app.label, color = MaterialTheme.colorScheme.onSurface)
-                    }
-                }
                 sections.forEach { (section, actions) ->
                     item(key = "section-$section") {
                         Spacer(Modifier.height(10.dp))
@@ -412,6 +404,34 @@ private fun GalaxyPanel(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = .7f))
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RightRail(
+    selected: String,
+    alpha: Float,
+    onChoose: (String) -> Unit,
+    modifier: Modifier
+) {
+    val sections = listOf("Notificações", "Conexões", "Dispositivo", "Segurança", "Sistema")
+    Surface(modifier = modifier.width(60.dp), shape = RoundedCornerShape(14.dp),
+        color = DumontColors.black.copy(alpha = alpha), shadowElevation = 3.dp) {
+        Column(Modifier.fillMaxSize().padding(vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            sections.forEachIndexed { i, section ->
+                Box(Modifier.size(48.dp).clip(RoundedCornerShape(10.dp))
+                    .background(if (selected == section) DumontColors.mocha.copy(alpha = .68f)
+                        else Color.Transparent)
+                    .clickable { onChoose(section) }
+                    .semantics { contentDescription = section },
+                    contentAlignment = Alignment.Center) {
+                    Text(listOf("●", "⌁", "▣", "◇", "⚙")[i],
+                        color = Color.White, fontSize = 23.sp)
                 }
             }
         }
