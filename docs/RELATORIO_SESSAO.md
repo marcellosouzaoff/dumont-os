@@ -266,3 +266,26 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Não foram introduzidas novas permissões, serviços, envios remotos
   de dados, alterações de HOME/Knox, nem concessão de notificações.
 - APK ARM64 e teste físico ainda requerem evidência específica.
+
+
+### Validação ARM64 e navegação física — fase 4
+
+- Build Flutter/Kotlin ARM64 debug **PASS**, `ca68a53be6b3fd3d09ffbacf47d93c7f91525b3c39e60ad414e61bdbc48cf844`.
+- Certificado `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`
+  validado e compatível com a trial instalada.
+- ADB `install -r` Success no pacote isolado
+  `br.com.dumont.experience.preview.trial`.
+- SM-X510: abertura Flutter por `am start -W` PASS.
+- Ghost Conexões: diálogo público «Internet» abriu; comando
+  Back voltou ao DUMONT e manteve dados nativos no Ghost (PASS).
+- Ghost Dispositivo: tela pública «Visor» do app
+  `com.android.settings` abriu; Back retornou ao DUMONT (PASS).
+- Ghost após retorno: rede Wi-Fi, bateria 48% carregando; sem
+  alteração de bateria, Wi-Fi ou ajustes do aparelho.
+- Recebimento de uma alteração real espontânea nos valores:
+  UNKNOWN; concorrência da consulta testada em Flutter.
+- `pm list packages -u` continua apresentando somente a trial;
+  a origem da ausência da prévia original permanece UNKNOWN.
+- Privilégio especial de notificações NÃO CONCEDIDO.
+- Logcat de erros examinado em amostra recente sem crash identificado;
+  isso não equivale a auditoria completa dos logs.

@@ -155,3 +155,9 @@ O Flutter observa o ciclo de vida. Ao voltar de uma tela externa
 de consentimento das notificações sem polling e sem alterá-lo.
 Eventos mais recentes têm prioridade sobre respostas atrasadas.
 Testes de regressão em `test/settings_resume_test.dart`.
+
+
+Teste físico de 17/10/2026: Ghost → Internet (diálogo Android) e
+Ghost → Visor (Activity Android) abriram e retornaram ao Flutter.
+Versão de teste: `br.com.dumont.experience.preview.trial`.
+Ver ADR-0019 para critérios e limites da validação.

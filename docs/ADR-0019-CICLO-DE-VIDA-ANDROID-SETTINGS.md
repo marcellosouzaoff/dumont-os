@@ -41,8 +41,22 @@ naquele intervalo. Reinstalar ou resetar o aplicativo não é solução.
    atrasada (75%) não sobrescrever evento mais recente (91%).
 4. `flutter analyze`: **PASS — zero problemas**.
 5. Suíte `flutter test`: **PASS — 29/29**.
-6. Build Android ARM64, comparação de certificado e teste físico:
-   **UNKNOWN** até a respectiva execução nesta rodada.
+6. `flutter build apk --debug --target-platform android-arm64`:
+   **PASS**. Identificador isolado: `br.com.dumont.experience.preview.trial`.
+7. Certificado APK SHA-256: `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`,
+   compatível com a prévia trial instalada; APK SHA-256:
+   `ca68a53be6b3fd3d09ffbacf47d93c7f91525b3c39e60ad414e61bdbc48cf844`.
+8. ADB `install -r`: **PASS**; Activity Flutter `am start -W` **PASS**.
+9. Ghost → Conexões: abriu diálogo público de Internet;
+   Android Back retornou ao DUMONT com Ghost visível (PASS).
+10. Ghost → Dispositivo: abriu Activity Android
+    `com.android.settings/.Settings$DisplaySettingsActivity`;
+    Android Back retornou à MainActivity Flutter (PASS).
+11. Valores reais do tablet no Ghost após retorno: rede Wi-Fi e
+    bateria 48%, carregando; sem alterações feitas nos ajustes.
+12. Mudança física deliberada de conectividade/bateria: **UNKNOWN**,
+    não provocada para preservar ADB e estado do dispositivo.
+    Simulação por TDD cobre o refresh e a concorrência (PASS).
 
 ## Auditoria não destrutiva dos pacotes
 
