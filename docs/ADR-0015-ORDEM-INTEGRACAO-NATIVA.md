@@ -35,5 +35,9 @@
 - RED: contrato novo falhou antes da implementação do codec.
 - GREEN: `flutter analyze` **0 problemas**, `flutter test` **19/19 PASS**,
   incluindo imagens de referência regeneradas pelo renderizador Flutter.
-- Build Kotlin/Android desta etapa: ainda exigir prova separada.
+- Build Kotlin/Android ARM64 debug: **PASS**, Flutter 3.47.7,
+  Android SDK 36 e NDK 28.2.
+- APK SHA-256: `96c972e0580da7f55b8c9e70404f49cd9caa46229c0caeb34327760353d91283`.
+- Copiado ao Termux do tablet em `~/dumont-validation/artifacts/
+  dumont-native-integrations-20261017-arm64-debug.apk`, hash conferido.
 - Instalação no tablet: **NÃO REALIZADA**.

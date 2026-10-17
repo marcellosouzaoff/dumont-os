@@ -91,3 +91,20 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - NotificationListener, consentimento especial e instalação:
   NÃO REALIZADOS. Nenhuma permissão privilegiada.
 - Compilação Android nativa aguarda registro do resultado separado.
+
+
+### Fechamento de build — nova sequência
+
+- Android SDK 36 e NDK 28.2, Flutter 3.47.7:
+  `flutter build apk --debug --target-platform android-arm64`: PASS.
+- Hash SHA-256 do APK resultante: `96c972e0580da7f55b8c9e70404f49cd9caa46229c0caeb34327760353d91283`.
+- APK de debug copiado para o Termux do SM-X510 e seu hash
+  confirmado; **não instalado**.
+- ADB confirma a prévia antiga versão 1.0.0, com data de instalação
+  17/10/2026 12:50:09, sem alteração nesta rodada.
+- `flutter analyze` PASS 0 issues; `flutter test` PASS 19/19.
+- Permissão Android normal ACCESS_NETWORK_STATE usada apenas
+  para o transporte da rede; notificações especiais sem autorização.
+- Próximos gates: autorização explícita antes de acessar notificações;
+  SOMENTE APÓS essas etapas, conferir assinatura e testar instalação
+  no tablet, respeitando HOME/Knox/firmware Samsung.
