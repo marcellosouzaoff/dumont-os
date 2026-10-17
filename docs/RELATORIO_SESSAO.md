@@ -33,7 +33,9 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Testes: Flutter 3.47.7, `flutter analyze` PASS 0 problemas e `flutter test`
   PASS 11/11 no Codespace. Dois golden regenerados pela alteração de layout.
 - Instalação: pacote preview v1.0.0 confirmado por ADB no SM-X510.
-  Código Fase 3 não instalado; Android build novo UNKNOWN por SDK ausente.
+  Código Fase 3 não instalado; build Android ARM64 debug PASS após
+  preparação de Android SDK API 36 e NDK 28.2 no Codespace.
+  APK de aproximadamente 75 MB, SHA-256: `ce7a1835cf43c860b4a166df936fdbbc20e285d3c13822d3bd2b7ce3c878dac8`.
 - Publicação GitHub: commit de implementação `8131e72`; atualização
   de goldens e documentação em commit subsequente.
 - Restrição: GitHub bloqueou a publicação de workflow por falta de escopo.

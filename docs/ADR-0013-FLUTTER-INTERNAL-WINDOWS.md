@@ -30,5 +30,7 @@ APK existente não é sobrescrito antes de prova de CI e consentimento explícit
 - Correção local visual pré-existente: texto editorial aparece somente
   quando o painel de aplicativos está recolhido.
 - Golden tests PASS após atualizar duas referências de correção de layout.
-- Revisão física do novo build e novo APK ARM64: UNKNOWN (SDK Android ausente).
+- Build do novo APK ARM64 debug: PASS (SDK API 36, NDK 28.2, Gradle).
+  SHA-256: `ce7a1835cf43c860b4a166df936fdbbc20e285d3c13822d3bd2b7ce3c878dac8` (aprox. 75 MB).
+- Revisão física e instalação do novo build: UNKNOWN / NÃO EXECUTADA.
 - Workflow Flutter não publicado: token sem escopo workflow; CI automático PENDENTE.

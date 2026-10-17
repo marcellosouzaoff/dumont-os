@@ -73,5 +73,5 @@ de **janelas internas** em `lib/windows/dumont_window_manager.dart`.
 O botão **Ajustes** abre a janela de demonstração Linus Security com Knox
 marcado `UNKNOWN`. Essas janelas são internas ao Flutter e não operam janelas
 DeX ou aplicativos externos. `flutter analyze` e `flutter test`
-(11/11) PASS no Codespace. O novo APK, CI automático e teste físico Fase 3
-permanecem pendentes.
+(11/11) PASS no Codespace. Novo APK ARM64 debug: PASS (SHA-256 `ce7a1835cf43c860b4a166df936fdbbc20e285d3c13822d3bd2b7ce3c878dac8`).
+CI automático e instalação/teste físico Fase 3 permanecem pendentes.
