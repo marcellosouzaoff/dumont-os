@@ -5,6 +5,23 @@
         android:label="DUMONT Flutter Preview"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- System-bound service, disabled until the user grants notification
+             access in Android Settings. No notification body is retained. -->
+        <service
+            android:name=".DumontNotificationListener"
+            android:label="DUMONT — notificações"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.notification.default_filter_types"
+                android:value="conversations|alerting"/>
+            <meta-data
+                android:name="android.service.notification.disabled_filter_types"
+                android:value="ongoing|silent"/>
+        </service>
         <activity
             android:name=".MainActivity"
             android:exported="true"

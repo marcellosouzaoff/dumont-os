@@ -108,3 +108,18 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Próximos gates: autorização explícita antes de acessar notificações;
   SOMENTE APÓS essas etapas, conferir assinatura e testar instalação
   no tablet, respeitando HOME/Knox/firmware Samsung.
+
+
+## 17/10/2026 — Autorização para próxima etapa: notificações
+
+- Usuário confirmou implementação das notificações seguindo a sequência
+  estabelecida (autorização em conversa).
+- Android ainda exige autorização especial manual por tela oficial;
+  nenhuma concessão automática ou via ADB.
+- Implementado listener privado com dados apenas em memória, limite
+  de 12, campos `packageName`, `appLabel`, `postTimeMs`.
+- UI Ghost exibe estado de acesso e abre a configuração oficial
+  somente quando o usuário seleciona a função.
+- Nenhum título/corpo/código ou histórico são persistidos.
+- TDD, build, assinatura e teste físico aguardam validação;
+  estado UNKNOWN até evidência.

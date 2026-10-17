@@ -101,3 +101,16 @@ sem listener nem permissão e aguarda autorização explícita.
 
 **A instalação e os testes no tablet são o último gate.**
 Consulte `docs/ADR-0015-ORDEM-INTEGRACAO-NATIVA.md`.
+
+
+## Notificações — ativação voluntária
+
+A opção Notificações do Ghost reconhece o estado de acesso especial.
+Somente ao tocar sem acesso concedido ela abre a página oficial de
+permissões Android. O sistema pede confirmação MANUAL. Mesmo após
+autorização, o DUMONT guarda apenas nome do aplicativo e timestamp
+em memória (até 12 registros); não lê nem exibe títulos, mensagens,
+códigos ou ações. Ao revogar o acesso, a UI limpa os registros
+disponíveis. O sistema Android pode conceder alcance mais amplo ao
+listener, por isso o usuário deve avaliar cuidadosamente o aviso
+oficial. Sem envio de dados para terceiros.

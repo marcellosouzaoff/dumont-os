@@ -83,6 +83,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
   final DumontWindowManager _windows = DumontWindowManager();
   final DumontNativeBridge _nativeBridge = const DumontNativeBridge();
   DumontDeviceInfo? _deviceInfo;
+  DumontNotificationSnapshot? _notificationSnapshot;
   List<DemoApp>? _realApps;
   List<String> get _categories =>
       _realApps == null ? categories : const ['Todos', 'Instalados'];
@@ -96,6 +97,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
     ghostOpen = widget.ghostInitiallyOpen;
     _refreshNativeApps();
     _refreshDeviceStatus();
+    _refreshNotifications();
   }
 
   @override
@@ -181,6 +183,33 @@ class _DumontDesktopState extends State<DumontDesktop> {
       if (mounted) notify('Não foi possível abrir a configuração');
     } on ArgumentError {
       if (mounted) notify('Ação de configuração não permitida');
+    }
+  }
+
+  Future<void> _refreshNotifications() async {
+    try {
+      final snapshot = await _nativeBridge.getNotificationSnapshot();
+      if (mounted) setState(() => _notificationSnapshot = snapshot);
+    } on MissingPluginException {
+      // Web and tests: do not claim permission or show any private data.
+    } on PlatformException {
+      if (mounted) setState(() => _notificationSnapshot = null);
+    }
+  }
+
+  /// The user must tap to open Android's special-access grant screen.
+  Future<void> _handleNotificationTap() async {
+    if (_notificationSnapshot?.accessGranted == true) {
+      await _refreshNotifications();
+      return;
+    }
+    try {
+      final opened = await _nativeBridge.openNotificationAccessSettings();
+      if (!opened && mounted) notify('Configurações de acesso indisponíveis');
+    } on MissingPluginException {
+      if (mounted) notify('Permissão disponível somente no Android');
+    } on PlatformException {
+      if (mounted) notify('Não foi possível abrir permissões Android');
     }
   }
 
@@ -894,45 +923,74 @@ class _DumontDesktopState extends State<DumontDesktop> {
               letterSpacing: 1.5,
             ),
           ),
-          const SizedBox(height: 27),
-          _ghostRow(
-            Icons.notifications_none,
-            'Notificações',
-            'Sem acesso — autorização explícita pendente',
+          const SizedBox(height: 15),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _ghostRow(
+                  Icons.notifications_none,
+                  'Notificações',
+                  _notificationSnapshot?.accessGranted == true
+                      ? (_notificationSnapshot!.connected
+                            ? '${_notificationSnapshot!.notifications.length} registros locais · toque para atualizar'
+                            : 'Acesso concedido · aguardando serviço Android')
+                      : 'Acesso não concedido · toque para abrir permissões',
+                  onTap: _handleNotificationTap,
+                ),
+                if (_notificationSnapshot?.connected == true)
+                  ..._notificationSnapshot!.notifications
+                      .take(2)
+                      .map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(left: 36, bottom: 8),
+                          child: Text(
+                            item.appLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Brand.cream,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                      ),
+                _ghostRow(
+                  Icons.wifi,
+                  'Conexões',
+                  _deviceInfo?.networkType == null
+                      ? 'Estado desconhecido'
+                      : 'Rede ativa: ${_deviceInfo!.networkType}',
+                  onTap: () => _openPublicSettings('internet'),
+                ),
+                _ghostRow(
+                  Icons.devices,
+                  'Dispositivo',
+                  _deviceInfo == null
+                      ? 'Dispositivo não verificado'
+                      : '${_deviceInfo!.model} · Android ${_deviceInfo!.androidVersion}',
+                  onTap: () => _openPublicSettings('display'),
+                ),
+                _ghostRow(
+                  Icons.battery_std_rounded,
+                  'Bateria',
+                  _deviceInfo?.batteryPercent == null
+                      ? 'Estado desconhecido'
+                      : '${_deviceInfo!.batteryPercent}% · ${_deviceInfo!.isCharging == true ? "Carregando" : "Status medido"}',
+                  onTap: _refreshDeviceStatus,
+                ),
+                _ghostRow(
+                  Icons.shield_outlined,
+                  'Privacidade',
+                  'Configurações públicas do Android',
+                  onTap: () => _openPublicSettings('privacy'),
+                ),
+              ],
+            ),
           ),
-          _ghostRow(
-            Icons.wifi,
-            'Conexões',
-            _deviceInfo?.networkType == null
-                ? 'Estado desconhecido'
-                : 'Rede ativa: ${_deviceInfo!.networkType}',
-            onTap: () => _openPublicSettings('internet'),
-          ),
-          _ghostRow(
-            Icons.devices,
-            'Dispositivo',
-            _deviceInfo == null
-                ? 'Dispositivo não verificado'
-                : '${_deviceInfo!.model} · Android ${_deviceInfo!.androidVersion}',
-            onTap: () => _openPublicSettings('display'),
-          ),
-          _ghostRow(
-            Icons.battery_std_rounded,
-            'Bateria',
-            _deviceInfo?.batteryPercent == null
-                ? 'Estado desconhecido'
-                : '${_deviceInfo!.batteryPercent}% · ${_deviceInfo!.isCharging == true ? "Carregando" : "Status medido"}',
-            onTap: _refreshDeviceStatus,
-          ),
-          _ghostRow(
-            Icons.shield_outlined,
-            'Privacidade',
-            'Configurações públicas do Android',
-            onTap: () => _openPublicSettings('privacy'),
-          ),
-          const Spacer(),
+          const SizedBox(height: 8),
           const Text(
-            'PRÉVIA — SEM DADOS PESSOAIS',
+            'PRÉVIA — SEM CONTEÚDO DE MENSAGENS',
             style: TextStyle(
               color: Brand.muted,
               fontSize: 10,

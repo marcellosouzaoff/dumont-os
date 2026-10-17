@@ -1,5 +1,6 @@
 package com.example.dumont_experience
 
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
@@ -97,9 +98,42 @@ class MainActivity : FlutterActivity() {
                             }
                         }
                     }
+                    "getNotificationSnapshot" -> {
+                        // Never send records if Android access was revoked.
+                        val access = hasNotificationListenerAccess()
+                        val (connected, entries) = if (access) {
+                            DumontNotificationMemory.snapshot()
+                        } else {
+                            false to emptyList<Map<String, Any>>()
+                        }
+                        result.success(mapOf(
+                            "accessGranted" to access,
+                            "connected" to connected,
+                            "notifications" to entries
+                        ))
+                    }
+                    "openNotificationAccessSettings" -> {
+                        try {
+                            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                            result.success(true)
+                        } catch (_: Exception) {
+                            result.error("notification_settings_unavailable",
+                                "Android notification listener settings unavailable", null)
+                        }
+                    }
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    private fun hasNotificationListenerAccess(): Boolean {
+        val service = ComponentName(this, DumontNotificationListener::class.java)
+        return try {
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.isNotificationListenerAccessGranted(service)
+        } catch (_: Exception) {
+            false
+        }
     }
 
     private data class LaunchableActivity(

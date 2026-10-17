@@ -90,6 +90,67 @@ class DumontDeviceInfo {
   }
 }
 
+/// Small in-memory record: never contains notification title, body or OTP.
+class DumontNotification {
+  const DumontNotification({
+    required this.packageName,
+    required this.appLabel,
+    required this.postTimeMs,
+  });
+  final String packageName;
+  final String appLabel;
+  final int postTimeMs;
+
+  static DumontNotification? parse(Object? raw) {
+    if (raw is! Map) return null;
+    final pkg = raw['packageName'];
+    final app = raw['appLabel'];
+    final time = raw['postTimeMs'];
+    if (pkg is! String ||
+        pkg.isEmpty ||
+        app is! String ||
+        app.isEmpty ||
+        time is! int ||
+        time <= 0) {
+      return null;
+    }
+    return DumontNotification(
+      packageName: pkg.substring(0, pkg.length.clamp(0, 120)),
+      appLabel: app.substring(0, app.length.clamp(0, 70)),
+      postTimeMs: time,
+    );
+  }
+}
+
+class DumontNotificationSnapshot {
+  const DumontNotificationSnapshot({
+    required this.accessGranted,
+    required this.connected,
+    required this.notifications,
+  });
+  final bool accessGranted;
+  final bool connected;
+  final List<DumontNotification> notifications;
+
+  static DumontNotificationSnapshot parse(Object? raw) {
+    final map = raw is Map ? raw : const {};
+    final granted = map['accessGranted'] == true;
+    final connected = granted && map['connected'] == true;
+    final items = <DumontNotification>[];
+    if (connected && map['notifications'] is List) {
+      for (final item in map['notifications'] as List) {
+        final parsed = DumontNotification.parse(item);
+        if (parsed != null && items.length < 12) items.add(parsed);
+      }
+    }
+    return DumontNotificationSnapshot(
+      accessGranted: granted,
+      connected: connected,
+      notifications: List.unmodifiable(items),
+    );
+  }
+}
+
 /// Contrato v1: métodos públicos sem permissões privilegiadas.
 /// Erros como MissingPluginException chegam ao chamador para explicitar fallback.
 class DumontNativeBridge {
@@ -138,6 +199,19 @@ class DumontNativeBridge {
     return await _channel.invokeMethod<bool>('openSettings', <String, String>{
           'id': id,
         }) ??
+        false;
+  }
+
+  Future<DumontNotificationSnapshot> getNotificationSnapshot() async {
+    final raw = await _channel.invokeMethod<dynamic>('getNotificationSnapshot');
+    return DumontNotificationSnapshot.parse(raw);
+  }
+
+  /// This only opens Android settings. Grant/revoke always belongs to the user.
+  Future<bool> openNotificationAccessSettings() async {
+    return await _channel.invokeMethod<bool>(
+          'openNotificationAccessSettings',
+        ) ??
         false;
   }
 
