@@ -174,3 +174,11 @@ janelas do Android/DeX.
 Validação física no Tab S9 FE: clique em «Maximizar» abriu a janela
 na área útil; clique em «Restaurar» devolveu a geometria inicial.
 Android trial somente, sem mudanças na HOME e sem teste DeX real.
+
+
+## Matriz responsiva (ADR-0021)
+
+`test/responsive_breakpoints_test.dart` exercita telas de celulares,
+tablets e janelas curtas de desktop; o menu lateral e o catálogo
+passam a rolar quando a altura disponível é insuficiente.
+Testes de dimensão **não** equivalem a instalar no A55 nem a rodar DeX real.

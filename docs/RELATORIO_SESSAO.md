@@ -326,3 +326,21 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - A prévia original segue ausente do inventário de pacotes;
   causa **UNKNOWN**, nenhuma reinstalação/desinstalação feita.
 - DeX real **UNKNOWN**; não simular aprovação a partir do viewport Flutter.
+
+
+## 17/10/2026 — Fase 6: matriz de responsividade
+
+- Tablet SM-X510 acessível e branch experimental limpa no início.
+- A55 SM-A556E acessível via Termux, porém sem ADB ativo; não foi
+  autorizada instalação sem verificação de pacote/assinatura.
+- TDD: novos testes de 13 dimensões e Ghost em 320×568.
+- Primeiro RED: overflow de 54 px em 1024×600, categorias laterais.
+  Correção com lista vertical rolável.
+- Segundo RED: overflow de 83 px em 600×360, conteúdo do navegador.
+  Correção com layout rolável em alturas reduzidas.
+- GREEN: Flutter analyze 0 problemas; suite completa 33/33 PASS,
+  inclusive goldens desktop/tablet/celular/Ghost anteriores.
+- Samsung DeX real não testado: UNKNOWN. A55 físico: UNKNOWN.
+- Direitos e privacidade: nenhuma nova permissão, alteração de
+  sistema ou coleta de dados; nenhuma mudança de HOME/Knox.
+- ADR-0021 contém a matriz e as evidências.

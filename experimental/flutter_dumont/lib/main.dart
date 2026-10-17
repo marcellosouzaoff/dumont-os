@@ -669,8 +669,19 @@ class _DumontDesktopState extends State<DumontDesktop>
                                 ),
                               ),
                             ),
-                            for (final cat in _categories) _sideItem(cat),
-                            const Spacer(),
+                            // The category list must scroll in short desktop
+                            // windows (e.g. 1024x600 DeX-like viewport).
+                            // A fixed Column overflows before it can shrink.
+                            Expanded(
+                              child: ListView(
+                                key: const Key('category-list'),
+                                padding: EdgeInsets.zero,
+                                children: [
+                                  for (final cat in _categories)
+                                    _sideItem(cat),
+                                ],
+                              ),
+                            ),
                             const Padding(
                               padding: EdgeInsets.all(18),
                               child: Text(
@@ -693,10 +704,12 @@ class _DumontDesktopState extends State<DumontDesktop>
                           compact ? 13 : 23,
                           10,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (!compact) ...[
+                        child: LayoutBuilder(
+                          builder: (context, available) {
+                            final content = Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (!compact) ...[
                               const Text(
                                 'Seu universo, organizado.',
                                 style: TextStyle(
@@ -808,7 +821,23 @@ class _DumontDesktopState extends State<DumontDesktop>
                                 },
                               ),
                             ),
-                          ],
+                              ],
+                            );
+                            // Short multi-window surfaces cannot fit a full
+                            // catalog header, filters and app grid at once.
+                            // Scroll content only in this compact-height mode;
+                            // normal tablet/desktop layouts remain unchanged.
+                            if (available.maxHeight < (compact ? 245 : 260)) {
+                              return SingleChildScrollView(
+                                key: const Key('short-browser-scroll'),
+                                child: SizedBox(
+                                  height: compact ? 270 : 320,
+                                  child: content,
+                                ),
+                              );
+                            }
+                            return content;
+                          },
                         ),
                       ),
                     ),
