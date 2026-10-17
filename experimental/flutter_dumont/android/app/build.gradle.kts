@@ -30,6 +30,11 @@ android {
     }
 
     buildTypes {
+        // Installed debug preview has a DIFFERENT signing certificate.
+        // Never overwrite it: all new debug runs use a separate application ID.
+        debug {
+            applicationIdSuffix = ".trial"
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.

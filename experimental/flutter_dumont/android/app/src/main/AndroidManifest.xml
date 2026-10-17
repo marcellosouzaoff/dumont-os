@@ -2,7 +2,7 @@
     <!-- Normal permission, no runtime dialog; only network transport status. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
-        android:label="DUMONT Flutter Preview"
+        android:label="DUMONT Teste"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <!-- System-bound service, disabled until the user grants notification

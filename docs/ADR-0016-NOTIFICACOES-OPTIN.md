@@ -44,3 +44,15 @@ funcionalidade, mas **não concede** a permissão especial Android.
 
 **Estado de prova:** implementação aguardando validação técnica e
 instalação separada. Não inferir que acesso especial já foi concedido.
+
+## Bloqueio de assinatura verificado
+
+- Certificado do APK instalado (SHA-256):
+  `dc9a66e6488f447216fde01d2b00a0ec97d6be6cc980a464dfa282eefe29844d`.
+- Certificado do primeiro build novo (SHA-256):
+  `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`.
+- **Incompatíveis**: proibido usar `adb install -r` para o pacote atual.
+- A build de teste `debug` recebe `applicationIdSuffix = ".trial"`,
+  produzindo `br.com.dumont.experience.preview.trial` para instalação
+  lado a lado sem substituir o aplicativo antigo.
+- Não executar uninstall nem limpar dados da versão instalada.
