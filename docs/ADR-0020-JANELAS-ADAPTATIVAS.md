@@ -37,10 +37,23 @@ aproveitar a área de trabalho sem perder o tamanho escolhido.
 3. **GREEN:** `test/window_adaptive_test.dart`: **2/2 PASS**.
 4. Flutter 3.47.7: `flutter analyze` **PASS, 0 issues**;
    `flutter test` **PASS, 31/31**.
-5. Build Android ARM64 e instalação no tablet: **UNKNOWN** antes de
-   finalizar testes físicos.
-6. Funcionamento no Samsung DeX real: **UNKNOWN**. Testes simulam
-   mudanças de dimensão em Flutter; não equivalem a sessão DeX.
+5. Build Android ARM64 `flutter build apk --debug
+   --target-platform android-arm64`: **PASS**; assinatura debug
+   SHA-256 `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`, compatível com a trial;
+   APK SHA-256 `1df7174259aa335f6d1f2084d916910b7b1b5d7a8729ac110e812aa00092e02c`.
+6. ADB `install -r` para `br.com.dumont.experience.preview.trial`:
+   **PASS**, atualização do pacote e MainActivity `am start`: PASS.
+7. UIAutomator no Galaxy Tab S9 FE: botão «Maximizar Linus
+   Security» com limites [690,225][774,303], após toque passou a
+   «Restaurar Linus Security» [2077,183][2161,261].
+   Toque de restaurar reexibiu «Maximizar Linus Security» na
+   posição original: **PASS**.
+8. Selo `Knox · UNKNOWN` permanece intacto. Notificações especiais
+   continuam **NOT_GRANTED**.
+9. Nenhuma mudança manual de rotação, rede, tela externa ou modo DeX
+   foi executada. O comportamento em sessão real DeX é **UNKNOWN**.
+10. Testes Flutter simulam mudanças de dimensões; isso não equivale
+    a sessão real no Samsung DeX (**UNKNOWN**).
 
 ## Investigação somente leitura — prévia original
 

@@ -305,3 +305,24 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Build ARM64, teste físico de janela e backup remoto: aguardam
   resultados verificáveis antes do encerramento.
 - DeX real não ativado nem testado: **UNKNOWN**.
+
+
+### Fechamento físico da fase 5 — janelas
+
+- Build ARM64 debug PASS; APK SHA-256 `1df7174259aa335f6d1f2084d916910b7b1b5d7a8729ac110e812aa00092e02c`.
+- Assinatura SHA-256 `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46` compatível
+  com a trial pré-instalada; transferência do APK ao Termux
+  validada por SHA-256.
+- ADB `install -r` PASS e Activity inicial abriu normalmente.
+- Toque em Configurações no cabeçalho abriu janela interna
+  «Linus Security» com «Knox · UNKNOWN».
+- UIAutomator confirmou botão de maximizar; após toque, botão mudou
+  para «Restaurar Linus Security», deslocando-se para a borda direita.
+- Toque em restaurar confirmou retorno do controle de maximizar à
+  posição original. Resultado físico: **PASS**.
+- Nenhuma permissão adicional concedida, nenhuma alteração de
+  orientação, firmware, Home ou DeX; notificações especiais
+  permanecem não concedidas.
+- A prévia original segue ausente do inventário de pacotes;
+  causa **UNKNOWN**, nenhuma reinstalação/desinstalação feita.
+- DeX real **UNKNOWN**; não simular aprovação a partir do viewport Flutter.

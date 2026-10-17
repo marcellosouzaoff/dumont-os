@@ -169,3 +169,8 @@ Janelas internas do Flutter agora podem ser maximizadas e restauradas
 por botão acessível, com margens de 8dp. O estado maximizado acompanha
 alterações do viewport e preserva a geometria anterior. Não gerencia
 janelas do Android/DeX.
+
+
+Validação física no Tab S9 FE: clique em «Maximizar» abriu a janela
+na área útil; clique em «Restaurar» devolveu a geometria inicial.
+Android trial somente, sem mudanças na HOME e sem teste DeX real.
