@@ -85,3 +85,7 @@ apps reais quando o canal responde; no navegador mantém a demonstração.
 A grade nativa ainda usa **ícones genéricos**. Não há integrações de
 notificações, Knox, SystemUI, papel de parede ou controle de janelas DeX.
 A integração nova ainda requer instalação e testes físicos no SM-X510.
+
+Build ARM64 debug com AndroidBridge Kotlin: **PASS** no Codespace,
+SHA-256 `fe3d629c3991563703fc1f839b256fad19df123b5e17d00cb78d4cee4eaac47c`. O pacote ainda não foi
+instalado nem testado fisicamente.

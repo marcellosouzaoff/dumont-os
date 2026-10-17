@@ -32,7 +32,9 @@ Canal: `br.com.dumont.experience/native`
 - RED: testes de contrato falharam sem o módulo AndroidBridge.
 - GREEN: `flutter analyze` sem problemas e `flutter test` 14/14,
   incluindo três testes de contrato/catálogo.
-- Build Kotlin/Android ARM64: aguarda resultado da compilação.
+- Build Kotlin/Android ARM64: **PASS**, APK de debug compilado no Codespace
+  (Flutter 3.47.7, SDK 36, NDK 28.2).
+  SHA-256: `fe3d629c3991563703fc1f839b256fad19df123b5e17d00cb78d4cee4eaac47c`.
 - Instalação/teste com aplicativos reais no SM-X510: UNKNOWN.
 - Sem alteração da HOME Samsung, nem solicitação de novas permissões.
 

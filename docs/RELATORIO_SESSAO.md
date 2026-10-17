@@ -53,3 +53,25 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   `docs/ci/flutter-workflow-template.yml`; ativação exige escopo/permissão
   do GitHub para workflows, não disponível nesta sessão.
 - Branch `main` e HOME Samsung permanecem intactas.
+
+
+## 17/10/2026 — Integração Flutter/Kotlin — etapa 1
+
+- Gap identificado: Flutter mostrava apps sintéticos, embora a base
+  Kotlin já tivesse catálogo e capacidade de abertura via Android.
+- Nova ponte `br.com.dumont.experience/native` com `listApps` e
+  `launchApp` usando atividades públicas `MAIN/LAUNCHER`.
+- `<queries>` de escopo restrito no manifesto, sem
+  `QUERY_ALL_PACKAGES` nem permissões privilegiadas.
+- Segurança: abertura exige revalidação da activity no catálogo.
+- TDD: novo teste falhou sem serviço Dart (RED); após implementação
+  `flutter analyze` 0 problems e `flutter test` **14/14 PASS**.
+- Teste de UI revelou e corrigiu overflow de 1,5 px na categoria
+  `Instalados`.
+- Build Kotlin/Android ARM64 debug **PASS** (Codespace), SHA-256:
+  `fe3d629c3991563703fc1f839b256fad19df123b5e17d00cb78d4cee4eaac47c`.
+- O APK novo permanece em isolamento e não foi instalado.
+  Integração em hardware real no Galaxy Tab S9 FE: UNKNOWN.
+- Ícones nativos reais, device status, notificações, ajustes Samsung
+  e Android DeX seguem pendentes. Sem troca de HOME/firmware.
+- Workflow Flutter automático continua pendente por escopo GitHub.
