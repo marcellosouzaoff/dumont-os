@@ -1,7 +1,7 @@
 # DUMONT Flutter Experience — laboratório visual
 
 **Versão experimental:** v0.1 (APK de build inicial com versionName 1.0.0).
-**Estado:** UI Flutter compilada e testada, ainda NÃO instalada.
+**Estado:** preview v1.0.0 instalada no Tab S9 FE em 17/10; código da Fase 3 testado no Codespace, ainda NÃO instalado no tablet.
 **Não é ROM, SystemUI nem launcher HOME.**
 
 ## Design aprovado
@@ -42,7 +42,7 @@ O script prepara os assets de fonte sem precisar armazená-los no Git.
 - Gesto na borda para abrir o Ghost; recolhido fica invisível.
 - Golden renderizados pelo motor Flutter: desktop, tablet, celular
   e Ghost aberto, em `test/goldens/`.
-- Cinco testes Flutter passaram, incluindo interação de busca/filtros.
+- 11 testes Flutter passaram em 17/10 (incluindo 6 novos); golden desktop e Ghost atualizados.
 - Builds Web release e Android ARM64 debug passaram.
 
 ## O que NÃO está implementado
@@ -50,7 +50,7 @@ O script prepara os assets de fonte sem precisar armazená-los no Git.
 - Apps reais do tablet, ícones reais e abertura de apps externos.
 - Serviço de notificações Android, permissões, uso ou wallpapers reais.
 - Bridge `MethodChannel`/`EventChannel` para Kotlin e testes DeX.
-- Instalação física no Tab S9 FE ou Galaxy A55.
+- Instalação física do novo build Fase 3 no Tab S9 FE e qualquer preview no Galaxy A55.
 
 O catálogo atual é demonstrativo. Nunca apresentar suas informações
 como dados observados no aparelho.
@@ -72,5 +72,6 @@ componente de status em `lib/widgets/dumont_state_badge.dart` e gerenciamento
 de **janelas internas** em `lib/windows/dumont_window_manager.dart`.
 O botão **Ajustes** abre a janela de demonstração Linus Security com Knox
 marcado `UNKNOWN`. Essas janelas são internas ao Flutter e não operam janelas
-DeX ou aplicativos externos. Status do código: aguardar o workflow
-`Flutter visual validation` e teste visual físico antes de afirmar PASS.
+DeX ou aplicativos externos. `flutter analyze` e `flutter test`
+(11/11) PASS no Codespace. O novo APK, CI automático e teste físico Fase 3
+permanecem pendentes.

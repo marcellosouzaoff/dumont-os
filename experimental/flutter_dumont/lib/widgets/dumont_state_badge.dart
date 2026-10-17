@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/dumont_theme.dart';
 
 enum DumontState { success, warning, error, unknown }
@@ -18,21 +19,21 @@ class DumontStateBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (color, icon) = switch (state) {
       DumontState.success => (
-          DumontTheme.stateSuccess,
-          Icons.check_circle_outline_rounded,
-        ),
+        DumontTheme.stateSuccess,
+        Icons.check_circle_outline_rounded,
+      ),
       DumontState.warning => (
-          DumontTheme.stateWarning,
-          Icons.warning_amber_rounded,
-        ),
+        DumontTheme.stateWarning,
+        Icons.warning_amber_rounded,
+      ),
       DumontState.error => (
-          DumontTheme.stateError,
-          Icons.error_outline_rounded,
-        ),
+        DumontTheme.stateError,
+        Icons.error_outline_rounded,
+      ),
       DumontState.unknown => (
-          DumontTheme.stateUnknown,
-          Icons.help_outline_rounded,
-        ),
+        DumontTheme.stateUnknown,
+        Icons.help_outline_rounded,
+      ),
     };
 
     return Semantics(

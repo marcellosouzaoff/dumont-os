@@ -21,3 +21,24 @@ Repositório público de destino: https://github.com/marcellosouzaoff/dumont-os
 ## Próximas validações
 
 Conferir árvore pública, licenças de imagens e README; fechar gate pré-código; iniciar estrutura Android somente após autorização. Não foram executadas mudanças de ROM, firmware ou Knox.
+
+
+## 17/10/2026 — Avanço Fase 3 Flutter
+
+- Fonte: branch `feature/flutter-visual-prototype-20261017` no GitHub.
+- Trabalho: preservada correção visual do tablet, tema Paleta 01 centralizado,
+  badge PASS/WARNING/ERROR/UNKNOWN e janelas internas Flutter com foco,
+  movimento, redimensionamento e fechamento. Exemplo: Linus Security
+  com Knox UNKNOWN.
+- Testes: Flutter 3.47.7, `flutter analyze` PASS 0 problemas e `flutter test`
+  PASS 11/11 no Codespace. Dois golden regenerados pela alteração de layout.
+- Instalação: pacote preview v1.0.0 confirmado por ADB no SM-X510.
+  Código Fase 3 não instalado; Android build novo UNKNOWN por SDK ausente.
+- Publicação GitHub: commit de implementação `8131e72`; atualização
+  de goldens e documentação em commit subsequente.
+- Restrição: GitHub bloqueou a publicação de workflow por falta de escopo.
+  O CI Flutter permanece PENDENTE.
+- Próximas etapas: preparar Android SDK, compilar preview assinado em
+  pacote isolado, validar janela responsiva no tablet, depois AndroidBridge.
+- Sem troca de HOME, permissões sensíveis, root, flash, merge de produção
+  ou impacto em OSAMBA.

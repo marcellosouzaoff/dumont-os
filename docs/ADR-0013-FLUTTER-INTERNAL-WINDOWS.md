@@ -1,7 +1,6 @@
 # ADR-0013 — Fase 3: janelas internas Flutter (experimental)
 
-**Estado:** código proposto na branch de laboratório; não considerar aprovado
-antes de CI Flutter e teste físico no Tab S9 FE.
+**Estado:** testes Flutter locais PASS no Codespace; instalação da Fase 3 e compatibilidade física DeX continuam UNKNOWN.
 **Data:** 17/10/2026.
 
 ## Decisão
@@ -26,9 +25,10 @@ APK existente não é sobrescrito antes de prova de CI e consentimento explícit
 ## Evidências e próximos gates
 
 - Testes adicionados em test/window_manager_test.dart e
-  test/security_window_test.dart; resultados devem vir do workflow
-  Flutter visual validation.
+  test/security_window_test.dart; `flutter test` 11/11 PASS no Codespace
+  em 17/10/2026, e `flutter analyze` 0 issues.
 - Correção local visual pré-existente: texto editorial aparece somente
   quando o painel de aplicativos está recolhido.
-- Revisão física, golden tests, screenshot atual e build ARM64:
-  UNKNOWN até o pipeline retornar resultado verificável.
+- Golden tests PASS após atualizar duas referências de correção de layout.
+- Revisão física do novo build e novo APK ARM64: UNKNOWN (SDK Android ausente).
+- Workflow Flutter não publicado: token sem escopo workflow; CI automático PENDENTE.

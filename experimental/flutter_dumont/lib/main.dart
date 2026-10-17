@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'theme/dumont_theme.dart';
 import 'widgets/dumont_state_badge.dart';
 import 'windows/dumont_window_manager.dart';
@@ -82,8 +83,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
     super.dispose();
   }
 
-  void _openLinus() =>
-      _windows.open(id: 'linus', title: 'Linus Security');
+  void _openLinus() => _windows.open(id: 'linus', title: 'Linus Security');
 
   Widget _windowContents(DumontWindow window) {
     if (window.id != 'linus') return const SizedBox.shrink();
@@ -91,18 +91,22 @@ class _DumontDesktopState extends State<DumontDesktop> {
       padding: const EdgeInsets.all(18),
       child: ListView(
         children: const [
-          Text('Linus Security',
-              style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: DumontTheme.baritoneBlue)),
+          Text(
+            'Linus Security',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              color: DumontTheme.baritoneBlue,
+            ),
+          ),
           SizedBox(height: 13),
           DumontStateBadge(label: 'Knox', state: DumontState.unknown),
           SizedBox(height: 13),
-          Text('Integração com Knox não verificada. Este painel não altera '
-              'configurações de segurança, nem solicita permissões.',
-              style: TextStyle(
-                  color: DumontTheme.ink, fontSize: 12, height: 1.4)),
+          Text(
+            'Integração com Knox não verificada. Este painel não altera '
+            'configurações de segurança, nem solicita permissões.',
+            style: TextStyle(color: DumontTheme.ink, fontSize: 12, height: 1.4),
+          ),
         ],
       ),
     );
@@ -309,10 +313,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
         SizedBox(width: compact ? 8 : 29),
         if (!compact) ...[
           _menu('Aplicativos', () => setState(() => browserOpen = true)),
-          _menu(
-            'Configurações',
-            _openLinus,
-          ),
+          _menu('Configurações', _openLinus),
           _menu('Terminal', () => notify('Prévia: integração Kotlin pendente')),
         ] else
           IconButton(

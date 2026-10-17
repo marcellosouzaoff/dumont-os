@@ -1,5 +1,7 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+
 import '../theme/dumont_theme.dart';
 
 /// Janelas apenas dentro da superfície Flutter. Não controla tarefas DeX.
@@ -34,12 +36,18 @@ class DumontWindowManager extends ChangeNotifier {
       bringToFront(id);
       return;
     }
-    _windows.add(DumontWindow(
-      id: id,
-      title: title,
-      rect: Rect.fromLTWH(52 + _windows.length * 24.0,
-          32 + _windows.length * 20.0, initialSize.width, initialSize.height),
-    ));
+    _windows.add(
+      DumontWindow(
+        id: id,
+        title: title,
+        rect: Rect.fromLTWH(
+          52 + _windows.length * 24.0,
+          32 + _windows.length * 20.0,
+          initialSize.width,
+          initialSize.height,
+        ),
+      ),
+    );
     notifyListeners();
   }
 
@@ -72,7 +80,10 @@ class DumontWindowManager extends ChangeNotifier {
       final maxH = math.max(minH, viewport.height - 8 - rect.top);
       final width = (rect.width + delta.dx).clamp(minW, maxW).toDouble();
       final height = (rect.height + delta.dy).clamp(minH, maxH).toDouble();
-      return _clamp(Rect.fromLTWH(rect.left, rect.top, width, height), viewport);
+      return _clamp(
+        Rect.fromLTWH(rect.left, rect.top, width, height),
+        viewport,
+      );
     }, viewport);
   }
 
@@ -90,18 +101,18 @@ class DumontWindowManager extends ChangeNotifier {
     const padding = 8.0;
     final availableWidth = math.max(1.0, viewport.width - 2 * padding);
     final availableHeight = math.max(1.0, viewport.height - 2 * padding);
-    final width = rect.width.clamp(
-      math.min(280.0, availableWidth), availableWidth,
-    ).toDouble();
-    final height = rect.height.clamp(
-      math.min(180.0, availableHeight), availableHeight,
-    ).toDouble();
-    final left = rect.left.clamp(
-      0.0, math.max(0.0, viewport.width - width),
-    ).toDouble();
-    final top = rect.top.clamp(
-      0.0, math.max(0.0, viewport.height - height),
-    ).toDouble();
+    final width = rect.width
+        .clamp(math.min(280.0, availableWidth), availableWidth)
+        .toDouble();
+    final height = rect.height
+        .clamp(math.min(180.0, availableHeight), availableHeight)
+        .toDouble();
+    final left = rect.left
+        .clamp(0.0, math.max(0.0, viewport.width - width))
+        .toDouble();
+    final top = rect.top
+        .clamp(0.0, math.max(0.0, viewport.height - height))
+        .toDouble();
     return Rect.fromLTWH(left, top, width, height);
   }
 }
@@ -127,20 +138,20 @@ class DumontWindowLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => AnimatedBuilder(
-          animation: manager,
-          builder: (context, _) {
-            final viewport = constraints.biggest;
-            return Stack(
-              clipBehavior: Clip.hardEdge,
-              children: [
-                for (final window in manager.windows)
-                  _buildWindow(context, window, viewport),
-              ],
-            );
-          },
-        ),
-      );
+    builder: (context, constraints) => AnimatedBuilder(
+      animation: manager,
+      builder: (context, _) {
+        final viewport = constraints.biggest;
+        return Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            for (final window in manager.windows)
+              _buildWindow(context, window, viewport),
+          ],
+        );
+      },
+    ),
+  );
 
   Widget _buildWindow(
     BuildContext context,
@@ -174,22 +185,31 @@ class DumontWindowLayer extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 13, right: 4),
                   child: Row(
                     children: [
-                      const Icon(Icons.drag_indicator,
-                          color: DumontTheme.curdsAndWhey, size: 18),
+                      const Icon(
+                        Icons.drag_indicator,
+                        color: DumontTheme.curdsAndWhey,
+                        size: 18,
+                      ),
                       const SizedBox(width: 7),
                       Expanded(
-                        child: Text(window.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                color: DumontTheme.cloudDancer,
-                                fontWeight: FontWeight.w600)),
+                        child: Text(
+                          window.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: DumontTheme.cloudDancer,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                       IconButton(
                         key: Key('window-close-${window.id}'),
                         tooltip: 'Fechar ${window.title}',
-                        icon: const Icon(Icons.close,
-                            color: DumontTheme.cloudDancer, size: 20),
+                        icon: const Icon(
+                          Icons.close,
+                          color: DumontTheme.cloudDancer,
+                          size: 20,
+                        ),
                         onPressed: () => manager.close(window.id),
                       ),
                     ],
@@ -206,8 +226,11 @@ class DumontWindowLayer extends StatelessWidget {
                       manager.resizeBy(window.id, d.delta, viewport),
                   child: const Padding(
                     padding: EdgeInsets.all(7),
-                    child: Icon(Icons.open_in_full,
-                        size: 15, color: DumontTheme.baritoneBlue),
+                    child: Icon(
+                      Icons.open_in_full,
+                      size: 15,
+                      color: DumontTheme.baritoneBlue,
+                    ),
                   ),
                 ),
               ),

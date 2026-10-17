@@ -15,12 +15,12 @@ abstract final class DumontTheme {
   static const Color stateUnknown = Color(0xFF626474);
 
   static ThemeData get darkTheme => ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: baritoneBlue,
-        fontFamily: 'DM Sans',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: baritoneBlue,
-          surface: cloudDancer,
-        ),
-      );
+    useMaterial3: true,
+    scaffoldBackgroundColor: baritoneBlue,
+    fontFamily: 'DM Sans',
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: baritoneBlue,
+      surface: cloudDancer,
+    ),
+  );
 }

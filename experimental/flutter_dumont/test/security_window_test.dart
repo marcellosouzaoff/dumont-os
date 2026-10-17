@@ -12,16 +12,24 @@ void main() {
     expect(DumontTheme.stateUnknown, const Color(0xFF626474));
   });
 
-  testWidgets('status component starts UNKNOWN instead of success', (tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      home: Scaffold(body: DumontStateBadge(label: 'Knox', state: DumontState.unknown)),
-    ));
+  testWidgets('status component starts UNKNOWN instead of success', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: DumontStateBadge(label: 'Knox', state: DumontState.unknown),
+        ),
+      ),
+    );
     expect(find.text('Knox · UNKNOWN'), findsOneWidget);
     expect(find.byIcon(Icons.help_outline_rounded), findsOneWidget);
     expect(find.byIcon(Icons.check_circle_outline_rounded), findsNothing);
   });
 
-  testWidgets('settings opens a closable Linus Security floating window', (tester) async {
+  testWidgets('settings opens a closable Linus Security floating window', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1000, 700);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
