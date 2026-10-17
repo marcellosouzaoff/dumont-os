@@ -289,3 +289,19 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Privilégio especial de notificações NÃO CONCEDIDO.
 - Logcat de erros examinado em amostra recente sem crash identificado;
   isso não equivale a auditoria completa dos logs.
+
+
+## 17/10/2026 — Fase 5: janelas Flutter adaptativas
+
+- Estado original Android auditado somente leitura: pacote
+  `br.com.dumont.experience.preview` não consta em
+  `pm list packages -u` nem em `pm path`; causa UNKNOWN.
+- Pacote `.trial` permanece instalado. Sem comando de desinstalação.
+- TDD red: ausência de APIs de maximização.
+- Desenvolvido modo maximizar/restaurar com margem de 8dp, preservação
+  de retângulo anterior, cálculo reativo ao viewport e botão acessível.
+- Primeiro teste UI revelou competição de duplo toque; removida.
+- Flutter analyze **PASS 0 issues**, flutter test **31/31 PASS**.
+- Build ARM64, teste físico de janela e backup remoto: aguardam
+  resultados verificáveis antes do encerramento.
+- DeX real não ativado nem testado: **UNKNOWN**.

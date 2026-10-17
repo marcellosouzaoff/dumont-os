@@ -161,3 +161,11 @@ Teste físico de 17/10/2026: Ghost → Internet (diálogo Android) e
 Ghost → Visor (Activity Android) abriram e retornaram ao Flutter.
 Versão de teste: `br.com.dumont.experience.preview.trial`.
 Ver ADR-0019 para critérios e limites da validação.
+
+
+## Janelas responsivas — ADR-0020
+
+Janelas internas do Flutter agora podem ser maximizadas e restauradas
+por botão acessível, com margens de 8dp. O estado maximizado acompanha
+alterações do viewport e preserva a geometria anterior. Não gerencia
+janelas do Android/DeX.

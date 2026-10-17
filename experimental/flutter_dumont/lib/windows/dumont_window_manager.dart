@@ -24,6 +24,22 @@ class DumontWindow {
 /// Estado de janelas: abrir, focar, mover, redimensionar e fechar.
 class DumontWindowManager extends ChangeNotifier {
   final List<DumontWindow> _windows = [];
+  final Set<String> _maximized = <String>{};
+
+  bool isMaximized(String id) => _maximized.contains(id);
+
+  /// Maximize only inside the Flutter surface; never changes Android DeX.
+  /// Restore retains the original rect, including after viewport changes.
+  void toggleMaximize(String id) {
+    final index = _windows.indexWhere((window) => window.id == id);
+    if (index < 0) return;
+    if (!_maximized.add(id)) _maximized.remove(id);
+    if (index != _windows.length - 1) {
+      final window = _windows.removeAt(index);
+      _windows.add(window);
+    }
+    notifyListeners();
+  }
 
   List<DumontWindow> get windows => List.unmodifiable(_windows);
 
@@ -52,7 +68,10 @@ class DumontWindowManager extends ChangeNotifier {
   }
 
   void close(String id) {
-    if (_windows.removeWhereAndCount(id) > 0) notifyListeners();
+    if (_windows.removeWhereAndCount(id) > 0) {
+      _maximized.remove(id);
+      notifyListeners();
+    }
   }
 
   void bringToFront(String id) {
@@ -65,14 +84,25 @@ class DumontWindowManager extends ChangeNotifier {
 
   Rect geometryFor(String id, Size viewport) {
     final w = _windows.firstWhere((w) => w.id == id);
+    if (isMaximized(id)) {
+      const inset = 8.0;
+      return Rect.fromLTWH(
+        inset,
+        inset,
+        math.max(1, viewport.width - inset * 2),
+        math.max(1, viewport.height - inset * 2),
+      );
+    }
     return _clamp(w.rect, viewport);
   }
 
   void moveBy(String id, Offset delta, Size viewport) {
+    if (isMaximized(id)) return;
     _update(id, (rect) => _clamp(rect.shift(delta), viewport), viewport);
   }
 
   void resizeBy(String id, Offset delta, Size viewport) {
+    if (isMaximized(id)) return;
     _update(id, (rect) {
       final minW = math.min(280.0, math.max(1.0, viewport.width - 16));
       final minH = math.min(180.0, math.max(1.0, viewport.height - 16));
@@ -203,6 +233,20 @@ class DumontWindowLayer extends StatelessWidget {
                         ),
                       ),
                       IconButton(
+                        key: Key('window-maximize-${window.id}'),
+                        tooltip: manager.isMaximized(window.id)
+                            ? 'Restaurar ${window.title}'
+                            : 'Maximizar ${window.title}',
+                        icon: Icon(
+                          manager.isMaximized(window.id)
+                              ? Icons.filter_none_rounded
+                              : Icons.crop_square_rounded,
+                          color: DumontTheme.cloudDancer,
+                          size: 20,
+                        ),
+                        onPressed: () => manager.toggleMaximize(window.id),
+                      ),
+                      IconButton(
                         key: Key('window-close-${window.id}'),
                         tooltip: 'Fechar ${window.title}',
                         icon: const Icon(
@@ -217,7 +261,8 @@ class DumontWindowLayer extends StatelessWidget {
                 ),
               ),
               Expanded(child: contentBuilder(window)),
-              Align(
+              if (!manager.isMaximized(window.id))
+                Align(
                 alignment: Alignment.bottomRight,
                 child: GestureDetector(
                   key: Key('window-resize-${window.id}'),
