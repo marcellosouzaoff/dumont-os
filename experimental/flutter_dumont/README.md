@@ -64,3 +64,13 @@ nem a HOME Samsung. Knox e firmware intactos.
 
 Mais detalhes no [status técnico](../../docs/STATUS_2026-10-17.md)
 e [ADR-0012](../../docs/ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md).
+
+## Fase 3 — em implementação
+
+A Paleta 01 passa a ser centralizada em `lib/theme/dumont_theme.dart`,
+componente de status em `lib/widgets/dumont_state_badge.dart` e gerenciamento
+de **janelas internas** em `lib/windows/dumont_window_manager.dart`.
+O botão **Ajustes** abre a janela de demonstração Linus Security com Knox
+marcado `UNKNOWN`. Essas janelas são internas ao Flutter e não operam janelas
+DeX ou aplicativos externos. Status do código: aguardar o workflow
+`Flutter visual validation` e teste visual físico antes de afirmar PASS.

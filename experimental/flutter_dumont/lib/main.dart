@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'theme/dumont_theme.dart';
+import 'widgets/dumont_state_badge.dart';
+import 'windows/dumont_window_manager.dart';
 
 void main() => runApp(const DumontApp());
 
 abstract final class Brand {
-  static const dark = Color(0xFF272836);
-  static const cream = Color(0xFFF0EEE9);
-  static const accent = Color(0xFFBCA483);
-  static const ink = Color(0xFF373945);
-  static const muted = Color(0xFFAEB0BF);
+  static const dark = DumontTheme.baritoneBlue;
+  static const cream = DumontTheme.cloudDancer;
+  static const accent = DumontTheme.curdsAndWhey;
+  static const ink = DumontTheme.ink;
+  static const muted = DumontTheme.muted;
 }
 
 class DumontApp extends StatelessWidget {
@@ -17,15 +20,7 @@ class DumontApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'DUMONT Flutter Experience',
-    theme: ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: Brand.dark,
-      fontFamily: 'DM Sans',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Brand.dark,
-        surface: Brand.cream,
-      ),
-    ),
+    theme: DumontTheme.darkTheme,
     home: DumontDesktop(ghostInitiallyOpen: ghostInitiallyOpen),
   );
 }
@@ -72,12 +67,45 @@ class DumontDesktop extends StatefulWidget {
 }
 
 class _DumontDesktopState extends State<DumontDesktop> {
+  final DumontWindowManager _windows = DumontWindowManager();
   bool browserOpen = true, ghostOpen = false;
   String category = 'Todos', search = '', notice = '';
   @override
   void initState() {
     super.initState();
     ghostOpen = widget.ghostInitiallyOpen;
+  }
+
+  @override
+  void dispose() {
+    _windows.dispose();
+    super.dispose();
+  }
+
+  void _openLinus() =>
+      _windows.open(id: 'linus', title: 'Linus Security');
+
+  Widget _windowContents(DumontWindow window) {
+    if (window.id != 'linus') return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.all(18),
+      child: ListView(
+        children: const [
+          Text('Linus Security',
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: DumontTheme.baritoneBlue)),
+          SizedBox(height: 13),
+          DumontStateBadge(label: 'Knox', state: DumontState.unknown),
+          SizedBox(height: 13),
+          Text('Integração com Knox não verificada. Este painel não altera '
+              'configurações de segurança, nem solicita permissões.',
+              style: TextStyle(
+                  color: DumontTheme.ink, fontSize: 12, height: 1.4)),
+        ],
+      ),
+    );
   }
 
   void notify(String value) => setState(() => notice = value);
@@ -106,7 +134,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
                   Expanded(
                     child: Stack(
                       children: [
-                        if (wide)
+                        if (wide && !browserOpen)
                           Positioned(
                             left: 12,
                             top: 34,
@@ -163,6 +191,12 @@ class _DumontDesktopState extends State<DumontDesktop> {
                               ),
                             ),
                           ),
+                        Positioned.fill(
+                          child: DumontWindowLayer(
+                            manager: _windows,
+                            contentBuilder: _windowContents,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -277,7 +311,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
           _menu('Aplicativos', () => setState(() => browserOpen = true)),
           _menu(
             'Configurações',
-            () => notify('Prévia: integração Kotlin pendente'),
+            _openLinus,
           ),
           _menu('Terminal', () => notify('Prévia: integração Kotlin pendente')),
         ] else
@@ -671,9 +705,15 @@ class _DumontDesktopState extends State<DumontDesktop> {
           (i) => IconButton(
             key: Key('dock-$i'),
             icon: Icon(icons[i], color: Brand.cream, size: compact ? 27 : 32),
-            onPressed: () => i == 0
-                ? setState(() => browserOpen = true)
-                : notify('${names[i]}: integração Kotlin pendente'),
+            onPressed: () {
+              if (i == 0) {
+                setState(() => browserOpen = true);
+              } else if (i == 5) {
+                _openLinus();
+              } else {
+                notify('${names[i]}: integração Kotlin pendente');
+              }
+            },
           ),
         ),
       ),
