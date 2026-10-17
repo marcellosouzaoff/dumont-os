@@ -44,3 +44,12 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   pacote isolado, validar janela responsiva no tablet, depois AndroidBridge.
 - Sem troca de HOME, permissões sensíveis, root, flash, merge de produção
   ou impacto em OSAMBA.
+
+### Encerramento técnico da rodada
+
+- Build ARM64 debug PASS, SHA-256 conferido e APK armazenado somente no
+  Termux do tablet para teste posterior, sem instalação.
+- O arquivo de workflow Flutter foi preservado como template em
+  `docs/ci/flutter-workflow-template.yml`; ativação exige escopo/permissão
+  do GitHub para workflows, não disponível nesta sessão.
+- Branch `main` e HOME Samsung permanecem intactas.

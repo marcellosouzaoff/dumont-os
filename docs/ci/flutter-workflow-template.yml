@@ -1,0 +1,43 @@
+name: Flutter visual validation
+on:
+  push:
+    paths:
+      - 'experimental/flutter_dumont/**'
+      - '.github/workflows/flutter.yml'
+  pull_request:
+    paths:
+      - 'experimental/flutter_dumont/**'
+      - '.github/workflows/flutter.yml'
+permissions:
+  contents: read
+jobs:
+  flutter-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - name: Prepare licensed fonts
+        run: bash experimental/flutter_dumont/scripts/setup_fonts.sh
+      - name: Resolve packages
+        working-directory: experimental/flutter_dumont
+        run: flutter pub get
+      - name: Analyze Dart
+        working-directory: experimental/flutter_dumont
+        run: flutter analyze
+      - name: Test widgets and golden files
+        working-directory: experimental/flutter_dumont
+        run: flutter test
+      - name: Build isolated ARM64 preview APK
+        working-directory: experimental/flutter_dumont
+        run: flutter build apk --debug --target-platform android-arm64
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: dumont-flutter-phase3-preview-debug
+          path: experimental/flutter_dumont/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
