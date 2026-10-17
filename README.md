@@ -126,3 +126,10 @@ O código-fonte que vier a ser publicado e a documentação original deste repos
 
 ### Fluxo visual do Orchestrator
 [ADR-0010 — retomada e Recentes no DeX](docs/ADR-0010-DEEX-VISUAL-RECENTES.md).
+
+### Flutter visual MVP (isolated from Kotlin Pilot)
+
+The Flutter desktop/tablet/mobile preview lives at
+[experimental/flutter_dumont](experimental/flutter_dumont/README.md).
+It is NOT Android SystemUI or a ROM, does not change Samsung One UI,
+and has no application-launch or notification privileges.
