@@ -47,6 +47,11 @@ check(declared_permissions <= allowed_permissions,
 check(all(item not in manifest for item in ("QUERY_ALL_PACKAGES", "BIND_ACCESSIBILITY_SERVICE", "MANAGE_EXTERNAL_STORAGE", "DEVICE_ADMIN")), "No dangerous privileged app capabilities")
 check(all(k in theme for k in ("F1EEE7", "4E5353", "252525", "A47864", "CD212A")), "Canonical palette present")
 check(all(k in tokens["palette"] for k in ("cloud","charcoal","black","mocha","red")), "Design tokens present")
+check(tokens["palette"]["baritone"]["value"] == "#272836" and
+      tokens["palette"]["cloud"]["value"] == "#F0EEE9" and
+      tokens["palette"]["accent"]["value"] == "#BCA483",
+      "Design tokens match Palette 01 (Flutter)")
+
 check(all(k in ui for k in ("DUMONT", "ApplicationWindow", "BottomDock", "LazyVerticalGrid", "NativeAppIcon")), "Main responsive UI modules present")
 check('Finder' not in ui and 'com.apple.' not in ui, "No Apple app icon dependency")
 check('Text("Início"' not in ui, "Top bar only shows DUMONT branding")

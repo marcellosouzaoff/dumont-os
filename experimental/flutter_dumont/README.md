@@ -1,30 +1,66 @@
-# DUMONT Flutter Experience — Laboratório visual
+# DUMONT Flutter Experience — laboratório visual
 
-Status: protótipo. Não é ROM, SystemUI ou launcher padrão.
-Paleta 01: Baritone Blue #272836, Cloud Dancer #F0EEE9, Curds & Whey #BCA483.
-Tipografia: DM Sans e Cormorant Garamond.
+**Versão experimental:** v0.1 (APK de build inicial com versionName 1.0.0).
+**Estado:** UI Flutter compilada e testada, ainda NÃO instalada.
+**Não é ROM, SystemUI nem launcher HOME.**
 
-## Executar
-Requer Flutter SDK. Para Android, configurar Android SDK e Java 21.
+## Design aprovado
 
-    bash scripts/setup_fonts.sh
-    flutter pub get
-    flutter analyze
-    flutter test
-    flutter run -d chrome
-    flutter build web --release
-    flutter build apk --debug --target-platform android-arm64
+| Token | Cor | HEX | Uso |
+|---|---|---|---|
+| Baritone Blue | escuro | `#272836` | Desktop, TopBar, Dock e Ghost |
+| Cloud Dancer | creme | `#F0EEE9` | Conteúdo e texto claro |
+| Curds & Whey | acento | `#BCA483` | Elementos discretos |
 
-As fontes de código aberto e licenças OFL são obtidas das fontes oficiais pelo script; os arquivos binários não serão versionados no repositório.
+Tipografia DM Sans para a interface, Cormorant Garamond para editorial.
+Binários não versionados; licenças SIL OFL incluídas.
 
-## Primeira entrega
-Janela Aplicativos, busca, filtros, marca DUMONT, Dock, fundo vetorial, responsividade e Ghost totalmente invisível quando fechado.
-Todos os aplicativos nesta prévia são ilustrativos. Os recursos reais de Android (instalação, intents, notificações, widgets) ainda requerem integração Kotlin por Platform Channels.
+## Executar no Codespace / Linux
 
-## Testes
-Flutter widget/golden: desktop 1440x900, tablet 1000x700, celular 390x844, Ghost e filtro/busca.
-A imagem de teste é produzida pelo renderizador Flutter e não por gerador de imagens.
+Pré-requisitos: Flutter SDK (validado com 3.47.7). Android SDK API 36
+e Java 21 para APK. Navegador compatível para `flutter run -d chrome`.
 
-## Segurança
-Mantenha o app separado de br.com.dumont.launcher e br.com.dumont.launcher.pilot.
-Nunca alterar HOME/One UI/Knox silenciosamente, e não realizar deploy em A55 ou Tab S9 FE sem instalação expressamente solicitada.
+~~~bash
+cd experimental/flutter_dumont
+bash scripts/setup_fonts.sh
+flutter pub get
+flutter analyze
+flutter test
+flutter run -d chrome
+flutter build web --release
+flutter build apk --debug --target-platform android-arm64
+~~~
+
+`flutter test --update-goldens` só quando houver alteração
+intencional da UI; em CI/regressão usar `flutter test`.
+O script prepara os assets de fonte sem precisar armazená-los no Git.
+
+## O que está implementado
+
+- Barra DUMONT, Dock, papel de parede vetorial, painel Aplicativos,
+  pesquisa, filtro por categoria, grid responsivo e Ghost.
+- Gesto na borda para abrir o Ghost; recolhido fica invisível.
+- Golden renderizados pelo motor Flutter: desktop, tablet, celular
+  e Ghost aberto, em `test/goldens/`.
+- Cinco testes Flutter passaram, incluindo interação de busca/filtros.
+- Builds Web release e Android ARM64 debug passaram.
+
+## O que NÃO está implementado
+
+- Apps reais do tablet, ícones reais e abertura de apps externos.
+- Serviço de notificações Android, permissões, uso ou wallpapers reais.
+- Bridge `MethodChannel`/`EventChannel` para Kotlin e testes DeX.
+- Instalação física no Tab S9 FE ou Galaxy A55.
+
+O catálogo atual é demonstrativo. Nunca apresentar suas informações
+como dados observados no aparelho.
+
+## Segurança e pacotes
+
+Pacote Android de teste: `br.com.dumont.experience.preview`.
+O Kotlin Pilot segue isolado em `br.com.dumont.launcher.pilot`;
+o original tem `br.com.dumont.launcher`. Não substituir nenhum deles
+nem a HOME Samsung. Knox e firmware intactos.
+
+Mais detalhes no [status técnico](../../docs/STATUS_2026-10-17.md)
+e [ADR-0012](../../docs/ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md).

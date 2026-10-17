@@ -1,6 +1,7 @@
-# Design System — DUMONT v0.3
+# Design System — DUMONT Paleta 01 (2026-10-17)
 
-**Estado:** linguagem visual aprovada como proposta; componentes ainda não implementados.
+**Estado:** referência visual aprovada. Prova de conceito Flutter implementada e
+testada; Kotlin Pilot em desenvolvimento. Seções antigas permanecem históricas.
 
 ## Princípios
 
@@ -10,21 +11,21 @@
 4. Ícones de apps Google instalados inicialmente, nenhum app Apple/Finder.
 5. Base Android preservada, com retorno ao launcher Samsung disponível.
 
-## Paleta canônica
+## Paleta canônica — vigente
 
 | Token | Nome | HEX | Função |
 |---|---|---|---|
-| cloud | Cloud Dancer, referência Pantone 2026 | #F1EEE7 | fundo principal |
-| white | branco | #FFFFFF | janelas e painéis claros |
-| charcoal | cinza-chumbo | #4E5353 | bordas e superfícies |
-| black | preto | #252525 | tipografia e Dock |
-| mocha | Mocha Mousse, referência Pantone 2025 | #A47864 | detalhes editoriais |
-| red | vermelho | #CD212A | acentos e falhas |
-| greenStatus | verde | #287D53 | disponível verificado |
-| yellowStatus | amarelo | #B78319 | limitação comprovada |
-| unknownStatus | cinza | #4E5353 | evidência insuficiente |
+| baritone | Baritone Blue | `#272836` | Fundo, TopBar, Dock e Ghost |
+| cloud | Cloud Dancer | `#F0EEE9` | Janelas e texto claro |
+| accent | Curds & Whey | `#BCA483` | Detalhes contidos |
+| white | Branco | `#FFFFFF` | Campos e superfícies auxiliares |
+| charcoal | Grafite auxiliar | `#414352` | Textos e divisões |
+| red | Vermelho semântico | `#CD212A` | Falhas reais, não decorativas |
+| greenStatus | Verde | `#287D53` | Estado comprovado |
+| yellowStatus | Amarelo | `#B78319` | Limitação comprovada |
 
-Peach Fuzz 2024 foi retirado da paleta por decisão do projeto. Orientação de composição em modo claro: 60% Cloud Dancer/branco, 25% cinza-chumbo, 12% preto e até 3% de acentos. Sinais operacionais são exceção semântica.
+Valores HEX digitais, não equivalências Pantone certificadas. Cloud
+`#F1EEE7`, preto `#252525` e Mocha `#A47864` são referências legadas.
 
 ## Tipografia editorial
 
@@ -35,7 +36,7 @@ Peach Fuzz 2024 foi retirado da paleta por decisão do projeto. Orientação de 
 
 ## Bordas e formas
 
-- Borda padrão: 1dp em cinza-chumbo #4E5353; foco: 2dp e feedback não dependente apenas de cor.
+- Borda padrão: 1dp em cinza neutro #9999A2; foco: 2dp e feedback não dependente apenas de cor.
 - Raio: 12dp controles, 16dp painéis/janelas, 20dp Dock e cartões grandes.
 - Espaçamento: 4, 8, 12, 16, 24, 32dp. Área clicável mínima: 48dp.
 - Ícones: 20–24dp em controles e 24–32dp para Dock, conforme viewport.
@@ -71,4 +72,10 @@ Verde apenas se funcionamento confirmado; amarelo para indisponibilidade parcial
 
 ## Tokens
 
-`design/tokens.json` é a referência canônica v0.3. `design/tokens.css` é espelho para a documentação visual. A futura aplicação Compose converterá estes tokens em tema Android.
+`design/tokens.json`, `design/tokens.css` e `design/paleta.svg`
+registram a Paleta 01 nesta branch. `experimental/flutter_dumont/lib/main.dart`
+utiliza as mesmas cores. Fontes DM Sans e Cormorant Garamond vêm de fontes
+oficiais sob SIL OFL e são obtidas por script, sem versionar arquivos de fonte.
+
+O Flutter v0.1 renderiza UI real com aplicativos fictícios; integração com
+PackageManager, notificações e Samsung DeX continua pendente.

@@ -1,6 +1,10 @@
 # M2 — Fundação Android do DUMONT
 
-**Status:** implementação inicial em branch de desenvolvimento; validação de compilação e testes obrigatória antes de qualquer instalação.
+**Estado histórico da fundação M2.** O conteúdo a seguir descreve
+o início da implementação. Em 17/10/2026 existem um Kotlin Pilot v1.1
+instalado historicamente no Tab S9 FE, código v1.2 compilado/testado
+e um protótipo Flutter isolado com testes PASS, ainda não instalado.
+Consulte `STATUS_2026-10-17.md` para evidência atualizada.
 
 ## Escopo entregue neste commit
 

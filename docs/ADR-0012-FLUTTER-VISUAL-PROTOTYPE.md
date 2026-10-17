@@ -1,6 +1,7 @@
 # ADR-0012 — DUMONT Flutter Experience visual laboratory
 
-State: local prototype PASSED, not installed. Date: 2026-10-17.
+Estado: protótipo Flutter com PASS em testes e builds; NÃO INSTALADO.
+Data: 17/10/2026. Evidências antes da integração Kotlin e do DeX real.
 
 ## Approved visual foundations
 
@@ -28,7 +29,9 @@ integration in this prototype. All catalog data is synthetic.
 - flutter build web --release: PASS.
 - flutter build apk --debug --target-platform android-arm64: PASS.
 - Device installation: NOT PERFORMED; physical Samsung DeX compatibility UNKNOWN.
-- GitHub remote push: NOT PERFORMED; logged-in account has READ permission.
+- GitHub remote push: pendente no momento da escrita original.
+  Verificação posterior do GitHub indicou permissão WRITE para a conta
+  conectada; o envio precisa ser comprovado separadamente.
 
 ## Required gate before deployment
 
@@ -38,3 +41,20 @@ integration in this prototype. All catalog data is synthetic.
 4. Request specific authorization before installing separate Flutter Preview APK.
 5. Validate landscape/portrait, window resizing, DeX, memory, opening apps.
 6. Never replace DUMONT Pilot or Android HOME automatically.
+
+## Linha divisória entre renderização e instalação
+
+`flutter test` usa o próprio Flutter para produzir os golden PNG. Não
+comprova a abertura de janelas nativas Samsung, acesso a apps instalados
+nem estabilidade no dispositivo físico. Nenhuma permissão especial,
+nem HOME, foi adicionada ao protótipo.
+
+## Registro e versões
+
+- GitHub: `marcellosouzaoff/dumont-os`.
+- Branch de laboratório: `feature/flutter-visual-prototype-20261017`.
+- Primeiro commit local: `96b5b0c`.
+- Build APK de prévia: `br.com.dumont.experience.preview`, debug ARM64.
+- Fontes: licenças SIL OFL no repositório, assets obtidos por script.
+- O conteúdo de `docs/STATUS_2026-10-17.md` é a referência para
+  PASS/FAIL/UNKNOWN e instalações; não pressupor deploy.
