@@ -98,11 +98,15 @@ class DumontDesktop extends StatefulWidget {
   State<DumontDesktop> createState() => _DumontDesktopState();
 }
 
-class _DumontDesktopState extends State<DumontDesktop> {
+class _DumontDesktopState extends State<DumontDesktop>
+    with WidgetsBindingObserver {
   final DumontWindowManager _windows = DumontWindowManager();
   final DumontNativeBridge _nativeBridge = const DumontNativeBridge();
   DumontDeviceInfo? _deviceInfo;
   StreamSubscription<DumontDeviceInfo>? _deviceEventsSubscription;
+  // Event stream wins over older MethodChannel responses.
+  int _deviceEventRevision = 0;
+  int _deviceRequestRevision = 0;
   DumontNotificationSnapshot? _notificationSnapshot;
   List<DemoApp>? _realApps;
   List<String> get _categories =>
@@ -115,6 +119,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     ghostOpen = widget.ghostInitiallyOpen;
     _refreshNativeApps();
     _refreshDeviceStatus();
@@ -124,9 +129,19 @@ class _DumontDesktopState extends State<DumontDesktop> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _deviceEventsSubscription?.cancel();
     _windows.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    // Android settings can change while DUMONT is in the background.
+    // Refresh on return without polling, including consent state.
+    _refreshDeviceStatus(force: true);
+    _refreshNotifications();
   }
 
   void _openGhost() {
@@ -206,6 +221,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
     if (events == null) return;
     _deviceEventsSubscription = events.listen(
       (snapshot) {
+        ++_deviceEventRevision;
         if (mounted) setState(() => _deviceInfo = snapshot);
       },
       onError: (Object _) {
@@ -215,11 +231,19 @@ class _DumontDesktopState extends State<DumontDesktop> {
     );
   }
 
-  Future<void> _refreshDeviceStatus() async {
+  Future<void> _refreshDeviceStatus({bool force = false}) async {
+    final eventRevisionAtStart = _deviceEventRevision;
+    final requestRevision = ++_deviceRequestRevision;
     try {
       final snapshot = await _nativeBridge.getDeviceStatus();
-      // A later one-shot response must not overwrite a fresher live event.
-      if (mounted && _deviceInfo == null) {
+      // Do not allow a stale one-shot call (or concurrent older request)
+      // to overwrite a newer EventChannel reading.
+      if (!mounted ||
+          _deviceEventRevision != eventRevisionAtStart ||
+          _deviceRequestRevision != requestRevision) {
+        return;
+      }
+      if (force || _deviceInfo == null) {
         setState(() => _deviceInfo = snapshot);
       }
     } on MissingPluginException {

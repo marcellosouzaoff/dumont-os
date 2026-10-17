@@ -248,3 +248,21 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Dropbox: o conector requer arquivo anexado à conversa e não aceita
   um caminho do Termux como origem. Upload REMOTO ainda **PENDENTE**;
   não afirmar sucesso nem enviar dados sem autorização da plataforma.
+
+
+## 17/10/2026 — Próxima etapa: retorno das Configurações Android
+
+- Inventário Android somente leitura: no tablet SM-X510 o pacote
+  original `br.com.dumont.experience.preview` continua ausente
+  em `pm path` e `pm list packages -u`. Causa UNKNOWN.
+- Pacote isolado `br.com.dumont.experience.preview.trial` presente;
+  nenhuma reinstalação ou exclusão do aplicativo original.
+- Testes TDD RED demonstraram ausência de refresh no ciclo de vida
+  e risco de sobrescrita por resposta antiga de MethodChannel.
+- Implementada observação `WidgetsBindingObserver`, atualização
+  ao receber `resumed`, release em `dispose` e prevenção
+  de condições de corrida via revisões de eventos/requisições.
+- `flutter analyze` PASS (0 problemas), `flutter test` PASS (29/29).
+- Não foram introduzidas novas permissões, serviços, envios remotos
+  de dados, alterações de HOME/Knox, nem concessão de notificações.
+- APK ARM64 e teste físico ainda requerem evidência específica.

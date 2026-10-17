@@ -146,3 +146,12 @@ fallback demonstrativo seguro e nenhum listener de eventos ativado.
 Validação tablet: APK `24f76f297b1a3531a77e720f5914d41ea455045bdc913f88f8ae8b0f6d18427f` compilado e instalado
 no pacote separado `.trial`. Bateria, rede e modelo exibidos em Ghost;
 recebimento de transição física espontânea ainda UNKNOWN.
+
+
+## Retorno das Configurações — ADR-0019
+
+O Flutter observa o ciclo de vida. Ao voltar de uma tela externa
+(estado `resumed`), consulta novamente os dados nativos e o estado
+de consentimento das notificações sem polling e sem alterá-lo.
+Eventos mais recentes têm prioridade sobre respostas atrasadas.
+Testes de regressão em `test/settings_resume_test.dart`.
