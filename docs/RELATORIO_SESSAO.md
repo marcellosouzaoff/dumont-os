@@ -241,6 +241,10 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   e não reinstalar sem decisão do usuário.
 - Acesso especial a notificações permanece não concedido;
   nenhuma ação automática de permissão foi realizada.
-- Backup da nova rodada: gerar ZIP do GitHub com relatório atualizado,
-  sem chaves privadas nem APK debug; Dropbox depende de arquivo
-  fornecido à conversa para `upload_file`.
+- Backup da rodada preparado por `git archive HEAD` e salvo na
+  pasta Downloads do SM-X510, com comparação SHA-256 da cópia.
+  Contém somente arquivos versionados; APK e dados privados do tablet
+  não foram incluídos.
+- Dropbox: o conector requer arquivo anexado à conversa e não aceita
+  um caminho do Termux como origem. Upload REMOTO ainda **PENDENTE**;
+  não afirmar sucesso nem enviar dados sem autorização da plataforma.
