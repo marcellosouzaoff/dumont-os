@@ -193,3 +193,23 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   tentativa de contornar esse bloqueio.
 - Pendente: disponibilizar ZIP em Downloads do tablet e anexá-lo à
   conversa para transferência autorizada pelo conector Dropbox.
+
+
+## 17/10/2026 — Fase 4: AndroidBridge em tempo real
+
+- Escopo autorizado: monitorar mudanças do estado do dispositivo por
+  eventos Android, evitando consultas periódicas.
+- Contrato Kotlin/Flutter: `br.com.dumont.experience/device_events`;
+  listener `ACTION_BATTERY_CHANGED` e callback da rede padrão.
+- A conexão só existe enquanto o Flutter estiver inscrito; liberação
+  de receptores em `onCancel`, integração com `dispose` do Flutter.
+- Atualização de interface sem reinicializar o DUMONT; dados que
+  não chegam continuam UNKNOWN em vez de fictícios.
+- No primeiro ciclo TDD, teste falhou por método ausente (RED).
+  Análise detectou erro de EventChannel em hosts sem Android;
+  corrigido com ativação exclusiva em Android real e stream de teste.
+- Suite Flutter **27/27 PASS**, analyze **zero issues**.
+- Kotlin/Android build e validação física: ainda aguardam prova.
+- Sem mudanças de HOME, Knox, firmware, instalação original,
+  acessibilidade ou permissão de notificações especiais.
+- Backup de rodada será atualizado após validação.

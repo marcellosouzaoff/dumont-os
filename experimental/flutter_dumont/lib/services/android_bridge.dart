@@ -160,6 +160,15 @@ class DumontNativeBridge {
     'br.com.dumont.experience/native',
   );
 
+  static const EventChannel _deviceEvents = EventChannel(
+    'br.com.dumont.experience/device_events',
+  );
+
+  /// Android pushes only actual changes; listening registers native callbacks.
+  /// Cancelling the subscription must unregister those callbacks in Kotlin.
+  Stream<DumontDeviceInfo> deviceStatusEvents() =>
+      _deviceEvents.receiveBroadcastStream().map(DumontDeviceInfo.parse);
+
   Future<List<NativeApp>> listApps() async {
     final raw = await _channel.invokeMethod<List<dynamic>>('listApps');
     final unique = <String, NativeApp>{};

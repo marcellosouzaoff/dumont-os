@@ -132,3 +132,12 @@ O gesto lateral Ghost ainda exige verificação física manual.
 O painel Ghost agora abre com gesto suave acumulado (-48dp) na borda
 invisível de 62dp, ou com toque na mesma borda. A alteração preserva
 o launcher Android e o estilo da Paleta 01. Consulte o ADR-0017.
+
+
+## Atualização em tempo real — ADR-0018
+
+`device_events` (Kotlin `EventChannel`) publica mudanças de bateria e
+transporte da rede ativa com receptores Android sob demanda, sem polling.
+O Flutter escuta apenas no Android real, faz consulta inicial e libera
+a assinatura ao descartar a tela. Hosts sem Android continuam com
+fallback demonstrativo seguro e nenhum listener de eventos ativado.

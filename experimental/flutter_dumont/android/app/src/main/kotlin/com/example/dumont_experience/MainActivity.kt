@@ -19,6 +19,7 @@ import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.EventChannel
 import java.text.Collator
 import java.util.Locale
 
@@ -29,9 +30,15 @@ import java.util.Locale
  */
 class MainActivity : FlutterActivity() {
     private val channel = "br.com.dumont.experience/native"
+    private val statusEventsChannel = "br.com.dumont.experience/device_events"
+    private var deviceEvents: DumontDeviceEventStream? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        deviceEvents = DumontDeviceEventStream(this, ::deviceSnapshot).also { bridge ->
+            EventChannel(flutterEngine.dartExecutor.binaryMessenger, statusEventsChannel)
+                .setStreamHandler(bridge)
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channel)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -124,6 +131,17 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        deviceEvents?.emitIfChanged()
+    }
+
+    override fun onDestroy() {
+        deviceEvents?.dispose()
+        deviceEvents = null
+        super.onDestroy()
     }
 
     private fun hasNotificationListenerAccess(): Boolean {

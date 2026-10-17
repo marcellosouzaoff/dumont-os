@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -17,14 +21,24 @@ abstract final class Brand {
 }
 
 class DumontApp extends StatelessWidget {
-  const DumontApp({super.key, this.ghostInitiallyOpen = false});
+  const DumontApp({
+    super.key,
+    this.ghostInitiallyOpen = false,
+    this.deviceStatusEvents,
+  });
   final bool ghostInitiallyOpen;
+
+  /// Optional stream enables deterministic tests without an Android host.
+  final Stream<DumontDeviceInfo>? deviceStatusEvents;
   @override
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'DUMONT Flutter Experience',
     theme: DumontTheme.darkTheme,
-    home: DumontDesktop(ghostInitiallyOpen: ghostInitiallyOpen),
+    home: DumontDesktop(
+      ghostInitiallyOpen: ghostInitiallyOpen,
+      deviceStatusEvents: deviceStatusEvents,
+    ),
   );
 }
 
@@ -73,8 +87,13 @@ const demoApps = <DemoApp>[
 const categories = ['Todos', 'Recentes', 'Samsung', 'Google', 'Sistema'];
 
 class DumontDesktop extends StatefulWidget {
-  const DumontDesktop({super.key, this.ghostInitiallyOpen = false});
+  const DumontDesktop({
+    super.key,
+    this.ghostInitiallyOpen = false,
+    this.deviceStatusEvents,
+  });
   final bool ghostInitiallyOpen;
+  final Stream<DumontDeviceInfo>? deviceStatusEvents;
   @override
   State<DumontDesktop> createState() => _DumontDesktopState();
 }
@@ -83,6 +102,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
   final DumontWindowManager _windows = DumontWindowManager();
   final DumontNativeBridge _nativeBridge = const DumontNativeBridge();
   DumontDeviceInfo? _deviceInfo;
+  StreamSubscription<DumontDeviceInfo>? _deviceEventsSubscription;
   DumontNotificationSnapshot? _notificationSnapshot;
   List<DemoApp>? _realApps;
   List<String> get _categories =>
@@ -98,11 +118,13 @@ class _DumontDesktopState extends State<DumontDesktop> {
     ghostOpen = widget.ghostInitiallyOpen;
     _refreshNativeApps();
     _refreshDeviceStatus();
+    _listenToDeviceStatus();
     _refreshNotifications();
   }
 
   @override
   void dispose() {
+    _deviceEventsSubscription?.cancel();
     _windows.dispose();
     super.dispose();
   }
@@ -173,10 +195,33 @@ class _DumontDesktopState extends State<DumontDesktop> {
     }
   }
 
+  void _listenToDeviceStatus() {
+    // Never attempt Android-only EventChannel registration on web/desktop or
+    // Flutter tests unless a stream is explicitly supplied.
+    final events =
+        widget.deviceStatusEvents ??
+        ((!kIsWeb && Platform.isAndroid)
+            ? _nativeBridge.deviceStatusEvents()
+            : null);
+    if (events == null) return;
+    _deviceEventsSubscription = events.listen(
+      (snapshot) {
+        if (mounted) setState(() => _deviceInfo = snapshot);
+      },
+      onError: (Object _) {
+        // Unsupported hosts or transient native errors keep the last
+        // verified snapshot; the MethodChannel fallback remains available.
+      },
+    );
+  }
+
   Future<void> _refreshDeviceStatus() async {
     try {
       final snapshot = await _nativeBridge.getDeviceStatus();
-      if (mounted) setState(() => _deviceInfo = snapshot);
+      // A later one-shot response must not overwrite a fresher live event.
+      if (mounted && _deviceInfo == null) {
+        setState(() => _deviceInfo = snapshot);
+      }
     } on MissingPluginException {
       // No native snapshot outside supported Android; leave UNKNOWN.
     } on PlatformException {
