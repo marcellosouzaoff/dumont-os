@@ -56,3 +56,30 @@ instalação separada. Não inferir que acesso especial já foi concedido.
   produzindo `br.com.dumont.experience.preview.trial` para instalação
   lado a lado sem substituir o aplicativo antigo.
 - Não executar uninstall nem limpar dados da versão instalada.
+
+
+## Evidência final — pacote instalado, 17/10/2026
+
+- `flutter analyze` PASS — 0 problemas; `flutter test` PASS — 23/23.
+- Compilação `flutter build apk --debug --target-platform android-arm64`:
+  PASS (Codespace, Android SDK 36).
+- Certificado instalado antigo: `dc9a66e6488f447216fde01d2b00a0ec97d6be6cc980a464dfa282eefe29844d`.
+- Certificado novo: `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`.
+  Diferença tratada com isolamento de pacote, nunca desinstalação.
+- Pacote de teste compilado: `br.com.dumont.experience.preview.trial`.
+- SHA-256 APK isolado: `f10a9367ca20b6e9a039dcada9f2cdc9482389cbdce56197787e10e2b100dced`.
+- ADB `install`: Success. ADB `pm path` confirmou o novo pacote.
+- O APK antigo continua instalado, com `lastUpdateTime` inalterado:
+  17/10/2026 12:50:09.
+- `am start -W`: PASS, Activity Flutter aberta no primeiro plano.
+- `uiautomator`: catálogo real Android presente.
+- Teste por toque no item Chrome: abriu `com.android.chrome`;
+  `KEYCODE_BACK` retornou à activity DUMONT Teste (PASS).
+- Indicador de bateria real no cabeçalho visível (PASS).
+- Acesso especial NotificationListener para a trial: **NÃO CONCEDIDO**.
+  Nenhuma concessão automática, nenhum conteúdo de notificação lido.
+- Gestual Ghost na borda: **UNKNOWN** — tentativas ADB não confirmaram
+  abertura física; testes Flutter simulados passaram.
+- Mensagens no Ghost e operação do listener com permissão efetiva:
+  **UNKNOWN**, dependem de habilitação manual pelo usuário.
+- Sem HOME, Knox, root, flash ou alterações na prévia original.

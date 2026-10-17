@@ -123,3 +123,24 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Nenhum título/corpo/código ou histórico são persistidos.
 - TDD, build, assinatura e teste físico aguardam validação;
   estado UNKNOWN até evidência.
+
+
+### Encerramento — instalação isolada e validação física
+
+- Flutter analyze PASS e flutter test 23/23 PASS.
+- Novo APK compilado no Codespace: `f10a9367ca20b6e9a039dcada9f2cdc9482389cbdce56197787e10e2b100dced`.
+- SHA-256 do certificado da antiga instalação: `dc9a66e6488f447216fde01d2b00a0ec97d6be6cc980a464dfa282eefe29844d`;
+  novo: `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46` (diferentes).
+- Usado packageId `br.com.dumont.experience.preview.trial` em debug,
+  sem atualizar/desinstalar o pacote antigo.
+- Android ADB informou instalação `Success`, lançou MainActivity
+  no primeiro plano e confirmou pacote original inalterado.
+- Teste do catálogo Android: Chrome abriu por toque no DUMONT;
+  Android Back retornou ao DUMONT.
+- Indicador de bateria real exibido, listener especial Android
+  não autorizado e não concedido.
+- Teste físico do gesto Ghost inconclusivo; documentar UNKNOWN.
+- Próximo gate: inspeção manual visual do Ghost e habilitação
+  voluntária do acesso a notificações no Android, apenas caso o usuário
+  aprove o aviso do sistema. Não reproduzir mensagens privadas.
+- Relatório salvo no GitHub, Dropbox ainda sem upload.

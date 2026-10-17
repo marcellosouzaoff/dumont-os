@@ -114,3 +114,14 @@ códigos ou ações. Ao revogar o acesso, a UI limpa os registros
 disponíveis. O sistema Android pode conceder alcance mais amplo ao
 listener, por isso o usuário deve avaliar cuidadosamente o aviso
 oficial. Sem envio de dados para terceiros.
+
+
+## Prévia no Tab S9 FE — 17/10/2026
+
+A versão debug usa `applicationIdSuffix = ".trial"`, portanto instala
+`br.com.dumont.experience.preview.trial` separadamente para evitar
+incompatibilidade de assinaturas com a prévia antiga. O APK isolado foi
+compilado e instalado, SHA-256 `f10a9367ca20b6e9a039dcada9f2cdc9482389cbdce56197787e10e2b100dced`.
+Catálogo real e abertura de Chrome tiveram teste físico PASS.
+A permissão especial de notificações continua não concedida.
+O gesto lateral Ghost ainda exige verificação física manual.
