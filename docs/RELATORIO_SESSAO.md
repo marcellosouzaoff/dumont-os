@@ -75,3 +75,19 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Ícones nativos reais, device status, notificações, ajustes Samsung
   e Android DeX seguem pendentes. Sem troca de HOME/firmware.
 - Workflow Flutter automático continua pendente por escopo GitHub.
+
+
+## 17/10/2026 — Sequência de integrações nativas (reordenada)
+
+- Ordem definida: ícones Kotlin → bateria/rede/modelo →
+  configurações públicas → notificações SOMENTE após autorização →
+  assinatura, instalação e testes no Tab S9 FE como último passo.
+- Código implementado para os três primeiros módulos.
+- Teste inicial falhou (contrato ausente), então foram adicionados
+  DTOs Dart, consultas Kotlin, interfaces Flutter e testes.
+- Flutter: análise PASS (0 issues), 19 testes PASS; quatro goldens
+  foram regenerados para representar dados desconhecidos sem valores
+  fictícios e painel Ghost atualizado.
+- NotificationListener, consentimento especial e instalação:
+  NÃO REALIZADOS. Nenhuma permissão privilegiada.
+- Compilação Android nativa aguarda registro do resultado separado.

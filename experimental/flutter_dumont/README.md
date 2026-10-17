@@ -89,3 +89,15 @@ A integração nova ainda requer instalação e testes físicos no SM-X510.
 Build ARM64 debug com AndroidBridge Kotlin: **PASS** no Codespace,
 SHA-256 `fe3d629c3991563703fc1f839b256fad19df123b5e17d00cb78d4cee4eaac47c`. O pacote ainda não foi
 instalado nem testado fisicamente.
+
+
+## Integrações nativas — ordem aprovada
+
+A prévia usa ícones de apps via `PackageManager`, informações de
+bateria e conexão sem identificadores privados, e apenas abre
+configurações públicas Android. Os estados desconhecidos nunca simulam
+rede conectada ou bateria cheia. A área de notificações continua
+sem listener nem permissão e aguarda autorização explícita.
+
+**A instalação e os testes no tablet são o último gate.**
+Consulte `docs/ADR-0015-ORDEM-INTEGRACAO-NATIVA.md`.

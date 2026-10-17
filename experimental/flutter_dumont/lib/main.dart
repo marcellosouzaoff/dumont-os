@@ -29,13 +29,21 @@ class DumontApp extends StatelessWidget {
 }
 
 class DemoApp {
-  const DemoApp(this.name, this.icon, this.tint, this.group, {this.component});
+  const DemoApp(
+    this.name,
+    this.icon,
+    this.tint,
+    this.group, {
+    this.component,
+    this.iconPng,
+  });
 
   final String name;
   final IconData icon;
   final Color tint;
   final String group;
   final String? component;
+  final Uint8List? iconPng;
 }
 
 const demoApps = <DemoApp>[
@@ -74,6 +82,7 @@ class DumontDesktop extends StatefulWidget {
 class _DumontDesktopState extends State<DumontDesktop> {
   final DumontWindowManager _windows = DumontWindowManager();
   final DumontNativeBridge _nativeBridge = const DumontNativeBridge();
+  DumontDeviceInfo? _deviceInfo;
   List<DemoApp>? _realApps;
   List<String> get _categories =>
       _realApps == null ? categories : const ['Todos', 'Instalados'];
@@ -86,6 +95,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
     super.initState();
     ghostOpen = widget.ghostInitiallyOpen;
     _refreshNativeApps();
+    _refreshDeviceStatus();
   }
 
   @override
@@ -136,6 +146,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
                 Brand.ink,
                 'Instalados',
                 component: app.component,
+                iconPng: app.iconPng,
               ),
             )
             .toList(growable: false);
@@ -146,6 +157,30 @@ class _DumontDesktopState extends State<DumontDesktop> {
     } on PlatformException {
       // Native call failed: never describe the sample data as installed apps.
       if (mounted) notify('Catálogo Android indisponível: prévia visual');
+    }
+  }
+
+  Future<void> _refreshDeviceStatus() async {
+    try {
+      final snapshot = await _nativeBridge.getDeviceStatus();
+      if (mounted) setState(() => _deviceInfo = snapshot);
+    } on MissingPluginException {
+      // No native snapshot outside supported Android; leave UNKNOWN.
+    } on PlatformException {
+      if (mounted) notify('Estado do dispositivo indisponível');
+    }
+  }
+
+  Future<void> _openPublicSettings(String id) async {
+    try {
+      final ok = await _nativeBridge.openSettings(id);
+      if (!ok && mounted) notify('Configuração Android indisponível');
+    } on MissingPluginException {
+      if (mounted) notify('Configuração Android indisponível na prévia web');
+    } on PlatformException {
+      if (mounted) notify('Não foi possível abrir a configuração');
+    } on ArgumentError {
+      if (mounted) notify('Ação de configuração não permitida');
     }
   }
 
@@ -387,9 +422,30 @@ class _DumontDesktopState extends State<DumontDesktop> {
             ),
           ),
         if (!compact) const SizedBox(width: 25),
-        const Icon(Icons.wifi_rounded, size: 17, color: Brand.cream),
+        Icon(
+          _deviceInfo?.networkType == 'wifi'
+              ? Icons.wifi_rounded
+              : _deviceInfo?.networkType == 'offline'
+              ? Icons.wifi_off_rounded
+              : Icons.network_check_rounded,
+          size: 17,
+          color: _deviceInfo == null ? Brand.muted : Brand.cream,
+        ),
         const SizedBox(width: 12),
-        const Icon(Icons.battery_full_rounded, size: 17, color: Brand.cream),
+        Icon(
+          _deviceInfo?.isCharging == true
+              ? Icons.battery_charging_full_rounded
+              : Icons.battery_std_rounded,
+          size: 17,
+          color: _deviceInfo == null ? Brand.muted : Brand.cream,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          _deviceInfo?.batteryPercent == null
+              ? '—'
+              : '${_deviceInfo!.batteryPercent}%',
+          style: const TextStyle(fontSize: 12, color: Brand.cream),
+        ),
       ],
     ),
   );
@@ -720,7 +776,17 @@ class _DumontDesktopState extends State<DumontDesktop> {
             color: app.tint.withValues(alpha: .17),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(app.icon, size: 33, color: app.tint),
+          child: app.iconPng == null
+              ? Icon(app.icon, size: 33, color: app.tint)
+              : Image.memory(
+                  app.iconPng!,
+                  key: Key('native-icon-${app.component}'),
+                  width: 56,
+                  height: 56,
+                  filterQuality: FilterQuality.medium,
+                  errorBuilder: (_, _, _) =>
+                      Icon(app.icon, size: 33, color: app.tint),
+                ),
         ),
         const SizedBox(height: 10),
         Text(
@@ -832,14 +898,37 @@ class _DumontDesktopState extends State<DumontDesktop> {
           _ghostRow(
             Icons.notifications_none,
             'Notificações',
-            'Permissão Android necessária',
+            'Sem acesso — autorização explícita pendente',
           ),
-          _ghostRow(Icons.wifi, 'Conexões', 'Serviços do sistema'),
-          _ghostRow(Icons.devices, 'Dispositivo', 'Samsung / Android'),
+          _ghostRow(
+            Icons.wifi,
+            'Conexões',
+            _deviceInfo?.networkType == null
+                ? 'Estado desconhecido'
+                : 'Rede ativa: ${_deviceInfo!.networkType}',
+            onTap: () => _openPublicSettings('internet'),
+          ),
+          _ghostRow(
+            Icons.devices,
+            'Dispositivo',
+            _deviceInfo == null
+                ? 'Dispositivo não verificado'
+                : '${_deviceInfo!.model} · Android ${_deviceInfo!.androidVersion}',
+            onTap: () => _openPublicSettings('display'),
+          ),
+          _ghostRow(
+            Icons.battery_std_rounded,
+            'Bateria',
+            _deviceInfo?.batteryPercent == null
+                ? 'Estado desconhecido'
+                : '${_deviceInfo!.batteryPercent}% · ${_deviceInfo!.isCharging == true ? "Carregando" : "Status medido"}',
+            onTap: _refreshDeviceStatus,
+          ),
           _ghostRow(
             Icons.shield_outlined,
             'Privacidade',
-            'Acesso gerenciado pelo Android',
+            'Configurações públicas do Android',
+            onTap: () => _openPublicSettings('privacy'),
           ),
           const Spacer(),
           const Text(
@@ -854,33 +943,42 @@ class _DumontDesktopState extends State<DumontDesktop> {
       ),
     ),
   );
-  Widget _ghostRow(IconData icon, String title, String caption) => Padding(
-    padding: const EdgeInsets.only(bottom: 22),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: Brand.cream, size: 22),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Brand.cream,
-                  fontWeight: FontWeight.w500,
+  Widget _ghostRow(
+    IconData icon,
+    String title,
+    String caption, {
+    VoidCallback? onTap,
+  }) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(8),
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Brand.cream, size: 22),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Brand.cream,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                caption,
-                style: const TextStyle(color: Brand.muted, fontSize: 11),
-              ),
-            ],
+                const SizedBox(height: 5),
+                Text(
+                  caption,
+                  style: const TextStyle(color: Brand.muted, fontSize: 11),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
