@@ -179,3 +179,17 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   justificando resultado falso negativo naquele teste físico.
 - Nenhuma permissão especial concedida. Janelas DeX continuam de
   responsabilidade do Android.
+
+### Backup da rodada e limite de Dropbox
+
+- Branch de desenvolvimento e relatório verificados no GitHub.
+- Arquivo de backup ZIP preparado a partir de `git archive`, sem
+  arquivos não versionados, chaves ou dados privados do tablet.
+- Conector Dropbox: conta acessível para leitura; não há pasta DUMONT.
+  O método `upload_file` exige um arquivo anexado à conversa;
+  não recebe caminho direto da instalação Termux.
+- Compartilhamento externo pelo Termux foi bloqueado pela ferramenta.
+  Não foi realizado nenhum upload, concessão de permissões ou
+  tentativa de contornar esse bloqueio.
+- Pendente: disponibilizar ZIP em Downloads do tablet e anexá-lo à
+  conversa para transferência autorizada pelo conector Dropbox.
