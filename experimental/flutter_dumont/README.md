@@ -141,3 +141,8 @@ transporte da rede ativa com receptores Android sob demanda, sem polling.
 O Flutter escuta apenas no Android real, faz consulta inicial e libera
 a assinatura ao descartar a tela. Hosts sem Android continuam com
 fallback demonstrativo seguro e nenhum listener de eventos ativado.
+
+
+Validação tablet: APK `24f76f297b1a3531a77e720f5914d41ea455045bdc913f88f8ae8b0f6d18427f` compilado e instalado
+no pacote separado `.trial`. Bateria, rede e modelo exibidos em Ghost;
+recebimento de transição física espontânea ainda UNKNOWN.

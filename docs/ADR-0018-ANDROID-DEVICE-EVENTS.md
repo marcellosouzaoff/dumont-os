@@ -44,6 +44,17 @@ HOME Samsung, Knox, privacidade, custo zero e o pacote de teste `.trial`.
   Implementada verificação de plataforma e injeção de stream nos testes.
 - Flutter 3.47.7: `flutter analyze` **PASS / zero problemas**;
   `flutter test` **PASS / 27 de 27 testes**.
-- Kotlin/Android ARM64: **aguardando compilação**.
-- Teste físico de transição de bateria ou rede no Tab S9 FE:
-  **UNKNOWN** antes da validação.
+- Kotlin/Android ARM64: **PASS**, `flutter build apk --debug --target-platform android-arm64`.
+  APK SHA-256: `24f76f297b1a3531a77e720f5914d41ea455045bdc913f88f8ae8b0f6d18427f`.
+  Certificado SHA-256: `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`.
+  Pacote: `br.com.dumont.experience.preview.trial`.
+- Instalação debug `.trial` por ADB: **PASS**.
+- UIAutomator: **PASS** para 54% de bateria, Wi-Fi, SM-X510, Ghost e
+  estado de notificações sem autorização, consistentes com Android.
+- Alteração física espontânea de rede/bateria: **UNKNOWN**; não simulada
+  para evitar alterar condições globais do dispositivo.
+- Prévia original `br.com.dumont.experience.preview`: após o build
+  atual, **não encontrada** na listagem de pacotes Android, embora
+  estivesse presente na rodada anterior. Causa **UNKNOWN**; não houve
+  comando de desinstalação ou limpeza de dados nesta rodada. Não
+  reinstalar automaticamente até o usuário decidir.

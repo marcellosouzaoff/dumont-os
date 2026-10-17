@@ -213,3 +213,34 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Sem mudanças de HOME, Knox, firmware, instalação original,
   acessibilidade ou permissão de notificações especiais.
 - Backup de rodada será atualizado após validação.
+
+
+### Fechamento: build e tablet — AndroidBridge eventos
+
+- Flutter: analyze **PASS 0 issues**, test **PASS 27/27**.
+- Kotlin/Android: build APK ARM64 debug **PASS**; SHA-256 `24f76f297b1a3531a77e720f5914d41ea455045bdc913f88f8ae8b0f6d18427f`.
+- Certificado de debug SHA-256 `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`, válido para a `.trial`.
+- Transferência ao Termux com SHA-256 conferido; comando
+  `adb install -r` **Success** para
+  `br.com.dumont.experience.preview.trial`. Sem firmware, Knox, root.
+- `am start`: MainActivity abriu em primeiro plano.
+- UIAutomator do tablet: DUMONT e catálogo Android disponíveis;
+  54% mostrado na barra e em Ghost (dumpsys battery também 54%),
+  Wi-Fi, modelo SM-X510 e notificações «Acesso não concedido».
+  Sem crashes observados no recorte do logcat examinado.
+- Uma transição real de Wi-Fi ou nível da bateria **não foi provocada**
+  nem observada nesta rodada. Testes simulados do EventChannel
+  verificaram entrega de eventos e cancelamento no Flutter.
+  Estado dessa verificação física: UNKNOWN.
+- **Divergência relevante:** ao verificar pacotes Android após instalar
+  o `.trial`, `br.com.dumont.experience.preview` original não
+  constava mais em `pm list packages`, nem `pm path`.
+  Na rodada anterior constava instalado. A origem da diferença é
+  UNKNOWN; nenhum `adb uninstall`, limpeza de dados ou instrução
+  para remover pacote foi executado nesta rodada. Não presumir causa
+  e não reinstalar sem decisão do usuário.
+- Acesso especial a notificações permanece não concedido;
+  nenhuma ação automática de permissão foi realizada.
+- Backup da nova rodada: gerar ZIP do GitHub com relatório atualizado,
+  sem chaves privadas nem APK debug; Dropbox depende de arquivo
+  fornecido à conversa para `upload_file`.
