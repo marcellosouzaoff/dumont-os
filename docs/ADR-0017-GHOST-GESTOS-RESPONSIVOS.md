@@ -35,3 +35,25 @@ e podia disputar o gesto com navegação do Android.
 - Teste físico tablet/ADB desta correção: **UNKNOWN** antes do novo APK.
 - Notificações especiais continuam sem autorização Android; nenhum
   auto-grant ou acesso a conteúdos particulares.
+
+
+## Validação física após correção
+
+- Build Flutter ARM64 debug: **PASS**; APK SHA-256:
+  `b04ed78df8f26517c9ce7f6beacf76346569bc37406901fa840ed2ef8b85740c`.
+- Certificado de assinatura SHA-256:
+  `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`
+  (igual ao `.trial` já instalado).
+- Instalação `adb install -r` do pacote isolado
+  `br.com.dumont.experience.preview.trial`: **PASS**.
+- Prévia antiga permanece com lastUpdateTime 12:50:09, intacta.
+- ADB UI hierarchy no SM-X510 (paisagem) delimitou a zona de interação
+  Ghost em X=2196–2304 (pixels físicos). Deslize iniciado em X=2230,
+  Y=720 com deslocamento gradual até X=1690: **PASS**.
+- Teste de toque em X=2240, Y=730 após fechar Ghost: **PASS**.
+- Ghost exibiu rede Wi-Fi, modelo SM-X510, Android 16, bateria real e
+  «Acesso não concedido» para notificações.
+- A tentativa anterior em X=2190 começou fora da zona X=2196–2304,
+  justificando resultado falso negativo naquele teste físico.
+- Nenhuma permissão especial concedida. Janelas DeX continuam de
+  responsabilidade do Android.
