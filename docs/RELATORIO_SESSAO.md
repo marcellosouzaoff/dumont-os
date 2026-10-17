@@ -363,3 +363,22 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   Nenhuma alteração de rotação, sistema, permissões ou HOME.
 - Somente pacote trial listado no Android, ausência do original
   permanece sem causa definida.
+
+
+## 17/10/2026 — Fase 7: diagnóstico do Galaxy A55
+
+- Remote Desktop Commander identificou dois aparelhos, tablet
+  SM-X510 e celular SM-A556E, ambos acessíveis via Termux.
+- No A55, `adb devices -l` retornou vazio. ADB daemon consta
+  `running`, mas sem porta de depuração sem fio divulgada; conexão
+  requer pareamento pelo usuário, sem tentativa de contorno.
+- `/system/bin/cmd package list packages -u` não lista DUMONT,
+  mas visibilidade de pacotes pode ser limitada pelo Android.
+  Estado de instalação de versões antigas no A55: UNKNOWN.
+- `aapt` verificou APKs DUMONT 0.4.0, Preview 0.4.0 e Pilot 0.4.2.
+  Pilot e trial Flutter utilizam nomes e certificados diferentes.
+- Integridade e certificado já verificados da trial ARM64 de Fase 6.
+  Nenhuma instalação, exclusão, modificação de HOME ou concessão de
+  permissão no A55 nesta rodada.
+- Fase 7 aguardando pareamento ADB voluntário do A55 para teste físico.
+- DeX real permanece UNKNOWN. Documentação: ADR-0022.
