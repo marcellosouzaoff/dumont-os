@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'theme/dumont_theme.dart';
+import 'services/android_bridge.dart';
 import 'widgets/dumont_state_badge.dart';
 import 'windows/dumont_window_manager.dart';
 
@@ -27,11 +29,13 @@ class DumontApp extends StatelessWidget {
 }
 
 class DemoApp {
-  const DemoApp(this.name, this.icon, this.tint, this.group);
+  const DemoApp(this.name, this.icon, this.tint, this.group, {this.component});
+
   final String name;
   final IconData icon;
   final Color tint;
   final String group;
+  final String? component;
 }
 
 const demoApps = <DemoApp>[
@@ -69,12 +73,19 @@ class DumontDesktop extends StatefulWidget {
 
 class _DumontDesktopState extends State<DumontDesktop> {
   final DumontWindowManager _windows = DumontWindowManager();
+  final DumontNativeBridge _nativeBridge = const DumontNativeBridge();
+  List<DemoApp>? _realApps;
+  List<String> get _categories =>
+      _realApps == null ? categories : const ['Todos', 'Instalados'];
+  List<DemoApp> get _catalog => _realApps ?? demoApps;
+  bool get _nativeAvailable => _realApps != null;
   bool browserOpen = true, ghostOpen = false;
   String category = 'Todos', search = '', notice = '';
   @override
   void initState() {
     super.initState();
     ghostOpen = widget.ghostInitiallyOpen;
+    _refreshNativeApps();
   }
 
   @override
@@ -110,6 +121,50 @@ class _DumontDesktopState extends State<DumontDesktop> {
         ],
       ),
     );
+  }
+
+  Future<void> _refreshNativeApps() async {
+    try {
+      final installed = await _nativeBridge.listApps();
+      if (!mounted) return;
+      setState(() {
+        _realApps = installed
+            .map(
+              (app) => DemoApp(
+                app.label,
+                Icons.apps_rounded,
+                Brand.ink,
+                'Instalados',
+                component: app.component,
+              ),
+            )
+            .toList(growable: false);
+        category = 'Todos';
+      });
+    } on MissingPluginException {
+      // Web, tests and unsupported hosts remain visibly demonstrative.
+    } on PlatformException {
+      // Native call failed: never describe the sample data as installed apps.
+      if (mounted) notify('Catálogo Android indisponível: prévia visual');
+    }
+  }
+
+  Future<void> _launchApp(DemoApp app) async {
+    final component = app.component;
+    if (component == null) {
+      notify('${app.name}: demonstração visual');
+      return;
+    }
+    try {
+      final launched = await _nativeBridge.launchApp(component);
+      if (!launched && mounted) {
+        notify('Não foi possível abrir ${app.name}');
+      }
+    } on PlatformException {
+      if (mounted) notify('Falha ao abrir ${app.name} pelo Android');
+    } on MissingPluginException {
+      if (mounted) notify('Ponte Android indisponível');
+    }
   }
 
   void notify(String value) => setState(() => notice = value);
@@ -345,7 +400,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
   );
 
   Widget _browser(bool compact) {
-    final visible = demoApps
+    final visible = _catalog
         .where(
           (app) =>
               app.name.toLowerCase().contains(search.toLowerCase()) &&
@@ -399,8 +454,9 @@ class _DumontDesktopState extends State<DumontDesktop> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () =>
-                        notify('Aplicativos ilustrativos do protótipo'),
+                    onPressed: _nativeAvailable
+                        ? _refreshNativeApps
+                        : () => notify('Catálogo ilustrativo do protótipo'),
                     icon: const Icon(Icons.refresh, color: Brand.ink),
                   ),
                   IconButton(
@@ -437,7 +493,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
                                 ),
                               ),
                             ),
-                            for (final cat in categories) _sideItem(cat),
+                            for (final cat in _categories) _sideItem(cat),
                             const Spacer(),
                             const Padding(
                               padding: EdgeInsets.all(18),
@@ -475,9 +531,11 @@ class _DumontDesktopState extends State<DumontDesktop> {
                               ),
                               const SizedBox(height: 6),
                             ],
-                            const Text(
-                              'Uma experiência feita para seu ritmo.',
-                              style: TextStyle(
+                            Text(
+                              _nativeAvailable
+                                  ? 'Aplicativos disponíveis neste dispositivo.'
+                                  : 'Uma experiência feita para seu ritmo.',
+                              style: const TextStyle(
                                 color: Color(0xFF8E8C92),
                                 fontSize: 12,
                               ),
@@ -511,7 +569,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
                                 height: 53,
                                 child: ListView(
                                   scrollDirection: Axis.horizontal,
-                                  children: categories
+                                  children: _categories
                                       .map(
                                         (cat) => Padding(
                                           padding: const EdgeInsets.only(
@@ -584,15 +642,20 @@ class _DumontDesktopState extends State<DumontDesktop> {
             ),
           ),
           if (!compact)
-            const SizedBox(
+            SizedBox(
               height: 34,
               child: Padding(
-                padding: EdgeInsets.only(left: 23),
+                padding: const EdgeInsets.only(left: 23),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'PRÉVIA FLUTTER  •  Integração Android via Kotlin',
-                    style: TextStyle(color: Color(0xFF909099), fontSize: 10),
+                    _nativeAvailable
+                        ? 'ANDROID  •  Catálogo via Kotlin'
+                        : 'PRÉVIA FLUTTER  •  Integração Android via Kotlin',
+                    style: const TextStyle(
+                      color: Color(0xFF909099),
+                      fontSize: 10,
+                    ),
                   ),
                 ),
               ),
@@ -629,9 +692,13 @@ class _DumontDesktopState extends State<DumontDesktop> {
                 size: 19,
               ),
               const SizedBox(width: 12),
-              Text(
-                cat,
-                style: const TextStyle(color: Brand.cream, fontSize: 13),
+              Flexible(
+                child: Text(
+                  cat,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Brand.cream, fontSize: 13),
+                ),
               ),
             ],
           ),
@@ -641,7 +708,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
   );
 
   Widget _appTile(DemoApp app) => InkWell(
-    onTap: () => notify('${app.name}: demonstração visual'),
+    onTap: () => _launchApp(app),
     borderRadius: BorderRadius.circular(13),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,

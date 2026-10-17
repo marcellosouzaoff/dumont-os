@@ -75,3 +75,13 @@ marcado `UNKNOWN`. Essas janelas são internas ao Flutter e não operam janelas
 DeX ou aplicativos externos. `flutter analyze` e `flutter test`
 (11/11) PASS no Codespace. Novo APK ARM64 debug: PASS (SHA-256 `ce7a1835cf43c860b4a166df936fdbbc20e285d3c13822d3bd2b7ce3c878dac8`).
 CI automático e instalação/teste físico Fase 3 permanecem pendentes.
+
+## Ponte Android nativa — etapa 1
+
+O pacote Flutter Preview agora possui um `MethodChannel` (Kotlin)
+para listar atividades `MAIN/LAUNCHER` exportadas e abrir somente
+componentes novamente verificados pelo Android. O catálogo mostra
+apps reais quando o canal responde; no navegador mantém a demonstração.
+A grade nativa ainda usa **ícones genéricos**. Não há integrações de
+notificações, Knox, SystemUI, papel de parede ou controle de janelas DeX.
+A integração nova ainda requer instalação e testes físicos no SM-X510.
