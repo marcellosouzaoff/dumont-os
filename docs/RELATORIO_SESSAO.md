@@ -144,3 +144,17 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   voluntária do acesso a notificações no Android, apenas caso o usuário
   aprove o aviso do sistema. Não reproduzir mensagens privadas.
 - Relatório salvo no GitHub, Dropbox ainda sem upload.
+
+
+## 17/10/2026 — Ajuste Ghost, antes do backup Dropbox
+
+- Detectada causa provável de não abrir o Ghost: limiar `primaryDelta < -8`
+  por evento; gestos suaves distribuem deslocamento em muitos eventos.
+- Implementados limiar acumulado -48 dp, borda invisível 62 dp,
+  abertura por toque, descrição para acessibilidade e atualização de
+  estado nativo somente de leitura.
+- Dois novos testes falharam antes do código (RED), e passaram depois.
+- Flutter 3.47.7: `flutter analyze` PASS zero issues;
+  `flutter test` PASS **25/25**, goldens mantidos.
+- Ainda aguardam: compilação debug isolada, atualização do tablet,
+  teste físico do novo gesto e upload Dropbox.

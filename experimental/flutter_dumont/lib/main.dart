@@ -90,6 +90,7 @@ class _DumontDesktopState extends State<DumontDesktop> {
   List<DemoApp> get _catalog => _realApps ?? demoApps;
   bool get _nativeAvailable => _realApps != null;
   bool browserOpen = true, ghostOpen = false;
+  double _ghostDragTravel = 0;
   String category = 'Todos', search = '', notice = '';
   @override
   void initState() {
@@ -104,6 +105,16 @@ class _DumontDesktopState extends State<DumontDesktop> {
   void dispose() {
     _windows.dispose();
     super.dispose();
+  }
+
+  void _openGhost() {
+    if (!mounted || ghostOpen) return;
+    setState(() {
+      ghostOpen = true;
+      _ghostDragTravel = 0;
+    });
+    // Read-only status refresh; never grants notification privileges.
+    _refreshNotifications();
   }
 
   void _openLinus() => _windows.open(id: 'linus', title: 'Linus Security');
@@ -334,15 +345,26 @@ class _DumontDesktopState extends State<DumontDesktop> {
               top: 75,
               right: 0,
               bottom: 100,
-              width: 26,
-              child: GestureDetector(
-                key: const Key('ghost-edge'),
-                behavior: HitTestBehavior.translucent,
-                onHorizontalDragUpdate: (d) {
-                  if ((d.primaryDelta ?? 0) < -8) {
-                    setState(() => ghostOpen = true);
-                  }
-                },
+              // Wider invisible gesture zone starts clear of Android's
+              // system-navigation edge. No visible Samsung-style rail.
+              width: 62,
+              child: Semantics(
+                label: 'Abrir painel Ghost',
+                button: true,
+                child: GestureDetector(
+                  key: const Key('ghost-edge'),
+                  behavior: HitTestBehavior.translucent,
+                  onTap: _openGhost,
+                  onHorizontalDragStart: (_) => _ghostDragTravel = 0,
+                  onHorizontalDragUpdate: (details) {
+                    _ghostDragTravel += details.primaryDelta ?? 0;
+                    // Smooth swipes arrive in many small move events.
+                    if (_ghostDragTravel <= -48) _openGhost();
+                  },
+                  onHorizontalDragEnd: (_) {
+                    if (_ghostDragTravel <= -48) _openGhost();
+                  },
+                ),
               ),
             ),
           if (ghostOpen) ...[

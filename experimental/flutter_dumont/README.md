@@ -125,3 +125,10 @@ compilado e instalado, SHA-256 `f10a9367ca20b6e9a039dcada9f2cdc9482389cbdce56197
 Catálogo real e abertura de Chrome tiveram teste físico PASS.
 A permissão especial de notificações continua não concedida.
 O gesto lateral Ghost ainda exige verificação física manual.
+
+
+## Ajuste de gestos Ghost — ADR-0017
+
+O painel Ghost agora abre com gesto suave acumulado (-48dp) na borda
+invisível de 62dp, ou com toque na mesma borda. A alteração preserva
+o launcher Android e o estilo da Paleta 01. Consulte o ADR-0017.
