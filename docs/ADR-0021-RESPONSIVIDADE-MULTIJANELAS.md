@@ -53,6 +53,23 @@ Larguras × alturas lógicas cobertas pelos novos testes:
 
 ## Build Android e backup
 
-Build ARM64, eventual atualização da `.trial` e backup desta rodada
-dependem das respectivas execuções; reportar separadamente PASS/UNKNOWN
-sem inferir testes físicos a partir de simulação Flutter.
+- Build `flutter build apk --debug --target-platform android-arm64`:
+  **PASS**. Identificador `br.com.dumont.experience.preview.trial`;
+  SHA-256 do APK `869386ef846ddb991b789cea47faabca7b58b7e9174e87c83e688b02338a0ead`.
+- Certificado SHA-256 `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`,
+  igual à prévia trial anterior.
+- Transferência ao Termux com SHA verificado; `adb install -r`:
+  **Success**, Activity iniciada por `am start -W` (PASS).
+- Galaxy Tab S9 FE UIAutomator: DUMONT presente, catálogo visível,
+  bateria 80%; Ghost abriu, mostrou rede e modelo SM-X510;
+  notificações continuam sem acesso especial (PASS).
+- **Limites:** não foi alterado tamanho físico, orientação nem ativado
+  DeX. Os casos de overflow em 1024×600 e 600×360 são comprovados
+  por teste Flutter, não por sessão DeX física.
+- A55 permanece sem ADB ativo, portanto físico **UNKNOWN**.
+- A prévia original não consta no Android, causa **UNKNOWN**;
+  nenhum reinstalar/remover foi executado.
+- Backup de código gerado por `git archive` após o commit final da
+  rodada, verificar integridade e localizar no tablet.
+- Envio de ZIP a Google Drive: somente declarar PASS após a
+  confirmação do binário no Drive, distinta do upload de relatório.

@@ -182,3 +182,8 @@ Android trial somente, sem mudanças na HOME e sem teste DeX real.
 tablets e janelas curtas de desktop; o menu lateral e o catálogo
 passam a rolar quando a altura disponível é insuficiente.
 Testes de dimensão **não** equivalem a instalar no A55 nem a rodar DeX real.
+
+
+Validado no SM-X510: APK ARM64 assinado da variante `.trial`,
+instalado sem root; UI DUMONT, catálogo e Ghost presentes. Testes
+de alturas pequenas executados no Flutter, não no DeX real.

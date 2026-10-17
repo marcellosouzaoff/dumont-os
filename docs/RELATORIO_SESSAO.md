@@ -344,3 +344,22 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Direitos e privacidade: nenhuma nova permissão, alteração de
   sistema ou coleta de dados; nenhuma mudança de HOME/Knox.
 - ADR-0021 contém a matriz e as evidências.
+
+
+### Evidências Android da fase 6
+
+- Build ARM64 debug PASS; APK SHA-256 `869386ef846ddb991b789cea47faabca7b58b7e9174e87c83e688b02338a0ead`.
+- Assinatura SHA-256 `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`
+  confere com o certificado da trial já instalada.
+- Download ao Termux (75 MB) com hash verificado; ADB `install -r`
+  PASS na `br.com.dumont.experience.preview.trial`.
+- `am start -W`: pacote trial abriu normalmente.
+- UIAutomator no tablet: DUMONT e catálogo aparecem, bateria 80%
+  lida do Android, Ghost aberto e dados de rede/modelo presentes.
+- Privilégio especial das notificações NÃO CONCEDIDO.
+- Logcat de erros recentes consultado sem crash detectado na
+  amostra; não afirmar cobertura de todas as execuções.
+- A55 físico sem ADB: UNKNOWN. Sessão DeX real: UNKNOWN.
+  Nenhuma alteração de rotação, sistema, permissões ou HOME.
+- Somente pacote trial listado no Android, ausência do original
+  permanece sem causa definida.
