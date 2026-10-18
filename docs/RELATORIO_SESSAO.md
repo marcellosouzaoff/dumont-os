@@ -529,3 +529,13 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Após `adb input tap 945 315`, UIAutomator capturou o pacote ChatGPT como aplicativo em primeiro plano, não o Ghost Lab. A tentativa posterior de encadear os comandos no ADB não produziu o XML esperado.
 - Resultado da abertura/fechamento físico do Ghost: UNKNOWN, sem inferir falha ou aprovação. Testes Flutter CI seguem PASS. Próximo teste requer manter o DUMONT em foreground de forma estável, sem interferência do controle remoto.
 - Não houve nova instalação, remoção, concessão de permissões, acesso a mensagens privadas ou alteração HOME.
+
+## 18/10/2026 — A55: Ghost Lab botão abrir/fechar PASS
+
+- Abertura Activity Ghost Lab via ADB: Status ok, em primeiro plano.
+- Toque no botão interno: 1 elemento semântico Ghost; Activity DUMONT permaneceu em primeiro plano.
+- Toque no fechar: 0 elementos Ghost; 1 elemento Abrir Ghost; Activity DUMONT permaneceu em primeiro plano.
+- Resultado: PASS para ciclo físico por botões (6,65 s). Gesto de borda permanece UNKNOWN.
+- HOME Samsung e previews anteriores preservados. Nenhuma permissão ou dado de notificações modificado/acessado.
+- XMLs temporários removidos após registrar contagens.
+- Evidência: docs/EVIDENCIA_GHOSTLAB_A55_2026-10-18.md.
