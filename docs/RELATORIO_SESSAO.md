@@ -382,3 +382,21 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   permissão no A55 nesta rodada.
 - Fase 7 aguardando pareamento ADB voluntário do A55 para teste físico.
 - DeX real permanece UNKNOWN. Documentação: ADR-0022.
+
+
+## 17/10/2026 — Ícone de aplicativo DUMONT / ADR-0023
+
+- O Master selecionou o conceito de monograma arquitetônico branco
+  com curva Burgundy sobre fundo azul-escuro.
+- Imagem da conversa usada como referência, sem busca de outra marca
+  ou substituição de obra por terceiros.
+- Produzidos ícones do launcher Android nas densidades 48, 72, 96,
+  144 e 192 px. Recursos binários alterados apenas na prévia Flutter.
+- O `AndroidManifest.xml` permanece com `@mipmap/ic_launcher`.
+- Pacotes fonte e mipmap enviados à pasta DUMONT no Google Drive,
+  com integridade ZIP verificada.
+- Aplicativo ainda não instalado no A55 nesta rodada.
+- Nenhuma autorização de alteração da HOME/Knox, root ou pacotes
+  anteriores foi presumida.
+- Estado de homologação do ícone: escolhido para esta prévia; versão
+  vetorial/adaptativa final ainda será avaliada.

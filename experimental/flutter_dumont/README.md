@@ -187,3 +187,13 @@ Testes de dimensão **não** equivalem a instalar no A55 nem a rodar DeX real.
 Validado no SM-X510: APK ARM64 assinado da variante `.trial`,
 instalado sem root; UI DUMONT, catálogo e Ghost presentes. Testes
 de alturas pequenas executados no Flutter, não no DeX real.
+
+
+## Identidade do app (ADR-0023)
+
+A prévia usa o monograma DUMONT selecionado pelo Master como ícone
+Android nas cinco densidades clássicas do launcher, em
+`android/app/src/main/res/mipmap-*/ic_launcher.png`.
+Arquivos de origem e reprodução: Google Drive / DUMONT /
+`DUMONT_ANDROID_ICONS_v0.1.zip`. O sistema adaptativo/monocromático
+ainda não está homologado. A imagem não foi instalada no Galaxy A55.
