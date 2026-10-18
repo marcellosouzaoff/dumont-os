@@ -400,3 +400,20 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   anteriores foi presumida.
 - Estado de homologação do ícone: escolhido para esta prévia; versão
   vetorial/adaptativa final ainda será avaliada.
+
+
+### Fechamento da validação do ícone DUMONT — 17/10/2026
+
+- Compilação Flutter 3.47.7 Android ARM64 PASS, análise estática
+  PASS, 33/33 testes Flutter PASS.
+- APK SHA-256 `9e466de26c86c6ea718ed63186803f1209ede8d15fc111ef844d33f62ff3c301`.
+- `aapt` confirmou 5 mipmaps do novo ícone presentes dentro do APK.
+- Certificado de assinatura é o mesmo da trial existente. Transferido
+  ao Termux e validado pelo SHA-256 antes da instalação.
+- Galaxy Tab S9 FE: install -r PASS e Activity abriu normalmente.
+  DUMONT e Aplicativos presentes segundo UIAutomator.
+- HOME Samsung preservada; nenhum acesso a notificações concedido.
+  App original não reinstalado.
+- Aparência visual do ícone na grade Android não inspecionada ainda:
+  UNKNOWN. Ícone adaptativo monocromático ainda pendente.
+- A55 sem instalação/alteração nesta rodada.

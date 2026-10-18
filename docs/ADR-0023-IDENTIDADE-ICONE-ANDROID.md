@@ -55,3 +55,31 @@ principal. **Nada foi instalado no Galaxy A55** nesta fase.
 3. Renderizar ícone no launcher em dispositivo real e validar legibilidade.
 4. Obter consentimento antes da instalação no A55; a aprovação da
    identidade visual não autoriza automaticamente a instalação.
+
+
+## Validação de compilação e tablet — rodada seguinte
+
+- Flutter 3.47.7: `flutter analyze` **PASS**, zero problemas;
+  `flutter test` **PASS**, 33/33.
+- Build `flutter build apk --debug --target-platform android-arm64`
+  **PASS**. APK SHA-256:
+  `9e466de26c86c6ea718ed63186803f1209ede8d15fc111ef844d33f62ff3c301`.
+- `aapt list` confirmou os cinco recursos `res/mipmap-*-v4/ic_launcher.png`
+  dentro do APK resultante: **PASS**.
+- Identificador do aplicativo: `br.com.dumont.experience.preview.trial`;
+  certificado SHA-256:
+  `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`;
+  corresponde à assinatura da trial previamente instalada.
+- Cópia local do APK no Termux do tablet verificada pelo SHA-256:
+  **PASS**. APK local:
+  `~/dumont-validation/artifacts/dumont-logo-961ab61-arm64-debug.apk`.
+- No Tab S9 FE SM-X510: `adb install -r` **Success**,
+  `am start -W` **Status ok**, UIAutomator confirmou DUMONT e
+  Aplicativos. Instalado apenas pacote `.trial`.
+- Android HOME permanece `com.sec.android.app.launcher`.
+  Privilégio de notificações não foi concedido.
+- **Avaliação visual da aparência do ícone na grade do launcher:
+  UNKNOWN.** `aapt` comprova presença dos recursos, mas não como
+  o launcher Samsung os compõe com máscara e escala.
+- Galaxy A55: nenhum APK instalado nesta rodada; aprovação para
+  instalar no A55 deve ser específica.
