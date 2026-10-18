@@ -465,3 +465,19 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
   de cobrança no GitHub Codespaces; não usar limite gratuito pago.
 - Arquivos salvos na branch de protótipo; nenhuma atualização
   instalada no A55 ou tablet. Estado: NÃO VALIDADO.
+
+
+## 17/10/2026 — Alternativa de CI sem custo (bloqueada)
+
+- Termux do tablet `aarch64`: sem Flutter, Dart, Java ou proot-distro
+  disponíveis neste ambiente de acesso remoto; não executamos
+  compilação local.
+- Workflows Android nativos existentes não validam Flutter.
+- Foi preparada uma alternativa GitHub Actions Flutter 3.47.7,
+  mas o push foi **recusado** por falta do escopo OAuth `workflow`.
+  Nenhuma execução de runner ocorreu e a proposta não foi publicada.
+- A tentativa de commit não publicado foi descartada no checkout
+  local: HEAD restaurado ao commit publicado `74a7090`.
+- Codespaces permanece bloqueado por HTTP 402 billing.
+- Patch Ghost continua **NÃO VALIDADO** e **NÃO INSTALADO**.
+  Não afirmar resultados de tests/build sem ambiente habilitado.
