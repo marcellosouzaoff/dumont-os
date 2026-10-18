@@ -489,3 +489,10 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Disparo por `workflow_dispatch` inicialmente indisponível por arquivo ausente da branch padrão (`HTTP 404`). Criado PR **draft** #2, sem merge, para executar `pull_request`.
 - Execuções iniciadas: Flutter preview validation run `39115676842` e Android validation run `39115676728`. Estado de conclusão ainda não confirmado ao escrever esta nota.
 - Não houve instalação de APK, mudança de HOME, Knox ou permissões Android nesta etapa.
+
+### CI Flutter e aprovação do snapshot do celular
+
+- PR draft #2 iniciou Flutter preview validation, run 39115676842, com 33 testes PASS e 1 golden mobile divergente (0,48%, alteração visual esperada do botão).
+- Runner gerou PNG de referência visual atualizado em execução posterior 39115889298. O arquivo mobile.png (390x844) foi baixado para o tablet, incorporado ao repositório e as etapas de atualização automática de golden foram removidas do CI (commit f80b0dd).
+- Nova execução 39116066877 na branch experimental estava em etapa de build Android na última verificação; **não declarar build PASS sem conclusão**.
+- Nenhum APK foi instalado. PR permanece draft sem merge na main.
