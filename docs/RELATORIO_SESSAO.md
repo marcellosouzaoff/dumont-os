@@ -438,3 +438,19 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Tablet: item «DUMONT Teste» visível no launcher (UIAutomator),
   Activity do DUMONT restaurada, HOME Samsung preservada.
 - Aparência cromática/máscara final exige inspeção visual manual.
+
+
+## 17/10/2026 — Fase de auditoria A55, porta ADB 41733
+
+- Reconectado ADB por 192.168.1.7:41733; modelo SM-A556E,
+  Android trial presente e HOME Samsung intacta.
+- Catálogo Flutter e Linus Security visíveis, 69 aplicativos contados
+  sem registrar nomes de apps pessoais.
+- Knox UNKNOWN, sem mudanças de segurança.
+- Serviço DumontNotificationListener está listado como habilitado
+  no Android; origem da autorização UNKNOWN, sem leitura de conteúdo.
+- Toque no trilho direito abriu painel de notificações do Android;
+  abertura do Ghost não foi comprovada. Possível conflito de gesto.
+- Sessão de navegação interrompida ao retornar a outro aplicativo;
+  nenhum conteúdo desse outro aplicativo registrado no relatório.
+- Nenhuma atualização de APK ou permissão realizada. ADR-0024.
