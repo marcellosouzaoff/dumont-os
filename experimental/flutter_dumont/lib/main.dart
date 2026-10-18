@@ -412,11 +412,12 @@ class _DumontDesktopState extends State<DumontDesktop>
           if (!ghostOpen)
             Positioned(
               top: 75,
-              right: 0,
               bottom: 100,
-              // Wider invisible gesture zone starts clear of Android's
-              // system-navigation edge. No visible Samsung-style rail.
-              width: 62,
+              // Keep the touch area away from Android's right-edge
+              // navigation gesture. The compact view also exposes an
+              // explicit accessible button as a gesture-free fallback.
+              right: compact ? 20 : 0,
+              width: compact ? 42 : 62,
               child: Semantics(
                 label: 'Abrir painel Ghost',
                 button: true,
@@ -433,6 +434,26 @@ class _DumontDesktopState extends State<DumontDesktop>
                   onHorizontalDragEnd: (_) {
                     if (_ghostDragTravel <= -48) _openGhost();
                   },
+                ),
+              ),
+            ),
+          if (!ghostOpen && compact)
+            Positioned(
+              top: 88,
+              right: 24,
+              child: Semantics(
+                label: 'Abrir Ghost por botão',
+                button: true,
+                child: IconButton(
+                  key: const Key('ghost-open-button'),
+                  tooltip: 'Abrir Ghost',
+                  icon: const Icon(Icons.tune_rounded, size: 20),
+                  color: Brand.cream,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Brand.dark,
+                    minimumSize: const Size(44, 44),
+                  ),
+                  onPressed: _openGhost,
                 ),
               ),
             ),

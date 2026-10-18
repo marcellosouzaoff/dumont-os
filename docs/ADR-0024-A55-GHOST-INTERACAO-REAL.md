@@ -41,3 +41,19 @@
    somente presença/ausência do Ghost e sem copiar notificações.
 4. Decidir explicitamente com Master se a permissão de notificações
    habilitada é desejada; não revogar nem conceder unilateralmente.
+
+
+## Correção proposta em 17/10/2026 — execução bloqueada
+
+- Na largura compacta, o trilho invisível foi movido para
+  `right: 20` e reduzido a `width: 42`, afastado do
+  gesto da borda Android.
+- Adicionado botão explícito `ghost-open-button` com semântica
+  «Abrir Ghost por botão», `right: 24` e 44×44 dp.
+- Novo teste de widget para classe A55 412×915: abre e fecha
+  Ghost sem deslizar a borda.
+- Não foi possível rodar `flutter analyze`, testes ou build:
+  GitHub Codespaces devolveu **HTTP 402 (billing issue)** ao
+  iniciar o ambiente anterior. Esse impedimento é externo ao código.
+- Estado desta alteração: **PATCH AVALIDAR**. Não declarar
+  correção física PASS; nenhum APK desta revisão foi instalado.

@@ -454,3 +454,14 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Sessão de navegação interrompida ao retornar a outro aplicativo;
   nenhum conteúdo desse outro aplicativo registrado no relatório.
 - Nenhuma atualização de APK ou permissão realizada. ADR-0024.
+
+
+## 17/10/2026 — Patch Ghost sem build (Codespaces HTTP 402)
+
+- Auditado código da borda direita do painel Ghost.
+- Implementada opção de botão interno e afastamento do
+  gesto de borda em layouts compactos, com teste de widget A55.
+- Execução de análise, testes e build impedida por erro HTTP 402
+  de cobrança no GitHub Codespaces; não usar limite gratuito pago.
+- Arquivos salvos na branch de protótipo; nenhuma atualização
+  instalada no A55 ou tablet. Estado: NÃO VALIDADO.

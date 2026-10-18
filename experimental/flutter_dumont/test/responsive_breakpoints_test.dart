@@ -46,6 +46,26 @@ void main() {
     }
   });
 
+  testWidgets('inset button opens Ghost without edge swipe on A55',
+      (tester) async {
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    tester.view.physicalSize = const Size(412, 915);
+    tester.view.devicePixelRatio = 1;
+    await tester.pumpWidget(const DumontApp());
+    await tester.pumpAndSettle();
+    final button = find.byKey(const Key('ghost-open-button'));
+    expect(button, findsOneWidget);
+    expect(tester.getTopRight(button).dx, lessThan(412 - 16));
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ghost-panel')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('ghost-close')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ghost-panel')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('small phone can open and close Ghost with no overflow',
       (tester) async {
     addTearDown(tester.view.resetPhysicalSize);
