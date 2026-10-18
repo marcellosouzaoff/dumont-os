@@ -31,13 +31,13 @@ jobs:
         run: flutter test
       - name: Flutter Android build
         run: flutter build apk --debug --target-platform android-arm64
-      - name: Verify trial package and launcher resources
+      - name: Verify isolated Ghost Lab package and launcher resources
         run: |
           set -eu
           apk=build/app/outputs/flutter-apk/app-debug.apk
           test -s "$apk"
           aapt_bin=$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -1)
-          "$aapt_bin" dump badging "$apk" | grep "name='br.com.dumont.experience.preview.trial'"
+          "$aapt_bin" dump badging "$apk" | grep "name='br.com.dumont.experience.preview.ghostlab'"
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             unzip -l "$apk" | grep -q "res/mipmap-${density}-v4/ic_launcher.png"
           done
@@ -45,6 +45,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: dumont-flutter-ghost-preview-debug
+          name: dumont-flutter-ghostlab-debug
           path: experimental/flutter_dumont/build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 3

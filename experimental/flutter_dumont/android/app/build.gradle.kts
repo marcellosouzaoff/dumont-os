@@ -33,7 +33,9 @@ android {
         // Installed debug preview has a DIFFERENT signing certificate.
         // Never overwrite it: all new debug runs use a separate application ID.
         debug {
-            applicationIdSuffix = ".trial"
+            // The CI runner uses a different debug certificate from .trial.
+            // Isolate this build so both previews coexist without data loss.
+            applicationIdSuffix = ".ghostlab"
         }
         release {
             // TODO: Add your own signing config for the release build.
