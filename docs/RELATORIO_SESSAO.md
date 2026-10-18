@@ -481,3 +481,11 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Codespaces permanece bloqueado por HTTP 402 billing.
 - Patch Ghost continua **NÃO VALIDADO** e **NÃO INSTALADO**.
   Não afirmar resultados de tests/build sem ambiente habilitado.
+
+## 18/10/2026 — Autorização GitHub workflow e CI Flutter
+
+- O Master completou a autorização via OAuth Device Flow; o GitHub CLI retornou `Authentication complete` e `Token scopes` incluindo `workflow` (sem registro de código temporário).
+- Novo pipeline `.github/workflows/flutter-preview-validation.yml` publicado no commit `4a00ebc` na branch experimental, com Flutter 3.47.7, análise, testes, build arm64, validação de pacote/ícones e artefato temporário de 3 dias.
+- Disparo por `workflow_dispatch` inicialmente indisponível por arquivo ausente da branch padrão (`HTTP 404`). Criado PR **draft** #2, sem merge, para executar `pull_request`.
+- Execuções iniciadas: Flutter preview validation run `39115676842` e Android validation run `39115676728`. Estado de conclusão ainda não confirmado ao escrever esta nota.
+- Não houve instalação de APK, mudança de HOME, Knox ou permissões Android nesta etapa.
