@@ -2,6 +2,17 @@
 
 **Tipo:** Product Requirements Document · **Fase:** pré-código · **Data-base:** 15/10/2026 · **Status:** candidato à aprovação
 
+> **Atualização de 17/10/2026:** este documento v0.3 permanece como
+> **referência histórica de requisitos**, não como descrição do estado
+> atual. Existem um Pilot Kotlin/Compose em desenvolvimento e um protótipo
+> visual Flutter testado, ainda não instalado. Consulte
+> [Status verificável](STATUS_2026-10-17.md),
+> [Design System Paleta 01](DESIGN_SYSTEM.md) e
+> [ADR-0012 Flutter](ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md).
+> Flutter v0.1 usa **apps demonstrativos**; não confundir com integração
+> Android real ou implementação de ROM/SystemUI.
+
+
 ## 1. Problema e oportunidade
 
 A experiência visual de fábrica dos dois aparelhos não corresponde à preferência do proprietário por uma interface desktop editorial, unificada e separada visualmente da Samsung. Queremos uma experiência que seja facilmente reconhecida como **DUMONT**, com produtividade, navegação simples, tema consistente, e sem depender de desbloqueio do bootloader.

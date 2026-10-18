@@ -1,10 +1,17 @@
 # DUMONT
 
-**DUMONT OS · design system e planejamento do launcher Android**
+**DUMONT OS · experiência Android em Kotlin e Flutter**
 
-> **Status: DOCUMENTAÇÃO / PRÉ-CÓDIGO.** Este projeto ainda não é um sistema operacional instalável. As imagens são *conceitos visuais*; o DUMONT **não foi instalado** em nenhum dos aparelhos. A implementação proposta é um launcher e um conjunto de experiências sobre Android, não uma substituição do firmware Samsung.
+> **Estado em 17/10/2026:** Kotlin/Jetpack Compose Pilot v1.1 instalado
+> historicamente no Galaxy Tab S9 FE; v1.2 compilada e testada, mas **não
+> instalada**. Flutter Experience v0.1 em `experimental/flutter_dumont`:
+> build Web/Android e 5 testes de widgets aprovados; **não instalada**.
+> O DUMONT funciona sobre Android/One UI; não é ROM ou SystemUI própria.
+>
+> **Paleta 01 aprovada:** Baritone Blue `#272836`, Cloud Dancer `#F0EEE9`
+> e Curds & Whey `#BCA483` como acento. Paletas v0.3 anteriores são históricas.
+> Capturas Flutter são produzidas pelo renderizador em testes, não por câmera.
 
-> **Mockups aprovados:** imagens do tablet e smartphone preparadas no pacote v0.3, ainda pendentes de upload para este repositório. A publicação gráfica não está concluída.
 
 ## Visão
 
@@ -12,18 +19,25 @@ Construir uma experiência de interface original e coerente para **Samsung Galax
 
 ### Regras visuais aprovadas
 
-- **Marca no topo:** somente `DUMONT`, sem símbolo ou assinatura secundária.
-- **Duas barras horizontais:** barra superior fina para marca e indicadores; **Dock inferior** de aplicativos.
-- **Área central:** pasta/janela de aplicativos ou área de trabalho, responsiva ao tamanho da tela.
-- **Ícones de aplicativos:** priorizar ícones reais dos apps Google instalados; **não usar ícones Samsung ou Apple como linguagem visual do DUMONT**. Não redistribuir pacotes de ícones de terceiros.
-- **Paleta-base:** Cloud Dancer `#F1EEE7`, branco `#FFFFFF`, cinza-chumbo `#4E5353`, preto `#252525`.
-- **Acentos:** Mocha Mousse `#A47864` e vermelho `#CD212A` em uso contido; verde/amarelo/vermelho para estados operacionais, sempre com texto e ícone.
-- **Tipografia:** DM Sans para UI e Cormorant Garamond para peças editoriais, sem comprometer legibilidade.
-- **Segurança:** Knox e a proteção original do Android permanecem intactos. **Linus Security** é apenas um nome proposto para uma interface informativa de segurança; não substitui Knox.
+- **Marca:** DUMONT, em tipografia espaçada à esquerda da barra superior.
+- **Desktop:** TopBar, janela de aplicativos, Dock inferior e Ghost invisível
+  quando recolhido. Layout adaptativo para tablet e celular.
+- **Paleta 01:** `#272836` para superfícies escuras, `#F0EEE9` para
+  janelas claras/textos escuros e `#BCA483` para acentos discretos.
+- **Fontes:** DM Sans para UI; Cormorant Garamond para editorial.
+- **Flutter v0.1:** aplicativos e ícones ilustrativos, sem abrir apps reais.
+  O Kotlin Pilot integra PackageManager e launch via APIs públicas Android.
+- **Segurança:** sem alteração de HOME, One UI, Knox, SystemUI ou firmware.
 
-**Mockup desktop:** imagem aprovada, pendente de upload público.
+**Prévia Flutter desktop — capturada em teste de renderização:**
 
-![Paleta DUMONT — versão vetorial](design/paleta.svg)
+![DUMONT Flutter Desktop](experimental/flutter_dumont/test/goldens/desktop.png)
+
+[Tablet](experimental/flutter_dumont/test/goldens/tablet.png) ·
+[Celular](experimental/flutter_dumont/test/goldens/mobile.png) ·
+[Ghost](experimental/flutter_dumont/test/goldens/ghost.png)
+
+![Paleta 01 — arquivo vetorial](design/paleta.svg)
 
 ## Alvos iniciais
 
@@ -46,9 +60,11 @@ Os dados da tabela são **observações históricas** feitas por comandos de lei
 | [Governança](docs/GOVERNANCA.md) | PASS/FAIL/UNKNOWN, aprovação e proteção de dados |
 | [Direitos de assets](docs/ASSETS_E_DIREITOS.md) | Origem e cuidados com imagens/marcas/fonte |
 | [ADR-0001](docs/ADR-0001-ESTRATEGIA.md) | Decisão por launcher sem modificar ROM |
-| [Relatório da sessão](docs/RELATORIO_SESSAO.md) | Decisões e pendências |
+| [Relatório da sessão](docs/RELATORIO_SESSAO.md) | Histórico |
+| [Status 17/10/2026](docs/STATUS_2026-10-17.md) | Evidências Kotlin, Flutter e deploy |
+| [ADR-0012](docs/ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md) | Arquitetura Flutter, testes e limites |
 
-### Estrutura da etapa atual
+### Estrutura inicial (histórica)
 
 ```text
 DUMONT/
@@ -72,7 +88,15 @@ DUMONT/
     └── dumont-desktop-conceito.png
 ```
 
-**Ainda não contém código-fonte Android.** O início da implementação exige aprovação explícita da documentação, da conta GitHub de destino e da publicação.
+### Estrutura Flutter atual
+
+A implementação de UI e as capturas de teste ficam em
+`experimental/flutter_dumont/`, com
+`lib/main.dart`, `test/widget_test.dart`, `test/goldens/`, `android/`, `web/` e
+`scripts/setup_fonts.sh`.
+
+**Registro histórico da fase M2.** Código experimental Android em `feat/m2-android-foundation`; consulte [Fundação Android](docs/M2_FOUNDATION.md) e [piloto real Tab S9 FE](docs/M2_PILOTO_TAB_S9_FE_2026-10-16.md) e [estado do piloto Galaxy A55](docs/M2_PILOTO_A55_2026-10-16.md) e [auditoria de assinaturas APK](docs/M2_ASSINATURAS_APK.md) e [assinatura local estável do Pilot](docs/M2_ASSINATURA_ESTAVEL.md). Veja [estado verificável de 17/10/2026](docs/STATUS_2026-10-17.md)
+para distinguir builds, commits e instalações.
 
 ## Referências técnicas
 
@@ -90,4 +114,49 @@ Este é um projeto independente, não afiliado a Samsung, Google ou Apple. Andro
 
 O código-fonte que vier a ser publicado e a documentação original deste repositório são disponibilizados sob a [Apache License, Version 2.0](LICENSE), salvo indicação expressa de outra licença. A Apache 2.0 permite uso, modificação e distribuição, inclusive comercial, mediante o cumprimento de suas condições.
 
-**Escopo e marcas:** a licença de código não concede direito de uso sobre o nome e a identidade visual **DUMONT**. Mockups, imagens, fotografias, logos, ícones e outros materiais gráficos não estão abrangidos pela Apache 2.0, a menos que sejam explicitamente identificados como licenciados. Elementos e marcas de terceiros permanecem sujeitos aos direitos dos respectivos titulares. O repositório ainda está em fase documental; não há aplicativo Android publicado.
+**Escopo e marcas:** a licença de código não concede direito de uso sobre o nome e a identidade visual **DUMONT**. Mockups, imagens, fotografias, logos, ícones e outros materiais gráficos não estão abrangidos pela Apache 2.0, a menos que sejam explicitamente identificados como licenciados. Elementos e marcas de terceiros permanecem sujeitos aos direitos dos respectivos titulares. Há código Kotlin e Flutter; nenhuma versão final foi publicada em loja.
+
+### Revisão de ergonomia v0.5
+
+[ADR-0002 — Workspace, menu superior, Dock e acesso ao Termux](docs/ADR-0002-ERGONOMIA-MACOS.md). Etapa experimental; não altera a HOME padrão.
+
+### DUMONT v0.6 — revisão da navegação
+
+[ADR-0003 — barras translúcidas, catálogo completo e Dock por uso](docs/ADR-0003-DOCK-E-BARRAS-TRANSLUCIDAS.md).
+
+### DUMONT v0.6.1 — barras alinhadas
+
+[ADR-0004 — larguras idênticas, cor sólida e Dock essencial sem Termux](docs/ADR-0004-BARRAS-IGUAIS-DOCK-ESSENCIAL.md).
+
+### DUMONT v0.7 — sistema, wallpaper e notificações
+
+[ADR-0005 — barra de status, galerias e painel direito de notificações](docs/ADR-0005-STATUS-WALLPAPER-NOTIFICACOES.md).
+
+### DUMONT v0.8 — Integração nativa Samsung / Android
+
+[ADR-0006 — painel Galaxy, controles públicos, limites Knox e plano de widgets](docs/ADR-0006-INTEGRACAO-GALAXY-ONE-UI.md).
+
+### DUMONT v0.9 — sidebar e harmonia cromática
+
+[ADR-0007 — nova barra superior e painel lateral direito](docs/ADR-0007-DESIGN-SIDEBAR-V09.md).
+
+### DUMONT v1.0-dev — correções de ergonomia
+
+[ADR-0008 — Mural, catálogo classificável e limites Samsung DeX](docs/ADR-0008-ERGONOMIA-DEX-CATALOGO-MURAL.md).
+
+### DUMONT v1.1 — Orchestrator e Samsung DeX
+
+[ADR-0009 — política de abertura de apps, limites DeX e testes](docs/ADR-0009-ORCHESTRATOR-DEX-V11.md).
+
+### Fluxo visual do Orchestrator
+[ADR-0010 — retomada e Recentes no DeX](docs/ADR-0010-DEEX-VISUAL-RECENTES.md).
+
+### Flutter Experience — v0.1
+
+O código fica em [experimental/flutter_dumont](experimental/flutter_dumont/README.md).
+Flutter 3.47.7: análise estática PASS (zero problemas), 5/5 testes PASS,
+build Web release PASS e build Android ARM64 debug PASS.
+Pacote `br.com.dumont.experience.preview`, **ainda não instalado**.
+Aplicativos reais, notificações e bridge Kotlin são pendentes.
+Consulte [ADR-0012](docs/ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md),
+[status](docs/STATUS_2026-10-17.md) e [Changelog](CHANGELOG.md).

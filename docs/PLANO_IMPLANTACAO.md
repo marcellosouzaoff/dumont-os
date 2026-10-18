@@ -1,6 +1,11 @@
 # Plano de implementação e implantação — DUMONT v0.3
 
-**Status:** fase de documentação; etapas futuras dependem de gates e aprovação.
+**Status atual (17/10/2026):** o plano v0.3 abaixo é histórico.
+Kotlin Pilot v1.1 foi instalado no tablet; a v1.2 foi compilada e testada sem deploy.
+Flutter visual v0.1 compilou para Web/Android, 5 testes PASS e não foi instalado.
+Veja `STATUS_2026-10-17.md` e `ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md`.
+
+**Histórico v0.3:** fase de documentação; etapas futuras dependiam de gates e aprovação.
 
 ## Princípio de sequenciamento
 

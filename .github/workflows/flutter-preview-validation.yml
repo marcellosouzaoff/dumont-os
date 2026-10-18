@@ -1,0 +1,53 @@
+name: Flutter preview validation
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "experimental/flutter_dumont/**"
+      - ".github/workflows/flutter-preview-validation.yml"
+permissions:
+  contents: read
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: experimental/flutter_dumont
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.7"
+          channel: stable
+          cache: true
+      - name: Prepare project assets
+        run: bash scripts/setup_fonts.sh
+      - name: Dependencies
+        run: flutter pub get
+      - name: Flutter static analysis
+        run: flutter analyze
+      - name: Flutter widget tests
+        run: flutter test
+      - name: Verify CI package isolation rules
+        run: python3 -m unittest discover -s scripts -p 'test_ghostlab_ci_identity.py'
+      - name: Flutter Android build
+        run: flutter build apk --debug --target-platform android-arm64
+      - name: Verify isolated Ghost Lab package and launcher resources
+        run: |
+          set -eu
+          apk=build/app/outputs/flutter-apk/app-debug.apk
+          test -s "$apk"
+          aapt_bin=$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -1)
+          expected_package="br.com.dumont.experience.preview.ghostlabr${GITHUB_RUN_ID}a${GITHUB_RUN_ATTEMPT}"
+          "$aapt_bin" dump badging "$apk" | grep -F "name='${expected_package}'"
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            unzip -l "$apk" | grep -q "res/mipmap-${density}-v4/ic_launcher.png"
+          done
+          sha256sum "$apk"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: dumont-flutter-ghostlab-debug
+          path: experimental/flutter_dumont/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 3

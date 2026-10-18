@@ -1,0 +1,60 @@
+# ADR-0018 — AndroidBridge em tempo real: bateria e conectividade
+
+**Data:** 17/10/2026
+**Projeto:** DUMONT OS Flutter Experience
+**Branch:** `feature/flutter-visual-prototype-20261017`
+
+## Escopo
+
+Atualizar o estado do dispositivo sem agendadores e sem consultas
+periódicas à API Android. Preservar a arquitetura Flutter + Kotlin,
+HOME Samsung, Knox, privacidade, custo zero e o pacote de teste `.trial`.
+
+## Contrato
+
+- `MethodChannel("br.com.dumont.experience/native")` fornece a consulta
+  inicial `getDeviceStatus` (fallback somente de leitura).
+- `EventChannel("br.com.dumont.experience/device_events")` entrega mapas
+  com `batteryPercent`, `isCharging`, `networkType`,
+  `model`, `androidVersion`.
+- Kotlin registra `ACTION_BATTERY_CHANGED` e
+  `ConnectivityManager.registerDefaultNetworkCallback` somente quando
+  o Flutter se inscreve; `onCancel` e `onDestroy` liberam ambos.
+- Eventos são postados na thread principal via `Handler`, com
+  deduplicação de snapshots idênticos. Não há loops, polling, timers,
+  serviços em background ou rede externa.
+- O Flutter observa via `StreamSubscription` e cancela no
+  `dispose`. A resposta da consulta inicial não sobrescreve eventos
+  mais recentes (proteção contra condição de corrida).
+- O EventChannel é ativado automaticamente somente no Android real;
+  a prévia web e testes Flutter ficam sem chamadas inválidas.
+- Um stream pode ser injetado nos testes para provar atualização
+  da interface e cancelamento sem serviço Kotlin real.
+- A conexão é apenas tipo de transporte. Sem SSID, localização,
+  identificador persistente, conteúdo de notificações ou dados privados.
+- A única permissão relacionada é `ACCESS_NETWORK_STATE`, normal,
+  declarada previamente. Nenhuma permissão especial concedida.
+
+## TDD / resultados
+
+- RED: os testes iniciais não compilaram porque o serviço de eventos
+  não existia.
+- Primeiro GREEN de contrato: 2/2 testes direcionados PASS.
+- A suíte completa identificou exceções em hosts sem EventChannel.
+  Implementada verificação de plataforma e injeção de stream nos testes.
+- Flutter 3.47.7: `flutter analyze` **PASS / zero problemas**;
+  `flutter test` **PASS / 27 de 27 testes**.
+- Kotlin/Android ARM64: **PASS**, `flutter build apk --debug --target-platform android-arm64`.
+  APK SHA-256: `24f76f297b1a3531a77e720f5914d41ea455045bdc913f88f8ae8b0f6d18427f`.
+  Certificado SHA-256: `c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46`.
+  Pacote: `br.com.dumont.experience.preview.trial`.
+- Instalação debug `.trial` por ADB: **PASS**.
+- UIAutomator: **PASS** para 54% de bateria, Wi-Fi, SM-X510, Ghost e
+  estado de notificações sem autorização, consistentes com Android.
+- Alteração física espontânea de rede/bateria: **UNKNOWN**; não simulada
+  para evitar alterar condições globais do dispositivo.
+- Prévia original `br.com.dumont.experience.preview`: após o build
+  atual, **não encontrada** na listagem de pacotes Android, embora
+  estivesse presente na rodada anterior. Causa **UNKNOWN**; não houve
+  comando de desinstalação ou limpeza de dados nesta rodada. Não
+  reinstalar automaticamente até o usuário decidir.

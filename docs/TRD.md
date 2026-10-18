@@ -2,6 +2,17 @@
 
 **Tipo:** Technical Requirements Document · **Status:** arquitetura proposta, não implementada · **Data-base:** 15/10/2026
 
+> **Atualização de 17/10/2026:** este documento v0.3 permanece como
+> **referência histórica de requisitos**, não como descrição do estado
+> atual. Existem um Pilot Kotlin/Compose em desenvolvimento e um protótipo
+> visual Flutter testado, ainda não instalado. Consulte
+> [Status verificável](STATUS_2026-10-17.md),
+> [Design System Paleta 01](DESIGN_SYSTEM.md) e
+> [ADR-0012 Flutter](ADR-0012-FLUTTER-VISUAL-PROTOTYPE.md).
+> Flutter v0.1 usa **apps demonstrativos**; não confundir com integração
+> Android real ou implementação de ROM/SystemUI.
+
+
 ## 1. Decisão central
 
 **Android original preservado + launcher DUMONT via APK normal.** Não criar ROM, SystemUI, root, bootloader unlock ou serviços privilegiados na etapa inicial. A substituição da tela inicial depende da seleção explícita do usuário.
