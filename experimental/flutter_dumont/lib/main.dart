@@ -1008,6 +1008,7 @@ class _DumontDesktopState extends State<DumontDesktop>
           icons.length,
           (i) => IconButton(
             key: Key('dock-$i'),
+            tooltip: names[i],
             icon: Icon(icons[i], color: Brand.cream, size: compact ? 27 : 32),
             onPressed: () {
               if (i == 0) {
