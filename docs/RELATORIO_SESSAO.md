@@ -505,3 +505,11 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Identificador do APK `br.com.dumont.experience.preview.trial`, Android SDK 36, arm64.
 - **BLOCKER:** novo APK CI certificado SHA-256 850b7ec721a6d1b894dbb933419c64e3d732f75d8507001706c6022a4e513ff1, diferente do certificado da trial instalada c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46.
 - Não instalar nem desinstalar, não limpar dados e não reempacotar com assinaturas improvisadas. Alternativas: assinar com keystore ORIGINAL se recuperável e autorizada, ou criar novo applicationId isolado para teste e conferir permissões.
+
+## 18/10/2026 — Ghost Lab no Galaxy A55
+
+- Nova variante Android ghostlab isolada da trial, commit 1e11250. Flutter CI run 39118461519 SUCCESS.
+- APK SHA256 c97fee638c371f660cb1f17fad6af4b8952185d3473a90366626fef277775cbe confirmado nos dois dispositivos. Certificado V2 e7da4725973a4b1f58609183d051caa5a2db0957fc0346f666c4f7afbf5d56b6.
+- A55 via ADB 192.168.1.7:35851: install Success e am start Status ok. Trial e ghostlab coexistem. HOME Samsung intacta.
+- Interação física de abrir/fechar Ghost permanece UNKNOWN: UIAutomator mostra sobreposição do SystemUI, não tela Flutter. Não declarar teste PASS.
+- Nenhuma desinstalação, root, alteração de HOME ou permissão. Servidor HTTP temporário encerrado.
