@@ -3,6 +3,27 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dumont_experience/main.dart';
 
 void main() {
+  testWidgets('compact Ghost close button has an accessible tooltip', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const DumontApp());
+
+    await tester.tap(find.byKey(const Key('ghost-open-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ghost-panel')), findsOneWidget);
+
+    // Android accessibility services should expose an actionable close label.
+    expect(find.byTooltip('Fechar Ghost'), findsOneWidget);
+    await tester.tap(find.byTooltip('Fechar Ghost'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('ghost-panel')), findsNothing);
+    expect(find.byKey(const Key('ghost-open-button')), findsOneWidget);
+  });
+
   testWidgets('ghost opens after smooth swipe with small deltas', (
     tester,
   ) async {

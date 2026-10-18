@@ -1050,6 +1050,7 @@ class _DumontDesktopState extends State<DumontDesktop>
               ),
               IconButton(
                 key: const Key('ghost-close'),
+                tooltip: 'Fechar Ghost',
                 icon: const Icon(Icons.close, color: Brand.cream),
                 onPressed: () => setState(() => ghostOpen = false),
               ),
