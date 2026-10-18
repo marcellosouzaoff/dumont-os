@@ -29,6 +29,8 @@ jobs:
         run: flutter analyze
       - name: Flutter widget tests
         run: flutter test
+      - name: Verify CI package isolation rules
+        run: python3 -m unittest discover -s scripts -p 'test_ghostlab_ci_identity.py'
       - name: Flutter Android build
         run: flutter build apk --debug --target-platform android-arm64
       - name: Verify isolated Ghost Lab package and launcher resources
@@ -37,7 +39,8 @@ jobs:
           apk=build/app/outputs/flutter-apk/app-debug.apk
           test -s "$apk"
           aapt_bin=$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -1)
-          "$aapt_bin" dump badging "$apk" | grep "name='br.com.dumont.experience.preview.ghostlab'"
+          expected_package="br.com.dumont.experience.preview.ghostlabr${GITHUB_RUN_ID}a${GITHUB_RUN_ATTEMPT}"
+          "$aapt_bin" dump badging "$apk" | grep -F "name='${expected_package}'"
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             unzip -l "$apk" | grep -q "res/mipmap-${density}-v4/ic_launcher.png"
           done

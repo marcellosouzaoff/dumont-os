@@ -35,7 +35,17 @@ android {
         debug {
             // The CI runner uses a different debug certificate from .trial.
             // Isolate this build so both previews coexist without data loss.
-            applicationIdSuffix = ".ghostlab"
+            // Each GitHub Actions run and attempt gets its own package.
+            // This also isolates reruns of the same commit signed by different runners.
+            val ciRunId = System.getenv("GITHUB_RUN_ID")
+            val ciAttempt = System.getenv("GITHUB_RUN_ATTEMPT")
+            require((ciRunId == null && ciAttempt == null) ||
+                    (ciRunId != null && ciAttempt != null &&
+                     Regex("[0-9]+").matches(ciRunId) &&
+                     Regex("[0-9]+").matches(ciAttempt))) {
+                "GITHUB_RUN_ID and GITHUB_RUN_ATTEMPT must both be positive numeric strings"
+            }
+            applicationIdSuffix = if (ciRunId == null) ".ghostlab" else ".ghostlabr${ciRunId}a${ciAttempt}"
         }
         release {
             // TODO: Add your own signing config for the release build.
