@@ -27,6 +27,13 @@ jobs:
         run: flutter pub get
       - name: Flutter static analysis
         run: flutter analyze
+      - name: Update mobile visual baseline for review
+        run: flutter test --update-goldens test/widget_test.dart
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dumont-mobile-golden-review
+          path: experimental/flutter_dumont/test/goldens/mobile.png
+          retention-days: 3
       - name: Flutter widget tests
         run: flutter test
       - name: Flutter Android build
