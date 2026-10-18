@@ -417,3 +417,24 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Aparência visual do ícone na grade Android não inspecionada ainda:
   UNKNOWN. Ícone adaptativo monocromático ainda pendente.
 - A55 sem instalação/alteração nesta rodada.
+
+
+## 17/10/2026 — Next all: instalação experimental A55 e launcher
+
+- Autorização "Next all" recebida para concluir a instalação
+  separada e os testes. A55 SM-A556E conexão ADB confirmada.
+- APK da prévia do commit 961ab61 transferido à área de trabalho
+  Termux do A55 (servidor HTTP temporário do tablet) com SHA-256
+  validado nos dois lados; servidor temporário desligado.
+- PackageName e certificado verificados antes do install.
+- A55 `install --user 0` Success; MainActivity Flutter Status ok.
+  Interface DUMONT, Apps, Ghost e bateria visíveis.
+- Samsung HOME não alterada; nenhuma alteração no Pilot antigo.
+- A55 exibiu DumontNotificationListener entre listeners habilitados,
+  origem UNKNOWN; não foi habilitado nesta rodada, não foram lidas
+  notificações. Auditada apenas configuração.
+- Conexão ADB caiu e porta recusou reconexão; novas ações físicas
+  A55 suspensas até nova sessão autorizada.
+- Tablet: item «DUMONT Teste» visível no launcher (UIAutomator),
+  Activity do DUMONT restaurada, HOME Samsung preservada.
+- Aparência cromática/máscara final exige inspeção visual manual.

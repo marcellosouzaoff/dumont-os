@@ -83,3 +83,39 @@ principal. **Nada foi instalado no Galaxy A55** nesta fase.
   o launcher Samsung os compõe com máscara e escala.
 - Galaxy A55: nenhum APK instalado nesta rodada; aprovação para
   instalar no A55 deve ser específica.
+
+
+## Validação em dois dispositivos — rodada Next all
+
+- Galaxy A55 SM-A556E: `adb devices` mostrou sessão autorizada
+  `192.168.1.7:40869`, Android 16/ARM64, perfil 0.
+- `pm list packages --user 0` não mostrava `.trial` antes da
+  instalação. HOME padrão Samsung foi confirmada.
+- O APK ARM64 da rodada anterior foi transferido pela rede local
+  do tablet ao Termux do A55. SHA-256 igual ao original:
+  `9e466de26c86c6ea718ed63186803f1209ede8d15fc111ef844d33f62ff3c301`.
+  Pacote e certificado auditados com `aapt` e `apksigner`.
+- No A55, `adb install --user 0 --no-streaming` deu **Success**,
+  `pm path --user 0` confirmou o APK, e `am start -W`
+  retornou **Status ok** para MainActivity.
+- UIAutomator no A55 confirmou DUMONT, botão Abrir aplicativos,
+  painel Ghost e bateria 74%; não houve crash fatal nos logs
+  recentes inspecionados. Teste de navegação/rotação completo não
+  foi finalizado.
+- Durante a auditoria, o Android do A55 listava
+  `DumontNotificationListener` em `enabled_notification_listeners`.
+  Não foi concedida permissão nesta rodada nem lido qualquer
+  conteúdo de notificação. Origem da habilitação **UNKNOWN**,
+  requer checagem visual no Android.
+- A sessão ADB do A55 tornou-se offline e, após desconexão para
+  recuperar, a porta recusou novas conexões. ADB final
+  **DISCONNECTED**; novo endereço/porta terá de ser obtido no
+  celular para prosseguir. Não foram alteradas preferências ADB.
+- Tablet SM-X510: `adb input HOME` e auditoria UIAutomator
+  confirmaram item «DUMONT Teste» no launcher Samsung.
+  A tela DUMONT foi restaurada com `am start -W`, Status ok.
+  HOME Samsung continua padrão. Aparência visual minuciosa
+  (escala/máscara/cor) do ícone: **UNKNOWN**; presença no launcher
+  e recursos empacotados: **PASS**.
+- Nenhuma reinstalação dos pacotes Pilot/Preview antigos, root,
+  alteração de HOME ou leitura de conteúdo privado.
