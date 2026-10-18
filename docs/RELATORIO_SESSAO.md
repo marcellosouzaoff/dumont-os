@@ -513,3 +513,11 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - A55 via ADB 192.168.1.7:35851: install Success e am start Status ok. Trial e ghostlab coexistem. HOME Samsung intacta.
 - Interação física de abrir/fechar Ghost permanece UNKNOWN: UIAutomator mostra sobreposição do SystemUI, não tela Flutter. Não declarar teste PASS.
 - Nenhuma desinstalação, root, alteração de HOME ou permissão. Servidor HTTP temporário encerrado.
+
+## 18/10/2026 — Verificação adicional Ghost Lab no Galaxy A55
+
+- Foi encontrado commit pré-existente `1e11250` da variante de pacote `br.com.dumont.experience.preview.ghostlab` e relatório `b8881c5`. GitHub Actions run `39119066825` já concluiu com SUCCESS.
+- ADB do A55 `192.168.1.7:35851` confirmou instalação simultânea dos pacotes `.trial` e `.ghostlab`; launcher padrão Samsung permanece intocado.
+- Abertura da Activity Ghost Lab por `am start -W` retornou `Status: ok`; UIAutomator confirmou semântica `DUMONT`, `Abrir Ghost`, `Abrir Ghost por botão` e `Aplicativos`.
+- Toque ADB no botão não produziu captura confiável do Ghost: o aplicativo em primeiro plano estava diferente ao colher UIAutomator. Não registrar resultado de abrir/fechar como PASS nem como FAIL; estado UNKNOWN. Nenhum conteúdo do outro aplicativo faz parte das evidências do projeto.
+- Sem reinstalação, permissão adicional, mudança de HOME ou limpeza de dados nesta rodada.
