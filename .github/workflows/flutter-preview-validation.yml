@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - "experimental/flutter_dumont/**"
+      - "design/tokens.json"
+      - "design/tokens.css"
+      - "scripts/check_color_tokens.py"
       - ".github/workflows/flutter-preview-validation.yml"
 permissions:
   contents: read
@@ -25,6 +28,8 @@ jobs:
         run: bash scripts/setup_fonts.sh
       - name: Dependencies
         run: flutter pub get
+      - name: Verify design tokens across JSON, CSS and Flutter
+        run: python3 ../../scripts/check_color_tokens.py
       - name: Flutter static analysis
         run: flutter analyze
       - name: Flutter widget tests
