@@ -496,3 +496,12 @@ Conferir árvore pública, licenças de imagens e README; fechar gate pré-códi
 - Runner gerou PNG de referência visual atualizado em execução posterior 39115889298. O arquivo mobile.png (390x844) foi baixado para o tablet, incorporado ao repositório e as etapas de atualização automática de golden foram removidas do CI (commit f80b0dd).
 - Nova execução 39116066877 na branch experimental estava em etapa de build Android na última verificação; **não declarar build PASS sem conclusão**.
 - Nenhum APK foi instalado. PR permanece draft sem merge na main.
+
+## 18/10/2026 — CI verde e incompatibilidade de assinatura no A55
+
+- GitHub Actions Flutter preview validation run 39116269594, commit 771cd88: SUCCESS.
+- Conexão autorizada ADB 192.168.1.7:35851 no Galaxy A55 SM-A556E, HOME Samsung preservada.
+- APK do artifact `dumont-flutter-ghost-preview-debug` transferido por HTTP local temporário do tablet para o Termux do A55; SHA-256 457c8497c9fb5c73c1680d5354b1ac9106e11964fbbe0546ce1927c9a7520586 nos dois dispositivos.
+- Identificador do APK `br.com.dumont.experience.preview.trial`, Android SDK 36, arm64.
+- **BLOCKER:** novo APK CI certificado SHA-256 850b7ec721a6d1b894dbb933419c64e3d732f75d8507001706c6022a4e513ff1, diferente do certificado da trial instalada c3fce7028c74f85ce9a77b2dc3f04cc44b6f7cfa3d0009e8a1545b47e9403a46.
+- Não instalar nem desinstalar, não limpar dados e não reempacotar com assinaturas improvisadas. Alternativas: assinar com keystore ORIGINAL se recuperável e autorizada, ou criar novo applicationId isolado para teste e conferir permissões.
