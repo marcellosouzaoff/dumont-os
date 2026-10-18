@@ -1,0 +1,50 @@
+name: Flutter preview validation
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "experimental/flutter_dumont/**"
+      - ".github/workflows/flutter-preview-validation.yml"
+permissions:
+  contents: read
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: experimental/flutter_dumont
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.7"
+          channel: stable
+          cache: true
+      - name: Prepare project assets
+        run: bash scripts/setup_fonts.sh
+      - name: Dependencies
+        run: flutter pub get
+      - name: Flutter static analysis
+        run: flutter analyze
+      - name: Flutter widget tests
+        run: flutter test
+      - name: Flutter Android build
+        run: flutter build apk --debug --target-platform android-arm64
+      - name: Verify trial package and launcher resources
+        run: |
+          set -eu
+          apk=build/app/outputs/flutter-apk/app-debug.apk
+          test -s "$apk"
+          aapt_bin=$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -1)
+          "$aapt_bin" dump badging "$apk" | grep "name='br.com.dumont.experience.preview.trial'"
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            unzip -l "$apk" | grep -q "res/mipmap-${density}-v4/ic_launcher.png"
+          done
+          sha256sum "$apk"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: dumont-flutter-ghost-preview-debug
+          path: experimental/flutter_dumont/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 3
